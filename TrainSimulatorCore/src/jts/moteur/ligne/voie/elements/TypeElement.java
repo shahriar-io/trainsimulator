@@ -1,6 +1,6 @@
 package jts.moteur.ligne.voie.elements;
 
-/**Liste les classes filles de CourbeElementaire.
+/**Liste les types correspondants aux classes filles de CourbeElementaire.
  * 
  * @author Yannick BISIAUX
  *

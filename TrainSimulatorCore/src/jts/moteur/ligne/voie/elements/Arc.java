@@ -8,9 +8,7 @@ import java.util.List;
 
 import jts.io.Sauvegardable;
 import jts.moteur.geometrie.AngleEuler;
-import jts.moteur.geometrie.BasicGeo;
 import jts.moteur.geometrie.Point;
-import jts.moteur.geometrie.Vecteur;
 import jts.moteur.ligne.voie.points.PointPassage;
 
 
@@ -27,17 +25,20 @@ public class Arc extends CourbeElementaire implements Sauvegardable{
 	protected double angleOrigine;
 	/**Positif vers l'est*/
 	protected double ouverture;
+	/**Angle d'inclinaison*/
+	protected double theta;
 	
 	public Arc(){
-		super(null, null, TypeElement.ARC);
+		this(null, null, null, 0, 0, 0, 0);		
 	}
 	
-	public Arc(PointPassage p1, PointPassage p2, Point centre, double rayon, double angleOrigine, double ouverture) {
+	public Arc(PointPassage p1, PointPassage p2, Point centre, double rayon, double angleOrigine, double ouverture, double theta) {
 		super(p1, p2, TypeElement.ARC);
 		this.centre = centre;
 		this.rayon = rayon;
 		this.angleOrigine = angleOrigine;
 		this.ouverture = ouverture;
+		this.theta = theta;
 		this.calculerLongueur();
 	}
 	
@@ -46,17 +47,21 @@ public class Arc extends CourbeElementaire implements Sauvegardable{
 	}
 	
 	public void recupererAngle(AngleEuler angle, double ratio) {
+		super.recupererAngle(angle, ratio);
 		double cap = - (angleOrigine + ratio*ouverture);
 		if (ouverture<0){
 			cap += Math.PI;
 		}
 		angle.setPsi(cap);
+		//Formule approchée
+		angle.setTheta(theta);
 	}
 	
 	public void recupererPoint(Point point, double ratio) {
-		double theta = angleOrigine + ratio*ouverture;
-		point.setX(centre.getX() + rayon*Math.sin(theta));
-		point.setY(centre.getY() + rayon*Math.cos(theta));
+		double psi = angleOrigine + ratio*ouverture;
+		point.setX(centre.getX() + rayon*Math.sin(psi));
+		point.setY(centre.getY() + rayon*Math.cos(psi));
+		point.setZ(centre.getZ() + rayon*Math.sin(theta)*Math.sin(ratio*ouverture));
 	}
 	
 	/**Permet d'effectuer une transformation affine sur cet élément.
@@ -67,31 +72,6 @@ public class Arc extends CourbeElementaire implements Sauvegardable{
 	public void transformer(Point translation, double rotation){
 		centre.transformer(translation, rotation);
 		angleOrigine -= rotation;
-	}
-	
-	public double projeter(Point point){
-		Vecteur vecteur = new Vecteur(centre, point);
-		double angle = BasicGeo.liPi(Math.PI/2 - vecteur.getAngle() - angleOrigine);
-		double alpha = angle/ouverture;
-		return alpha;
-	}
-	
-	public double projeterAbsCurv(Point point) {
-		//La création du vecteur peut consommer du temps
-		Vecteur vecteur = new Vecteur(centre, point);
-		double angle = BasicGeo.liPi(Math.PI/2 - vecteur.getAngle() - angleOrigine);
-		double absCurv;
-		if(ouverture>0){
-			absCurv = angle*rayon;
-		} else {
-			absCurv = -angle*rayon;
-		}
-		return absCurv;
-	}
-	
-	public double projeterDistance(Point point) {
-		double distance = Math.abs(point.getDistance(centre) - rayon);
-		return distance;
 	}
 	
 	public List<Point> getPointsRemarquables(){
@@ -122,6 +102,7 @@ public class Arc extends CourbeElementaire implements Sauvegardable{
 		this.rayon = dis.readDouble();
 		this.angleOrigine = dis.readDouble();
 		this.ouverture = dis.readDouble();
+		this.theta = dis.readDouble();
 	}
 
 	public void save(DataOutputStream dos) throws IOException {
@@ -131,5 +112,6 @@ public class Arc extends CourbeElementaire implements Sauvegardable{
 		dos.writeDouble(this.rayon);
 		dos.writeDouble(this.angleOrigine);
 		dos.writeDouble(this.ouverture);
+		dos.writeDouble(this.theta);
 	}
 }

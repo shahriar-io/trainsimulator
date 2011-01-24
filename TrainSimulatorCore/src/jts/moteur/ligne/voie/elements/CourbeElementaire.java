@@ -24,8 +24,10 @@ public abstract class CourbeElementaire implements Sauvegardable{
 
 	/**Origine*/
 	protected PointPassage p1;
+	protected double phi1;
 	/**Fin*/
 	protected PointPassage p2;
+	protected double phi2;
 	protected TypeElement type;
 	protected double longueur;
 	
@@ -99,7 +101,9 @@ public abstract class CourbeElementaire implements Sauvegardable{
 	 * @param angle l'angle de la voiture (maj)
 	 * @param abscisse l'abscisse curviligne
 	 */
-	protected abstract void recupererAngle(AngleEuler angle, double ratio);
+	public void recupererAngle(AngleEuler angle, double ratio){
+		angle.setPhi((phi2 - phi1)*ratio + phi1);
+	}
 	
 	/**Permet de créer un segment.
 	 * 
@@ -115,13 +119,13 @@ public abstract class CourbeElementaire implements Sauvegardable{
 	}
 	
 	@Deprecated
-	public static Arc createArc(Point centre, double rayon, double angleOrigine, double ouverture){
+	public static Arc createArc(Point centre, double rayon, double angleOrigine, double ouverture, double theta){
 		//On crée deux points bidons
 		PointPassage p1 = new PointFrontiere();
 		PointPassage p2 = new PointFrontiere();
 		
 		//On crée l'arc et on récupère ses origine/fin vrais
-		Arc arc = new Arc(p1, p2, centre, rayon, angleOrigine, ouverture);
+		Arc arc = new Arc(p1, p2, centre, rayon, angleOrigine, ouverture, theta);
 		arc.recupererPoint(p1, 0);
 		arc.recupererPoint(p2, 1);
 		arc.calculerLongueur();

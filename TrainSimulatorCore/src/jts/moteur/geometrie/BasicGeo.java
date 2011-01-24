@@ -36,4 +36,16 @@ public class BasicGeo {
 		}
 		return angle;
 	}
+	
+	/**Calcul le cap du vecteur p1p2.
+	 * 
+	 * @param p1
+	 * @param p2
+	 * @return
+	 */
+	public static double getCap(Point p1, Point p2){
+		double cap = Math.atan2(p2.getX() - p1.getX(), p2.getY() - p1.getY());
+		cap = li2Pi(cap);
+		return cap;
+	}
 }
