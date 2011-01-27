@@ -19,11 +19,11 @@ import jts.moteur.ligne.voie.points.PointPassage;
 public class Segment extends CourbeElementaire implements Sauvegardable{
 
 	public Segment(){
-		this(null, null, 0, 0, 0);
+		this(null, null, 0);
 	}
 	
-	public Segment(PointPassage p1, PointPassage p2, double phi1, double phi2, double theta) {
-		super(p1, p2, phi1, phi2, TypeElement.SEGMENT, theta);
+	public Segment(PointPassage p1, PointPassage p2, double theta) {
+		super(p1, p2, TypeElement.SEGMENT, theta);
 		this.calculerLongueur();
 	}
 	
@@ -48,7 +48,6 @@ public class Segment extends CourbeElementaire implements Sauvegardable{
 	}
 
 	public void save(DataOutputStream dos) throws IOException {
-		dos.writeShort(TypeElement.SEGMENT.ordinal());
 		super.save(dos);
 	}
 }

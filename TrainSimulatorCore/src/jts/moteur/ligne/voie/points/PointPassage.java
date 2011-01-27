@@ -14,12 +14,16 @@ public abstract class PointPassage extends Point {
 	/**Tout point de passage est relié à au moins un élément de voie*/
 	protected CourbeElementaire elementBase;
 	
+	/**Inclinaison en roulis de la voie à ce point de passage*/
+	protected double phi;
+	
 	public PointPassage(){
-		super();
+		super(0, 0, 0);
 	}
 	
-	public PointPassage(double x, double y){
+	public PointPassage(double x, double y, double phi){
 		super(x, y);
+		this.phi = phi;
 	}
 	
 	/**Permet de récupérer l'élément suivant accédé par ce point depuis l'élément courant.
@@ -32,4 +36,8 @@ public abstract class PointPassage extends Point {
 	public CourbeElementaire getElement(){ return this.elementBase; }
 
 	public void setElement(CourbeElementaire element){ this.elementBase = element; }
+	
+	public double getPhi(){ return this.phi; }
+	
+	public void setPhi(double phi){ this.phi = phi; }
 }

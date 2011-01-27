@@ -14,11 +14,11 @@ public class PointFrontiere extends PointPassage {
 	protected PointFrontiere connexion;
 	
 	public PointFrontiere(){
-		super();
+		super(0, 0, 0);
 	}
 	
-	public PointFrontiere(double x, double y){
-		super(x, y);
+	public PointFrontiere(double x, double y, double phi){
+		super(x, y, phi);
 	}
 	
 	public Transition getNextElement(CourbeElementaire elementCourant) {

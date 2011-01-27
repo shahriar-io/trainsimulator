@@ -24,21 +24,16 @@ public abstract class CourbeElementaire implements Sauvegardable{
 
 	/**Origine*/
 	protected PointPassage p1;
-	protected double phi1;
 	/**Fin*/
 	protected PointPassage p2;
-	protected double phi2;
-	
 	protected TypeElement type;
 	/**Pente de la courbe*/
 	protected double theta;
 	protected double longueur;
 	
-	protected CourbeElementaire(PointPassage p1, PointPassage p2, double phi1, double phi2, TypeElement type, double theta){
+	protected CourbeElementaire(PointPassage p1, PointPassage p2, TypeElement type, double theta){
 		this.p1 = p1;
 		this.p2 = p2;
-		this.phi1 = phi1;
-		this.phi2 = phi2;
 		this.type = type;
 		this.theta = theta;
 	}
@@ -76,6 +71,11 @@ public abstract class CourbeElementaire implements Sauvegardable{
 			dansIntervalle = false;
 		}
 		
+		//En sens non direct, les angles changent de signe
+		if(!sensDirect){
+			angle.opposer();
+		}
+		
 		return dansIntervalle;
 	}
 	
@@ -108,7 +108,7 @@ public abstract class CourbeElementaire implements Sauvegardable{
 	 * @param abscisse l'abscisse curviligne
 	 */
 	public void recupererAngle(AngleEuler angle, double ratio){
-		angle.setPhi((phi2 - phi1)*ratio + phi1);
+		angle.setPhi((p2.getPhi() - p1.getPhi())*ratio + p1.getPhi());
 		angle.setTheta(theta);
 	}
 	
@@ -118,21 +118,23 @@ public abstract class CourbeElementaire implements Sauvegardable{
 	 * @param p2
 	 * @return
 	 */
-	public static Segment createSegment(PointPassage p1, PointPassage p2, double phi1, double phi2, double theta){
-		Segment segment = new Segment(p1, p2, phi1, phi2, theta);
+	@Deprecated
+	public static Segment createSegment(PointPassage p1, PointPassage p2){
+		double theta = Math.asin((p2.getZ() - p1.getZ())/p1.getDistance(p2));
+		Segment segment = new Segment(p1, p2, theta);
 		segment.calculerLongueur();
 		
 		return segment;
 	}
 	
 	@Deprecated
-	public static Arc createArc(double phi1, double phi2, double theta, Point centre, double rayon, double angleOrigine, double ouverture){
+	public static Arc createArc(double theta, Point centre, double rayon, double angleOrigine, double ouverture){
 		//On crée deux points bidons
 		PointPassage p1 = new PointFrontiere();
 		PointPassage p2 = new PointFrontiere();
 		
 		//On crée l'arc et on récupère ses origine/fin vrais
-		Arc arc = new Arc(p1, p2, phi1, phi2, theta, centre, rayon, angleOrigine, ouverture);
+		Arc arc = new Arc(p1, p2, theta, centre, rayon, angleOrigine, ouverture);
 		arc.recupererPoint(p1, 0);
 		arc.recupererPoint(p2, 1);
 		arc.calculerLongueur();
@@ -145,6 +147,7 @@ public abstract class CourbeElementaire implements Sauvegardable{
 	}
 
 	public void save(DataOutputStream dos) throws IOException {
+		dos.writeShort(type.ordinal());
 		dos.writeDouble(this.theta);
 	}
 }

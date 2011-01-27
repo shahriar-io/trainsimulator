@@ -27,11 +27,11 @@ public class Arc extends CourbeElementaire implements Sauvegardable{
 	protected double ouverture;
 	
 	public Arc(){
-		this(null, null, 0, 0, 0, null, 0, 0, 0);		
+		this(null, null, 0, null, 0, 0, 0);		
 	}
 	
-	public Arc(PointPassage p1, PointPassage p2, double phi1, double phi2, double theta, Point centre, double rayon, double angleOrigine, double ouverture) {
-		super(p1, p2, phi1, phi2, TypeElement.ARC, theta);
+	public Arc(PointPassage p1, PointPassage p2, double theta, Point centre, double rayon, double angleOrigine, double ouverture) {
+		super(p1, p2, TypeElement.ARC, theta);
 		this.centre = centre;
 		this.rayon = rayon;
 		this.angleOrigine = angleOrigine;
@@ -101,7 +101,6 @@ public class Arc extends CourbeElementaire implements Sauvegardable{
 	}
 
 	public void save(DataOutputStream dos) throws IOException {
-		dos.writeShort(TypeElement.ARC.ordinal());
 		super.save(dos);
 		this.centre.save(dos);
 		dos.writeDouble(this.rayon);
