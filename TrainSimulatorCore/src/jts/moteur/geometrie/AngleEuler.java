@@ -28,6 +28,15 @@ public class AngleEuler {
 		this.psi = psi;
 	}
 	
+	/**Transforme l'angle en son opposé.
+	 * 
+	 */
+	public void opposer(){
+		this.theta = -this.theta;
+		this.phi = -this.phi;
+		this.psi = -this.psi;
+	}
+	
 	/**Tangage, positif vers le haut*/
 	public double getTheta(){ return this.theta; }
 	

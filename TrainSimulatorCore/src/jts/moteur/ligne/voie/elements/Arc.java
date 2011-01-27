@@ -12,7 +12,7 @@ import jts.moteur.geometrie.Point;
 import jts.moteur.ligne.voie.points.PointPassage;
 
 
-/**Cette classe représente un élément de type arc.
+/**Cette classe représente une courbe de type arc.
  * 
  * @author Yannick BISIAUX
  *
@@ -25,15 +25,13 @@ public class Arc extends CourbeElementaire implements Sauvegardable{
 	protected double angleOrigine;
 	/**Positif vers l'est*/
 	protected double ouverture;
-	/**Angle d'inclinaison*/
-	protected double theta;
 	
 	public Arc(){
-		this(null, null, null, 0, 0, 0, 0);		
+		this(null, null, 0, 0, 0, null, 0, 0, 0);		
 	}
 	
-	public Arc(PointPassage p1, PointPassage p2, Point centre, double rayon, double angleOrigine, double ouverture, double theta) {
-		super(p1, p2, TypeElement.ARC);
+	public Arc(PointPassage p1, PointPassage p2, double phi1, double phi2, double theta, Point centre, double rayon, double angleOrigine, double ouverture) {
+		super(p1, p2, phi1, phi2, TypeElement.ARC, theta);
 		this.centre = centre;
 		this.rayon = rayon;
 		this.angleOrigine = angleOrigine;
@@ -53,13 +51,11 @@ public class Arc extends CourbeElementaire implements Sauvegardable{
 			cap += Math.PI;
 		}
 		angle.setPsi(cap);
-		//Formule approchée
-		angle.setTheta(theta);
 	}
 	
 	public void recupererPoint(Point point, double ratio) {
 		double psi = angleOrigine + ratio*ouverture;
-		point.setX(centre.getX() + rayon*Math.sin(psi));
+		point.setX(centre.getX() + rayon*Math.sin(psi));	//On néglige ici le cos(theta)
 		point.setY(centre.getY() + rayon*Math.cos(psi));
 		point.setZ(centre.getZ() + rayon*Math.sin(theta)*Math.sin(ratio*ouverture));
 	}
@@ -102,7 +98,6 @@ public class Arc extends CourbeElementaire implements Sauvegardable{
 		this.rayon = dis.readDouble();
 		this.angleOrigine = dis.readDouble();
 		this.ouverture = dis.readDouble();
-		this.theta = dis.readDouble();
 	}
 
 	public void save(DataOutputStream dos) throws IOException {
@@ -112,6 +107,5 @@ public class Arc extends CourbeElementaire implements Sauvegardable{
 		dos.writeDouble(this.rayon);
 		dos.writeDouble(this.angleOrigine);
 		dos.writeDouble(this.ouverture);
-		dos.writeDouble(this.theta);
 	}
 }

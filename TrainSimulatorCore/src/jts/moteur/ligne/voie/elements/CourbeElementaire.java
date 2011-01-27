@@ -28,13 +28,19 @@ public abstract class CourbeElementaire implements Sauvegardable{
 	/**Fin*/
 	protected PointPassage p2;
 	protected double phi2;
+	
 	protected TypeElement type;
+	/**Pente de la courbe*/
+	protected double theta;
 	protected double longueur;
 	
-	protected CourbeElementaire(PointPassage p1, PointPassage p2, TypeElement type){
+	protected CourbeElementaire(PointPassage p1, PointPassage p2, double phi1, double phi2, TypeElement type, double theta){
 		this.p1 = p1;
 		this.p2 = p2;
+		this.phi1 = phi1;
+		this.phi2 = phi2;
 		this.type = type;
+		this.theta = theta;
 	}
 
 	public PointPassage getP1() { return p1; }
@@ -103,6 +109,7 @@ public abstract class CourbeElementaire implements Sauvegardable{
 	 */
 	public void recupererAngle(AngleEuler angle, double ratio){
 		angle.setPhi((phi2 - phi1)*ratio + phi1);
+		angle.setTheta(theta);
 	}
 	
 	/**Permet de créer un segment.
@@ -111,21 +118,21 @@ public abstract class CourbeElementaire implements Sauvegardable{
 	 * @param p2
 	 * @return
 	 */
-	public static Segment createSegment(PointPassage p1, PointPassage p2){
-		Segment segment = new Segment(p1, p2);
+	public static Segment createSegment(PointPassage p1, PointPassage p2, double phi1, double phi2, double theta){
+		Segment segment = new Segment(p1, p2, phi1, phi2, theta);
 		segment.calculerLongueur();
 		
 		return segment;
 	}
 	
 	@Deprecated
-	public static Arc createArc(Point centre, double rayon, double angleOrigine, double ouverture, double theta){
+	public static Arc createArc(double phi1, double phi2, double theta, Point centre, double rayon, double angleOrigine, double ouverture){
 		//On crée deux points bidons
 		PointPassage p1 = new PointFrontiere();
 		PointPassage p2 = new PointFrontiere();
 		
 		//On crée l'arc et on récupère ses origine/fin vrais
-		Arc arc = new Arc(p1, p2, centre, rayon, angleOrigine, ouverture, theta);
+		Arc arc = new Arc(p1, p2, phi1, phi2, theta, centre, rayon, angleOrigine, ouverture);
 		arc.recupererPoint(p1, 0);
 		arc.recupererPoint(p2, 1);
 		arc.calculerLongueur();
@@ -133,7 +140,11 @@ public abstract class CourbeElementaire implements Sauvegardable{
 		return arc;
 	}
 	
-	public void load(DataInputStream dis) throws IOException {}
+	public void load(DataInputStream dis) throws IOException {
+		this.theta = dis.readDouble();
+	}
 
-	public void save(DataOutputStream dos) throws IOException {}
+	public void save(DataOutputStream dos) throws IOException {
+		dos.writeDouble(this.theta);
+	}
 }

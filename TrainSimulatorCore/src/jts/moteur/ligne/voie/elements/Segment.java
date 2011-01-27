@@ -11,7 +11,7 @@ import jts.moteur.geometrie.Point;
 import jts.moteur.ligne.voie.points.PointPassage;
 
 
-/**Cette classe représente un élément de type segment.
+/**Cette classe représente une courbe de type segment.
  * 
  * @author Yannick BISIAUX
  *
@@ -19,11 +19,11 @@ import jts.moteur.ligne.voie.points.PointPassage;
 public class Segment extends CourbeElementaire implements Sauvegardable{
 
 	public Segment(){
-		this(null, null);
+		this(null, null, 0, 0, 0);
 	}
 	
-	public Segment(PointPassage p1, PointPassage p2) {
-		super(p1, p2, TypeElement.SEGMENT);
+	public Segment(PointPassage p1, PointPassage p2, double phi1, double phi2, double theta) {
+		super(p1, p2, phi1, phi2, TypeElement.SEGMENT, theta);
 		this.calculerLongueur();
 	}
 	
@@ -34,7 +34,6 @@ public class Segment extends CourbeElementaire implements Sauvegardable{
 	public void recupererAngle(AngleEuler angle, double ratio) {
 		super.recupererAngle(angle, ratio);
 		angle.setPsi(BasicGeo.getCap(p1, p2));
-		angle.setTheta(Math.atan2(p2.getZ() - p1.getZ(), p1.getDistance(p2)));
 	}
 	
 	public void recupererPoint(Point point, double ratio) {
