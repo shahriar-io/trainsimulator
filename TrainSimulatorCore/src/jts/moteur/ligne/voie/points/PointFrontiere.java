@@ -9,7 +9,7 @@ import jts.moteur.ligne.voie.elements.Transition;
  * @author Yannick BISIAUX
  *
  */
-public class PointFrontiere extends PointPassage {
+public class PointFrontiere extends PointExtremite {
 
 	protected PointFrontiere connexion;
 	

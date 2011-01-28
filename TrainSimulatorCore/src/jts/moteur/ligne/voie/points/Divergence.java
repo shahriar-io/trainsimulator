@@ -8,7 +8,7 @@ import jts.moteur.ligne.voie.elements.Transition;
  * @author Yannick BISIAUX
  *
  */
-public class Divergence extends PointPassage {
+public class Divergence extends PointExtremite {
 	
 	/**Indique si l'aiguillage va nous dévier*/
 	private boolean aiguillageEnDivergence;

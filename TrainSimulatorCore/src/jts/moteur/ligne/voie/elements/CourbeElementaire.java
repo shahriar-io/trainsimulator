@@ -10,7 +10,7 @@ import jts.io.Sauvegardable;
 import jts.moteur.geometrie.AngleEuler;
 import jts.moteur.geometrie.Point;
 import jts.moteur.ligne.voie.points.PointFrontiere;
-import jts.moteur.ligne.voie.points.PointPassage;
+import jts.moteur.ligne.voie.points.PointExtremite;
 
 
 /**Cette classe représente un élément de base de voie ferrée. C'est un élément géométrique
@@ -23,24 +23,24 @@ import jts.moteur.ligne.voie.points.PointPassage;
 public abstract class CourbeElementaire implements Sauvegardable{
 
 	/**Origine*/
-	protected PointPassage p1;
+	protected PointExtremite p1;
 	/**Fin*/
-	protected PointPassage p2;
+	protected PointExtremite p2;
 	protected TypeElement type;
 	/**Pente de la courbe*/
 	protected double theta;
 	protected double longueur;
 	
-	protected CourbeElementaire(PointPassage p1, PointPassage p2, TypeElement type, double theta){
+	protected CourbeElementaire(PointExtremite p1, PointExtremite p2, TypeElement type, double theta){
 		this.p1 = p1;
 		this.p2 = p2;
 		this.type = type;
 		this.theta = theta;
 	}
 
-	public PointPassage getP1() { return p1; }
+	public PointExtremite getP1() { return p1; }
 
-	public PointPassage getP2() { return p2; }
+	public PointExtremite getP2() { return p2; }
 	
 	public TypeElement getType(){ return type; }
 	
@@ -119,7 +119,7 @@ public abstract class CourbeElementaire implements Sauvegardable{
 	 * @return
 	 */
 	@Deprecated
-	public static Segment createSegment(PointPassage p1, PointPassage p2){
+	public static Segment createSegment(PointExtremite p1, PointExtremite p2){
 		double theta = Math.asin((p2.getZ() - p1.getZ())/p1.getDistance(p2));
 		Segment segment = new Segment(p1, p2, theta);
 		segment.calculerLongueur();
@@ -130,8 +130,8 @@ public abstract class CourbeElementaire implements Sauvegardable{
 	@Deprecated
 	public static Arc createArc(double theta, Point centre, double rayon, double angleOrigine, double ouverture){
 		//On crée deux points bidons
-		PointPassage p1 = new PointFrontiere();
-		PointPassage p2 = new PointFrontiere();
+		PointExtremite p1 = new PointFrontiere();
+		PointExtremite p2 = new PointFrontiere();
 		
 		//On crée l'arc et on récupère ses origine/fin vrais
 		Arc arc = new Arc(p1, p2, theta, centre, rayon, angleOrigine, ouverture);
