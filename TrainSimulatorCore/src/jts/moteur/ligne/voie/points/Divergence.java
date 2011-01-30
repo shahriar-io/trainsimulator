@@ -15,7 +15,6 @@ public class Divergence extends PointPassage {
 	/**Indique si l'aiguillage peut dévier à gauche (sinon à droite)*/
 	private boolean typeGauche;
 	
-	//private CourbeElementaire voieNormale;
 	private CourbeElementaire voieDeviee;
 	
 	public Divergence(boolean typeGauche){
@@ -24,7 +23,7 @@ public class Divergence extends PointPassage {
 	
 	public Divergence(double x, double y, double phi, boolean typeGauche){
 		super(x, y, phi);
-		this.aiguillageEnDivergence = true;
+		this.aiguillageEnDivergence = false;
 		this.typeGauche = typeGauche;
 	}
 	
