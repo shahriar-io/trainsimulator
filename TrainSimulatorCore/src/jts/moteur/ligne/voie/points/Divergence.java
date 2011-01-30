@@ -8,14 +8,14 @@ import jts.moteur.ligne.voie.elements.Transition;
  * @author Yannick BISIAUX
  *
  */
-public class Divergence extends PointExtremite {
+public class Divergence extends PointPassage {
 	
 	/**Indique si l'aiguillage va nous dévier*/
 	private boolean aiguillageEnDivergence;
 	/**Indique si l'aiguillage peut dévier à gauche (sinon à droite)*/
 	private boolean typeGauche;
 	
-	private CourbeElementaire voieNormale;
+	//private CourbeElementaire voieNormale;
 	private CourbeElementaire voieDeviee;
 	
 	public Divergence(boolean typeGauche){
@@ -24,7 +24,7 @@ public class Divergence extends PointExtremite {
 	
 	public Divergence(double x, double y, double phi, boolean typeGauche){
 		super(x, y, phi);
-		this.aiguillageEnDivergence = false;
+		this.aiguillageEnDivergence = true;
 		this.typeGauche = typeGauche;
 	}
 	
@@ -32,15 +32,15 @@ public class Divergence extends PointExtremite {
 	 * 
 	 * @param element
 	 */
-	public void setElement(CourbeElementaire element) {
-		if(this.elementBase == null){
-			this.elementBase = element;
-		} else if(this.voieNormale == null){
-			this.voieNormale = element;
-		} else if(this.voieDeviee == null){
-			this.voieDeviee = element;
+	public boolean setElement(CourbeElementaire element) {
+		boolean set = super.setElement(element);
+		if(!set){
+			if(this.voieDeviee == null){
+				this.voieDeviee = element;
+				set = true;
+			}
 		}
-		
+		return set;
 	}
 
 	/**Permet de changer l'aiguillage de place.
@@ -60,9 +60,9 @@ public class Divergence extends PointExtremite {
 			if(aiguillageEnDivergence){
 				next = voieDeviee;
 			} else {
-				next = voieNormale;
+				next = elementConnecte;
 			}
-		} else if((elementCourant.equals(voieNormale))&&(!aiguillageEnDivergence)) {
+		} else if((elementCourant.equals(elementConnecte))&&(!aiguillageEnDivergence)) {
 			next = elementBase;
 		} else if((elementCourant.equals(voieDeviee))&&(aiguillageEnDivergence)) {
 			next = elementBase;

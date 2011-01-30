@@ -9,7 +9,7 @@ import java.util.List;
 import jts.io.Sauvegardable;
 import jts.moteur.geometrie.AngleEuler;
 import jts.moteur.geometrie.Point;
-import jts.moteur.ligne.voie.points.PointExtremite;
+import jts.moteur.ligne.voie.points.PointPassage;
 
 
 /**Cette classe représente une courbe de type arc.
@@ -30,7 +30,7 @@ public class Arc extends CourbeElementaire implements Sauvegardable{
 		this(null, null, 0, null, 0, 0, 0);		
 	}
 	
-	public Arc(PointExtremite p1, PointExtremite p2, double theta, Point centre, double rayon, double angleOrigine, double ouverture) {
+	public Arc(PointPassage p1, PointPassage p2, double theta, Point centre, double rayon, double angleOrigine, double ouverture) {
 		super(p1, p2, TypeElement.ARC, theta);
 		this.centre = centre;
 		this.rayon = rayon;

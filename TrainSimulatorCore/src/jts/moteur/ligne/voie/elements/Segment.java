@@ -8,7 +8,7 @@ import jts.io.Sauvegardable;
 import jts.moteur.geometrie.AngleEuler;
 import jts.moteur.geometrie.BasicGeo;
 import jts.moteur.geometrie.Point;
-import jts.moteur.ligne.voie.points.PointExtremite;
+import jts.moteur.ligne.voie.points.PointPassage;
 
 
 /**Cette classe représente une courbe de type segment.
@@ -22,7 +22,7 @@ public class Segment extends CourbeElementaire implements Sauvegardable{
 		this(null, null, 0);
 	}
 	
-	public Segment(PointExtremite p1, PointExtremite p2, double theta) {
+	public Segment(PointPassage p1, PointPassage p2, double theta) {
 		super(p1, p2, TypeElement.SEGMENT, theta);
 		this.calculerLongueur();
 	}
