@@ -32,4 +32,6 @@ public class Bogie {
 	public Position getPositionCourbe(){ return this.position; }
 	
 	public Point getPoint(){ return this.point;	}
+	
+	public AngleEuler getAngle(){ return this.angle; }
 }
