@@ -1,6 +1,5 @@
 package jts.moteur.ligne.voie.points;
 
-import jts.moteur.geometrie.Point;
 import jts.moteur.ligne.voie.elements.CourbeElementaire;
 import jts.moteur.ligne.voie.elements.Transition;
 
@@ -9,50 +8,59 @@ import jts.moteur.ligne.voie.elements.Transition;
  * @author Yannick BISIAUX
  *
  */
-public abstract class PointPassage extends Point {
-	
-	/**Tout point de passage est relié à au moins un élément de voie*/
-	protected CourbeElementaire elementBase;
+public class PointPassage extends PointExtremite {
 	
 	/**Tout point de passage peut être relié à un autre élément de voie*/
 	protected CourbeElementaire elementConnecte;
-	
-	/**Inclinaison en roulis de la voie à ce point de passage*/
-	protected double phi;
 	
 	public PointPassage(){
 		super(0, 0, 0);
 	}
 	
 	public PointPassage(double x, double y, double phi){
-		super(x, y);
-		this.phi = phi;
+		super(x, y, phi);
+	}
+
+	@Override
+	public Transition getNextElement(CourbeElementaire elementCourant) {
+		CourbeElementaire next = null;
+		boolean sensAller = false;
+		
+		//D'abord, on détermine l'élément suivant.
+		if(elementCourant.equals(elementBase)){
+			next = elementConnecte;
+		} else if(elementCourant.equals(elementConnecte)) {
+			next = elementBase;
+		}
+		
+		//Ensuite on détermine le prochain sens de parcours
+		if(next != null){
+			if (next.getP1().equals(this)){
+				sensAller = true;
+			} else {
+				sensAller = false;
+			}
+		}
+		
+		Transition transition = new Transition(sensAller, next);
+		return transition;
 	}
 	
-	/**Permet de récupérer l'élément suivant accédé par ce point depuis l'élément courant.
+	public CourbeElementaire getElementConnecte(){ return this.elementConnecte; }
+	
+	/**Permet d'ajouter un élément à une divergence. Les éléments seront remplis dans l'ordre : elementBase, elementConnecte.
 	 * 
-	 * @param elementCourant élément sur lequel se trouve le train.
-	 * @return <code>Transition</code> : le nouvel élément et son sens de parcours.
+	 * @param element
 	 */
-	public abstract Transition getNextElement(CourbeElementaire elementCourant);
-	
-	public CourbeElementaire getElementBase(){ return this.elementBase; }
-	
-	public CourbeElementaire getElementConn(){ return this.elementBase; }
-
 	public boolean setElement(CourbeElementaire element){
-		boolean set = true;
-		if(this.elementBase == null){
-			this.elementBase = element;
-		} else if(this.elementConnecte == null){
-			this.elementConnecte = element;
-		} else {
-			set = false;
+		boolean set = super.setElement(element);
+		if(!set){
+			if(this.elementConnecte == null){
+				this.elementConnecte = element;
+				set = true;
+			}
 		}
 		return set;
 	}
-	
-	public double getPhi(){ return this.phi; }
-	
-	public void setPhi(double phi){ this.phi = phi; }
+
 }

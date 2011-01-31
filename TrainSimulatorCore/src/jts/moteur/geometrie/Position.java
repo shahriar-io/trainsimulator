@@ -3,7 +3,7 @@ package jts.moteur.geometrie;
 import jts.moteur.ligne.voie.elements.CourbeElementaire;
 import jts.moteur.ligne.voie.elements.Transition;
 import jts.moteur.ligne.voie.points.PointFrontiere;
-import jts.moteur.ligne.voie.points.PointPassage;
+import jts.moteur.ligne.voie.points.PointExtremite;
 
 /**Cette classe représente la position d'un point sur un rail médian par son abscisse curviligne et son élément de référence.
  * 
@@ -57,7 +57,7 @@ public class Position {
 		
 		if(!encoreSurElement){
 			this.abscisseCourbe -= element.getLongueur();
-			PointPassage pivot;
+			PointExtremite pivot;
 			if(sensDirect){
 				pivot = element.getP2();
 			} else {
