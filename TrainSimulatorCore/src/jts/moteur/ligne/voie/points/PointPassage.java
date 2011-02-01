@@ -14,11 +14,11 @@ public class PointPassage extends PointExtremite {
 	protected CourbeElementaire elementConnecte;
 	
 	public PointPassage(){
-		super(0, 0, 0);
+		super(0, 0, 0, 0);
 	}
 	
-	public PointPassage(double x, double y, double phi){
-		super(x, y, phi);
+	public PointPassage(double x, double y, double z, double phi){
+		super(x, y, z, phi);
 	}
 
 	@Override

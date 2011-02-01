@@ -59,12 +59,12 @@ public class SectionLoader {
 				double y = Double.parseDouble(point.getAttribute("y"));
 				
 				if(point.getNodeName().equals("PointFrontiere")){
-					PointFrontiere pf = new PointFrontiere(x, y, 0);
+					PointFrontiere pf = new PointFrontiere(x, y, 0, 0);
 					section.addPoint(pf);
 				} else if(point.getNodeName().equals("Divergence")){
 					String type = point.getAttribute("type");
 					boolean typeGauche = type.equals("g");
-					Divergence div = new Divergence(x, y, 0, typeGauche);
+					Divergence div = new Divergence(x, y, 0, 0, typeGauche);
 					section.addPoint(div);
 				}
 			}

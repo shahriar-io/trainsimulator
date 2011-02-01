@@ -18,11 +18,11 @@ public class Divergence extends PointPassage {
 	private CourbeElementaire voieDeviee;
 	
 	public Divergence(boolean typeGauche){
-		this(0, 0, 0, typeGauche);
+		this(0, 0, 0, 0, typeGauche);
 	}
 	
-	public Divergence(double x, double y, double phi, boolean typeGauche){
-		super(x, y, phi);
+	public Divergence(double x, double y, double z, double phi, boolean typeGauche){
+		super(x, y, z, phi);
 		this.aiguillageEnDivergence = false;
 		this.typeGauche = typeGauche;
 	}

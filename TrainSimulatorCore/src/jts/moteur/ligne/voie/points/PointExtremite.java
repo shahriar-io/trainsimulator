@@ -1,5 +1,9 @@
 package jts.moteur.ligne.voie.points;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
 import jts.moteur.geometrie.Point;
 import jts.moteur.ligne.voie.elements.CourbeElementaire;
 import jts.moteur.ligne.voie.elements.Transition;
@@ -21,8 +25,8 @@ public abstract class PointExtremite extends Point {
 		super(0, 0, 0);
 	}
 	
-	public PointExtremite(double x, double y, double phi){
-		super(x, y);
+	public PointExtremite(double x, double y, double z, double phi){
+		super(x, y, z);
 		this.phi = phi;
 	}
 	
@@ -48,4 +52,14 @@ public abstract class PointExtremite extends Point {
 	public double getPhi(){ return this.phi; }
 	
 	public void setPhi(double phi){ this.phi = phi; }
+	
+	public void load(DataInputStream dis) throws IOException {
+		super.load(dis);
+		this.phi = dis.readDouble();
+	}
+
+	public void save(DataOutputStream dos) throws IOException {
+		super.save(dos);
+		dos.writeDouble(this.phi);
+	}
 }
