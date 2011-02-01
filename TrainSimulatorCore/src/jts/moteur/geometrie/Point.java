@@ -81,8 +81,8 @@ public class Point implements Sauvegardable {
 	 * @param rotation angle de rotation en radians
 	 */
 	public void transformer(Point translation, double rotation){
-		double x2 = Math.cos(rotation)*x - Math.sin(rotation)*y + translation.x;
-		double y2 = Math.sin(rotation)*x + Math.cos(rotation)*y + translation.y;
+		double x2 = Math.cos(rotation)*x + Math.sin(rotation)*y + translation.x;
+		double y2 = - Math.sin(rotation)*x + Math.cos(rotation)*y + translation.y;
 		
 		x = x2;
 		y = y2;
