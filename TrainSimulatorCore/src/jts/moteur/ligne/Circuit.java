@@ -24,4 +24,11 @@ public class Circuit {
 		this.aiguillages = new ArrayList<Divergence>();
 	}
 	
+	public void addPointPassage(PointExtremite pointExtremite){
+		pointsPassages.add(pointExtremite);
+		if(pointExtremite instanceof Divergence){
+			aiguillages.add((Divergence)pointExtremite);
+		}
+	}
+	
 }
