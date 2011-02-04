@@ -71,7 +71,7 @@ public class Section implements Sauvegardable{
 	public void rendreAbsolu(){
 		if (!absolu){
 			for (PointExtremite pp : pointsPassages){
-				pp.transformer(positionAbsolue, -angle.getPsi());
+				pp.transformer(positionAbsolue, angle.getPsi());
 			}
 			for (CourbeElementaire element : elements){
 				if(element.getType().equals(TypeElement.ARC)){
@@ -80,7 +80,7 @@ public class Section implements Sauvegardable{
 			}
 			if(frontiere != null){
 				for (Point point : frontiere.getSommets()){
-					point.transformer(positionAbsolue, -angle.getPsi());
+					point.transformer(positionAbsolue, angle.getPsi());
 				}
 			}
 		}

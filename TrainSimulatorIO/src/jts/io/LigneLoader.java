@@ -63,7 +63,7 @@ public class LigneLoader {
 				Element angleNode = (Element)sectionNode.getElementsByTagName("Angle").item(0);
 				double psi = Double.parseDouble(angleNode.getAttribute("psi"));
 				double theta = Double.parseDouble(angleNode.getAttribute("theta"));
-				AngleEuler angle = new AngleEuler(-(theta*Math.PI/180), 0, -(psi*Math.PI/180));
+				AngleEuler angle = new AngleEuler(theta*Math.PI/180, 0, psi*Math.PI/180);
 				
 				String type = sectionNode.getAttribute("type");
 				Section section = SectionLoader.load(new File("data/sections/" + type + ".xml"), point, angle);

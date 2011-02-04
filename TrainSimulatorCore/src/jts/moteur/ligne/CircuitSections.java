@@ -26,7 +26,7 @@ public class CircuitSections {
 	}
 	
 	public void init(int numeroSection, double abscisse, boolean sensDirect){
-		this.trainJoueur.initTrain(sections.get(numeroSection).getElements().get(0), abscisse, sensDirect);
+		this.trainJoueur.initTrain(sections.get(numeroSection).getElements().get(1), abscisse, sensDirect);
 	}
 	
 	/**Translate les éléments dans leur position absolue si nécessaire.

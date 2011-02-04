@@ -95,7 +95,7 @@ public class SectionLoader {
 					double rayon = Double.parseDouble(element.getAttribute("rayon"));
 					double origine = Double.parseDouble(element.getAttribute("origine"));
 					double ouverture = Double.parseDouble(element.getAttribute("ouverture"));
-					
+					System.out.println(origine);
 					Arc arc = new Arc(p1, p2, 0, pCentre, rayon, origine, ouverture);
 					section.addElement(arc);
 					p1.setElement(arc);

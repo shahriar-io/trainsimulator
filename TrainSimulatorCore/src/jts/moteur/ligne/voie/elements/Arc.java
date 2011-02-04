@@ -66,8 +66,8 @@ public class Arc extends CourbeElementaire implements Sauvegardable{
 	 * @param rotation l'angle de rotation en radians
 	 */
 	public void transformer(Point translation, double rotation){
-		centre.transformer(translation, -rotation);
-		angleOrigine -= rotation;
+		centre.transformer(translation, rotation);
+		angleOrigine += rotation;
 	}
 	
 	public List<Point> getPointsRemarquables(){
