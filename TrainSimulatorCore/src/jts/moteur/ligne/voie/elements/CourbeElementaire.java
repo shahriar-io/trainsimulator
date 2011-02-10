@@ -118,7 +118,6 @@ public abstract class CourbeElementaire implements Sauvegardable{
 	 * @param p2
 	 * @return
 	 */
-	@Deprecated
 	public static Segment createSegment(PointExtremite p1, PointExtremite p2){
 		double theta = Math.asin((p2.getZ() - p1.getZ())/p1.getDistance(p2));
 		Segment segment = new Segment(p1, p2, theta);

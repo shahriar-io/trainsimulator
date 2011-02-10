@@ -31,4 +31,8 @@ public class Circuit {
 		}
 	}
 	
+	public void addSegment(int point1, int point2){
+		courbesElementaires.add(CourbeElementaire.createSegment(pointsPassages.get(point1), pointsPassages.get(point2)));
+	}
+	
 }
