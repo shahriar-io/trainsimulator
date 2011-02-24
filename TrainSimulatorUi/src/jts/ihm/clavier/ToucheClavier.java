@@ -1,4 +1,4 @@
-package jts.io;
+package jts.ihm.clavier;
 
 import java.util.HashMap;
 

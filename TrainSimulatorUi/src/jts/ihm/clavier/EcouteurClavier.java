@@ -3,17 +3,18 @@ package jts.ihm.clavier;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import jts.ihm.gui.InterfaceGraphique;
-import jts.io.ToucheClavier;
-
 
 public class EcouteurClavier implements KeyListener, InterfaceClavier{
 	
 	private boolean[] touches;
-	private InterfaceGraphique gay;
+	//private InterfaceGraphique gay;
 	
-	public EcouteurClavier(InterfaceGraphique gay){
-		this.gay = gay;
+	public EcouteurClavier(/*InterfaceGraphique gay*/){
+		//this.gay = gay;
+		
+	}
+	
+	public void init() {
 		this.touches = new boolean[ToucheClavier.values().length];
 	}
 	
@@ -110,8 +111,5 @@ public class EcouteurClavier implements KeyListener, InterfaceClavier{
 		
 	}
 
-	public boolean[] getTouchePressee() {
-		return this.touches;
-	}
-
+	public boolean[] getTouchePressee() { return this.touches; }
 }

@@ -10,16 +10,16 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Controller;
 import org.lwjgl.input.Controllers;
 
-public class GestionnaireJoystick {
+/**Cette classe gère le joystick grâce à la librairie LWJGL.
+ * 
+ * @author Yannick BISIAUX
+ *
+ */
+public class GestionnaireJoystick implements InterfaceJoystick {
 	
 	private ConfigurationJoystick confJoystick;
 	private Controller joystick;
 	private ValeursJoystick valeurs;
-	
-	/*private boolean finInit;
-	private float initX;
-	private float initY;
-	private float initZ;*/
 	
 	public GestionnaireJoystick(){
 		valeurs = new ValeursJoystick();
@@ -88,12 +88,4 @@ public class GestionnaireJoystick {
 		valeursVF[1] = valeurs.getAction(confJoystick.commandeFrein, false);
 		return valeursVF;
 	}
-	
-	/*private void checkFinInit(){
-		boolean x = joystick.getXAxisValue() == initX;
-		boolean y = joystick.getYAxisValue() == initY;
-		boolean z = joystick.getAxisValue(2) == initZ;
-		
-		finInit = !(x && y && z);
-	}*/
 }

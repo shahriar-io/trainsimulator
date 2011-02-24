@@ -13,7 +13,7 @@ public class Lanceur {
 	 */
 	public static void main(String[] args) {
 		Controleur controleur = new Controleur();
-		controleur.initLogiciel();
+		controleur.init();
 	}
 
 }
