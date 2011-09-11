@@ -19,4 +19,10 @@ public interface InterfaceJoystick {
 	 * @return
 	 */
 	public List<String> getJoystickNames();
+	
+	/**Sélectionne l'utilisation du joystick numéro 1.
+	 * 
+	 * @param i le numéro du joystick
+	 */
+	public void selectJoystick(int i);
 }

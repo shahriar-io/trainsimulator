@@ -17,7 +17,7 @@ public class Locomotive extends Wagon {
 	 * @param commandeVitesse
 	 * @return
 	 */
-	public float getForceTraction(float vitesse, float commandeVitesse){
+	public double getForceTraction(double vitesse, double commandeVitesse){
 		return commandeVitesse*200;
 	}
 }

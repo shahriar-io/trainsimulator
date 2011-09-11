@@ -15,11 +15,11 @@ public class Train {
 	private List<Locomotive> locomotives;
 	private List<Wagon> wagons;
 	
-	private float masse;
-	private float vitesse;
-	private float commandeVolant;
+	private double masse;
+	private double vitesse;
+	private double commandeTraction;
 	private int tamponCommande;
-	private float commandeFrein;
+	private double commandeFrein;
 	
 	private Chemin chemin;
 	
@@ -35,9 +35,9 @@ public class Train {
 	}
 	
 	public void avancer(double dt){
-		float acceleration = 0;
+		double acceleration = 0;
 		for(Locomotive locomotive : locomotives){
-			acceleration += locomotive.getForceTraction(vitesse, commandeVolant);
+			acceleration += locomotive.getForceTraction(vitesse, commandeTraction);
 		}
 		acceleration = acceleration * 1000 / masse;
 		this.vitesse += acceleration*dt;
@@ -62,13 +62,13 @@ public class Train {
 	
 	public List<Wagon> getWagons(){ return this.wagons; }
 	
-	public float getVitesse(){ return this.vitesse; }
+	public double getVitesse(){ return this.vitesse; }
 	
-	public float getCommandeVolant(){ return this.commandeVolant; }
+	public double getCommandeTraction(){ return this.commandeTraction; }
 	
 	public void modifierCommandeVolant(double deltaCV){
-		float nouvelleCommande = commandeVolant + (float)(0.2*deltaCV);
-		if (nouvelleCommande*commandeVolant<=0){
+		double nouvelleCommande = commandeTraction + (0.2*deltaCV);
+		if (nouvelleCommande*commandeTraction<=0){
 			if(tamponCommande < 20){
 				tamponCommande++;
 				nouvelleCommande = 0;
@@ -76,8 +76,8 @@ public class Train {
 				tamponCommande = 0;
 			}
 		}
-		commandeVolant = Math.max(nouvelleCommande, -1);
-		commandeVolant = Math.min(nouvelleCommande, 1);
+		commandeTraction = Math.max(nouvelleCommande, -1);
+		commandeTraction = Math.min(nouvelleCommande, 1);
 	}
 	
 	public void modifierCommandeFrein(double deltaCF){

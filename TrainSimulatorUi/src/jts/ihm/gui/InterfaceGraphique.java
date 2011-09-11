@@ -11,4 +11,9 @@ public interface InterfaceGraphique {
 	 * 
 	 */
 	public void init();
+	
+	/**Met l'interface graphique dans l'état de jeu.
+	 * 
+	 */
+	public void afficherEcranJeu();
 }
