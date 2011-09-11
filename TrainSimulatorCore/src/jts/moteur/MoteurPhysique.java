@@ -22,18 +22,26 @@ public class MoteurPhysique {
 		//this.prevTouches = new boolean[ToucheClavier.values().length];
 	}
 	
-	public void nextStep(float deltaCommandeVolant, float deltaCommandeFrein, boolean[] touches){
+	public void nextStep(/*boolean[] touches*/){
 		Train trainJoueur = this.ligne.getCircuit().getTrainJoueur();
 		//System.out.println(touches[ToucheClavier.G.ordinal()] + "/" + prevTouches[ToucheClavier.G.ordinal()]);
 		/*if((touches[ToucheClavier.G.ordinal()])&&(!prevTouches[ToucheClavier.G.ordinal()])){
 			trainJoueur.switchNextDivergence();
 		}*/
-		trainJoueur.modifierCommandeVolant(deltaCommandeVolant*dt);
-		trainJoueur.modifierCommandeFrein(deltaCommandeFrein*dt);
 		trainJoueur.avancer(dt);
 		/*for(int i=0; i< prevTouches.length; i++){
 			prevTouches[i] = touches[i];
 		}*/
+	}
+	
+	public void setDeltaCommandeVolant(float deltaCommandeVolant){
+		Train trainJoueur = this.ligne.getCircuit().getTrainJoueur();
+		trainJoueur.modifierCommandeVolant(deltaCommandeVolant*dt);
+	}
+	
+	public void setDeltaCommandeFrein(float deltaCommandeFrein){
+		Train trainJoueur = this.ligne.getCircuit().getTrainJoueur();
+		trainJoueur.modifierCommandeFrein(deltaCommandeFrein*dt);
 	}
 
 	public Ligne getLigne() { return ligne;	}

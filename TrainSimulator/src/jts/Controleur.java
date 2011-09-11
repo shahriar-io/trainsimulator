@@ -82,7 +82,12 @@ public class Controleur implements InterfaceControleur {
 	public void boucler() {
 		//float[] valeurJoystick = this.ihm.getIntefaceJoystick().getValeursVolantFrein();
 		boolean[] touchesClavier = this.ihm.getInterfaceClavier().getTouchePressee();
-		this.moteurPhysique.nextStep(/*valeurJoystick[0], valeurJoystick[1]*/0,0, touchesClavier);
+		if(configuration.getConfigurationJoystick().isUseJoystick()){
+			ihm.getIntefaceJoystick().refreshValeurs();
+			this.moteurPhysique.setDeltaCommandeVolant(-ihm.getIntefaceJoystick().getValeurs().getAxe(0));
+			this.moteurPhysique.setDeltaCommandeFrein(0);
+		}
+		this.moteurPhysique.nextStep();
 		((Gui)this.ihm.getInterfaceGraphique()).afficherLigne(moteurPhysique.getLigne());
 	}
 	

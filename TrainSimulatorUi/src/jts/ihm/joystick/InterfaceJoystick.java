@@ -25,4 +25,15 @@ public interface InterfaceJoystick {
 	 * @param i le numéro du joystick
 	 */
 	public void selectJoystick(int i);
+	
+	/**Rafraîchit les valeurs connues de la position du joystick.
+	 * 
+	 */
+	public void refreshValeurs();
+	
+	/**Renvoie les valeurs courantes du joystick.
+	 * 
+	 * @return
+	 */
+	public ValeursJoystick getValeurs();
 }

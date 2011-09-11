@@ -41,22 +41,22 @@ public class GestionnaireJoystick implements InterfaceJoystick {
 	}
 	
 	public void selectJoystick(int i){
-		if(confJoystick.isUtiliserJoystick()){
+		//if(confJoystick.isUtiliserJoystick()){
 			joystick = Controllers.getController(i);
 			joystick.poll();
 			valeurs.init(joystick.getAxisCount(), joystick.getButtonCount());
 			
 			Log.getInstance().logWarning(joystick.getName() + " selectionne : "
 					+ joystick.getAxisCount() + " axes / " + joystick.getButtonCount() + " boutons", false);
-		} else {
-			Log.getInstance().logWarning("Pas de joystick sélectionné", false);
-		}
+		//} else {
+		//	Log.getInstance().logWarning("Pas de joystick sélectionné", false);
+		//}
 	}
 	
 	public ConfigurationJoystick getConfJoystick(){ return this.confJoystick; }
 	
 	public void refreshValeurs(){
-		if(confJoystick.isUtiliserJoystick()){
+		//if(confJoystick.isUtiliserJoystick()){
 			joystick.poll();
 
 			for(int i=0; i<valeurs.getNbAxes(); i++){
@@ -66,7 +66,7 @@ public class GestionnaireJoystick implements InterfaceJoystick {
 			for(int i=0; i<valeurs.getNbBoutons(); i++){
 				valeurs.setBouton(i, joystick.isButtonPressed(i));
 			}
-		}
+		//}
 	}
 	
 	public List<String> getJoystickNames(){
@@ -80,6 +80,8 @@ public class GestionnaireJoystick implements InterfaceJoystick {
 		
 		return noms;
 	}
+	
+	public ValeursJoystick getValeurs(){ return this.valeurs; }
 	
 	public float[] getValeursVolantFrein(){
 		float[] valeursVF = new float[2];

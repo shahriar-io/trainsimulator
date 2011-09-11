@@ -51,6 +51,7 @@ public class Ihm implements InterfaceHommeMachine {
 		frameInit.setProgression(20);
 		joystick = new GestionnaireJoystick();
 		joystick.init();
+		joystick.selectJoystick(controleur.getConfiguration().getConfigurationJoystick().getNumeroJoystick());
 		frameInit.setProgression(40);
 		langueManager = new DefaultLangueManager();
 		langueManager.init();
