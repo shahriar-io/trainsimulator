@@ -73,7 +73,7 @@ public class Controleur implements InterfaceControleur {
 		ScenarioLoader.loadScenario(ligne.getCircuit(), fichierScenario);
 		
 		this.ihm.getInterfaceGraphique().afficherEcranJeu();
-		((Gui)this.ihm.getInterfaceGraphique()).chargerTerrain(ligne.getCircuit());
+		((Gui)this.ihm.getInterfaceGraphique()).chargerTerrain(ligne);
 		
 		Thread gb = new GrandeBoucle(this, DUREE);
 		gb.start();
@@ -82,6 +82,7 @@ public class Controleur implements InterfaceControleur {
 	public void boucler() {
 		//float[] valeurJoystick = this.ihm.getIntefaceJoystick().getValeursVolantFrein();
 		boolean[] touchesClavier = this.ihm.getInterfaceClavier().getTouchePressee();
+		
 		if(configuration.getConfigurationJoystick().isUseJoystick()){
 			ihm.getIntefaceJoystick().refreshValeurs();
 			this.moteurPhysique.setDeltaCommandeVolant(-ihm.getIntefaceJoystick().getValeurs().getAxe(0));

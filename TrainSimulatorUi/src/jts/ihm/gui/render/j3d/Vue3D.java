@@ -107,7 +107,7 @@ public class Vue3D /*extends Applet */implements InterfaceJ3D {
 	    parent.addChild(light);
 	    
 	    soleil = new DirectionalLight();
-	    soleil.setDirection(new Vector3f(0.1f, 0.1f, -0.5f));
+	    soleil.setDirection(new Vector3f(-0.1f, -0.5f, 0.1f));
 	    //light.setColor(new Color3f(0.5f, 0.5f, 0.5f));
 	    soleil.setInfluencingBounds(new BoundingSphere(new Point3d(0, 0, 0), 80));
 	    parent.addChild(soleil);

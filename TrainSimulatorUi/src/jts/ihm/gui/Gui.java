@@ -18,8 +18,8 @@ import jts.ihm.gui.render.j3d.InterfaceJ3D;
 import jts.ihm.gui.render.j3d.Vue3D;
 import jts.log.Log;
 import jts.moteur.geometrie.Point;
-import jts.moteur.ligne.CircuitSections;
 import jts.moteur.ligne.Ligne;
+import jts.moteur.ligne.ObjetScene;
 import jts.moteur.ligne.voie.Section;
 import jts.moteur.ligne.voie.elements.CourbeElementaire;
 import jts.moteur.train.Locomotive;
@@ -126,19 +126,27 @@ public class Gui implements InterfaceGraphique {
 		this.fenetreCtrl.setLocation(800, 0);
 	}
 	
-	public void chargerTerrain(CircuitSections circuit){
-		for (Section section : circuit.getSections()){
+	public void chargerTerrain(Ligne ligne){
+		for (Section section : ligne.getCircuit().getSections()){
 			vue3D.dessinerSurface(section.getFrontiere().getSommets());
-			if(section.getNomObjet() != null){
+			/*if(section.getNomObjet() != null){
 				vue3D.chargerObjet(
 						(float)section.getPositionAbsolue().getY(),
 						(float)section.getPositionAbsolue().getZ(),
 						(float)section.getPositionAbsolue().getX(),
 						section.getNomObjet());
-			}
+			}*/
 			for (CourbeElementaire element : section.getElements()){
 				vue3D.dessinerLigne(element.getPointsRemarquables());
 			}
+		}
+		
+		for(ObjetScene objet : ligne.getObjets()){
+			vue3D.chargerObjet(
+					(float)objet.getPoint().getY(),
+					(float)objet.getPoint().getZ(),
+					(float)objet.getPoint().getX(),
+					objet.getNomObjet());
 		}
 	}
 

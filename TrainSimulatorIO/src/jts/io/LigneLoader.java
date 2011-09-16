@@ -6,11 +6,13 @@ import java.io.IOException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.soap.Node;
 
 import jts.moteur.geometrie.AngleEuler;
 import jts.moteur.geometrie.Point;
 import jts.moteur.ligne.CircuitSections;
 import jts.moteur.ligne.Ligne;
+import jts.moteur.ligne.ObjetScene;
 import jts.moteur.ligne.voie.Section;
 
 import org.w3c.dom.Document;
@@ -51,7 +53,7 @@ public class LigneLoader {
 		Element sections = (Element)circuitNode.getElementsByTagName("Sections").item(0);
 		NodeList sectionsNL = sections.getChildNodes();
 		for(int i=0; i<sectionsNL.getLength(); i++){
-			if(sectionsNL.item(i).getNodeType() == 1){
+			if(sectionsNL.item(i).getNodeType() == Node.ELEMENT_NODE){
 				Element sectionNode = (Element)sectionsNL.item(i);
 				
 				Element pointNode = (Element)sectionNode.getElementsByTagName("Point").item(0);
@@ -76,7 +78,7 @@ public class LigneLoader {
 		Element connexions = (Element)circuitNode.getElementsByTagName("Connexions").item(0);
 		NodeList connexionsNL = connexions.getChildNodes();
 		for(int i=0; i<connexionsNL.getLength(); i++){
-			if(connexionsNL.item(i).getNodeType() == 1){
+			if(connexionsNL.item(i).getNodeType() == Node.ELEMENT_NODE){
 				Element connexionNode = (Element)connexionsNL.item(i);
 				
 				int index1 = Integer.parseInt(connexionNode.getAttribute("sec1").split("#")[1]);
@@ -85,6 +87,20 @@ public class LigneLoader {
 				Section sec1 = circuit.getSections().get(index1 - 1);
 				Section sec2 = circuit.getSections().get(index2 - 1);
 				circuit.essayerLienBidirectionnel(sec1, sec2);
+			}
+		}
+		
+		Element objetsNode = (Element)racine.getElementsByTagName("Objets").item(0);
+		NodeList objetsNL = objetsNode.getChildNodes();
+		for(int i=0; i<objetsNL.getLength(); i++){
+			if(objetsNL.item(i).getNodeType() == Node.ELEMENT_NODE){
+				Element objet = (Element)objetsNL.item(i);
+				String nomObjet = objet.getAttribute("nomObjet");
+				Element point = (Element)objet.getElementsByTagName("Point").item(0);
+				double x = Double.parseDouble(point.getAttribute("x"));
+				double y = Double.parseDouble(point.getAttribute("y"));
+				double z = Double.parseDouble(point.getAttribute("z"));
+				ligne.addObjet(new ObjetScene(new Point(x, y, z), nomObjet));
 			}
 		}
 		
