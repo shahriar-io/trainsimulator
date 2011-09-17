@@ -7,6 +7,7 @@ import jts.conf.Configuration;
 import jts.conf.InterfaceConfiguration;
 import jts.ihm.Ihm;
 import jts.ihm.InterfaceHommeMachine;
+import jts.ihm.clavier.ToucheClavier;
 import jts.ihm.gui.Gui;
 import jts.io.LigneLoader;
 import jts.io.ScenarioLoader;
@@ -82,6 +83,15 @@ public class Controleur implements InterfaceControleur {
 	public void boucler() {
 		//float[] valeurJoystick = this.ihm.getIntefaceJoystick().getValeursVolantFrein();
 		boolean[] touchesClavier = this.ihm.getInterfaceClavier().getTouchePressee();
+		if(touchesClavier[ToucheClavier.D.ordinal()]){
+			this.moteurPhysique.setDeltaCommandeVolant(0.5f);
+		}
+		if(touchesClavier[ToucheClavier.Q.ordinal()]){
+			this.moteurPhysique.setDeltaCommandeVolant(-0.5f);
+		}
+		if(touchesClavier[ToucheClavier.G.ordinal()]){
+			this.moteurPhysique.getLigne().getCircuit().getTrainJoueur().switchNextDivergence();
+		}
 		
 		if(configuration.getConfigurationJoystick().isUseJoystick()){
 			ihm.getIntefaceJoystick().refreshValeurs();

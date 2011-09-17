@@ -2,6 +2,7 @@ package jts.ihm.gui;
 
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -114,7 +115,7 @@ public class Gui implements InterfaceGraphique {
 		this.vue3D = new Vue3D(c3d);
 		fenetre.setFocusable(true);
 		fenetre.requestFocus();
-		//fenetre.addKeyListener(clavier);
+		fenetre.addKeyListener((KeyListener)ihm.getInterfaceClavier());
 		this.relocaliserFenetre();
 		
 		this.fenetreCtrl = new JFrame("Driver Simulator");
