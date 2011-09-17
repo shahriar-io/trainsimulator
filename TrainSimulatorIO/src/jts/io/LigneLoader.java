@@ -91,16 +91,18 @@ public class LigneLoader {
 		}
 		
 		Element objetsNode = (Element)racine.getElementsByTagName("Objets").item(0);
-		NodeList objetsNL = objetsNode.getChildNodes();
-		for(int i=0; i<objetsNL.getLength(); i++){
-			if(objetsNL.item(i).getNodeType() == Node.ELEMENT_NODE){
-				Element objet = (Element)objetsNL.item(i);
-				String nomObjet = objet.getAttribute("nomObjet");
-				Element point = (Element)objet.getElementsByTagName("Point").item(0);
-				double x = Double.parseDouble(point.getAttribute("x"));
-				double y = Double.parseDouble(point.getAttribute("y"));
-				double z = Double.parseDouble(point.getAttribute("z"));
-				ligne.addObjet(new ObjetScene(new Point(x, y, z), nomObjet));
+		if(objetsNode!=null){
+			NodeList objetsNL = objetsNode.getChildNodes();
+			for(int i=0; i<objetsNL.getLength(); i++){
+				if(objetsNL.item(i).getNodeType() == Node.ELEMENT_NODE){
+					Element objet = (Element)objetsNL.item(i);
+					String nomObjet = objet.getAttribute("nomObjet");
+					Element point = (Element)objet.getElementsByTagName("Point").item(0);
+					double x = Double.parseDouble(point.getAttribute("x"));
+					double y = Double.parseDouble(point.getAttribute("y"));
+					double z = Double.parseDouble(point.getAttribute("z"));
+					ligne.addObjet(new ObjetScene(new Point(x, y, z), nomObjet));
+				}
 			}
 		}
 		

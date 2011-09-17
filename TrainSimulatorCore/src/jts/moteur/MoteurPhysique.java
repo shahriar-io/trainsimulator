@@ -15,8 +15,6 @@ public class MoteurPhysique {
 
 	private Ligne ligne;
 	
-	private boolean[] prevTouches;
-	
 	public MoteurPhysique(long dt){
 		this.dt = dt/1000.0;
 		//this.prevTouches = new boolean[ToucheClavier.values().length];
@@ -24,14 +22,7 @@ public class MoteurPhysique {
 	
 	public void nextStep(/*boolean[] touches*/){
 		Train trainJoueur = this.ligne.getCircuit().getTrainJoueur();
-		//System.out.println(touches[ToucheClavier.G.ordinal()] + "/" + prevTouches[ToucheClavier.G.ordinal()]);
-		/*if((touches[ToucheClavier.G.ordinal()])&&(!prevTouches[ToucheClavier.G.ordinal()])){
-			trainJoueur.switchNextDivergence();
-		}*/
 		trainJoueur.avancer(dt);
-		/*for(int i=0; i< prevTouches.length; i++){
-			prevTouches[i] = touches[i];
-		}*/
 	}
 	
 	public void setDeltaCommandeVolant(float deltaCommandeVolant){

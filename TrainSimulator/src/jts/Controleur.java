@@ -7,7 +7,6 @@ import jts.conf.Configuration;
 import jts.conf.InterfaceConfiguration;
 import jts.ihm.Ihm;
 import jts.ihm.InterfaceHommeMachine;
-import jts.ihm.clavier.ToucheClavier;
 import jts.ihm.gui.Gui;
 import jts.io.LigneLoader;
 import jts.io.ScenarioLoader;
@@ -32,6 +31,7 @@ public class Controleur implements InterfaceControleur {
 	private InterfaceConfiguration configuration;
 	private InterfaceHommeMachine ihm;
 	private MoteurPhysique moteurPhysique;
+	private PreneurDecisionClavier decisions;
 	
 	public Controleur(){
 		
@@ -58,14 +58,14 @@ public class Controleur implements InterfaceControleur {
 				Log.getInstance().logInfo("Unable to load configuration");
 			}
 			ihm.init();
+			moteurPhysique = new MoteurPhysique(DUREE);
+			decisions = new PreneurDecisionClavier(moteurPhysique);
 		}
 	}
 	
 	public InterfaceConfiguration getConfiguration(){ return this.configuration; }
 	
 	public void lancerSimu(File fichierLigne, File fichierScenario){
-		this.moteurPhysique = new MoteurPhysique(DUREE);
-		
 		Log.getInstance().logInfo("**********  Chargement de la ligne  **********");
 		Ligne ligne = LigneLoader.load(fichierLigne);
 		this.moteurPhysique.setLigne(ligne);
@@ -83,15 +83,7 @@ public class Controleur implements InterfaceControleur {
 	public void boucler() {
 		//float[] valeurJoystick = this.ihm.getIntefaceJoystick().getValeursVolantFrein();
 		boolean[] touchesClavier = this.ihm.getInterfaceClavier().getTouchePressee();
-		if(touchesClavier[ToucheClavier.D.ordinal()]){
-			this.moteurPhysique.setDeltaCommandeVolant(0.5f);
-		}
-		if(touchesClavier[ToucheClavier.Q.ordinal()]){
-			this.moteurPhysique.setDeltaCommandeVolant(-0.5f);
-		}
-		if(touchesClavier[ToucheClavier.G.ordinal()]){
-			this.moteurPhysique.getLigne().getCircuit().getTrainJoueur().switchNextDivergence();
-		}
+		decisions.prendreDecisions(touchesClavier);
 		
 		if(configuration.getConfigurationJoystick().isUseJoystick()){
 			ihm.getIntefaceJoystick().refreshValeurs();

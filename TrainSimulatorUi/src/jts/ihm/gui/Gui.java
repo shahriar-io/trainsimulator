@@ -130,13 +130,13 @@ public class Gui implements InterfaceGraphique {
 	public void chargerTerrain(Ligne ligne){
 		for (Section section : ligne.getCircuit().getSections()){
 			vue3D.dessinerSurface(section.getFrontiere().getSommets());
-			/*if(section.getNomObjet() != null){
+			if(section.getNomObjet() != null){
 				vue3D.chargerObjet(
 						(float)section.getPositionAbsolue().getY(),
 						(float)section.getPositionAbsolue().getZ(),
 						(float)section.getPositionAbsolue().getX(),
 						section.getNomObjet());
-			}*/
+			}
 			for (CourbeElementaire element : section.getElements()){
 				vue3D.dessinerLigne(element.getPointsRemarquables());
 			}
