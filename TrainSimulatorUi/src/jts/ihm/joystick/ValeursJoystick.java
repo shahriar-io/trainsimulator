@@ -10,6 +10,9 @@ public class ValeursJoystick {
 
 	private int nbAxes;
 	private float[] axes;
+	private float[] axesInit;
+	/**Tant que le boolean est à vrai, le joystick n'a pas été bougé.*/
+	private boolean[] initValues;
 	
 	private int nbBoutons;
 	private boolean[] boutons;
@@ -25,14 +28,31 @@ public class ValeursJoystick {
 	public void init(int nbAxes, int nbBoutons){
 		this.nbAxes = nbAxes;
 		axes = new float[nbAxes];
+		axesInit = new float[nbAxes];
+		initValues = new boolean[nbAxes];
+		for(int i=0; i<nbAxes; i++){
+			axes[i] = 0;
+			axesInit[i] = 0;
+			initValues[i] = true;
+		}
 		
 		this.nbBoutons = nbBoutons;
 		boutons = new boolean[nbBoutons];
 		boutonsPrecedents = new boolean[nbBoutons];
 	}
 	
+	public void initAxe(int index, float valeur){
+		axesInit[index] = valeur;
+	}
+	
 	public void setAxe(int index, float valeur){
-		axes[index] = valeur;
+		if(!initValues[index]){
+			axes[index] = valeur;
+		} else {
+			if(Math.abs(valeur - axesInit[index])>0.01){
+				initValues[index] = false;
+			}
+		}
 	}
 	
 	public void setBouton(int index, boolean appuye){

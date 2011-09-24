@@ -127,6 +127,8 @@ public class PanelReglages extends JPanel implements ActionListener, ItemListene
 			gui.getIhm().getControleur().sauvegarderConfiguration();
 		} else if(event.getSource().equals(utiliserJoystick)){
 			gui.getIhm().getControleur().getConfiguration().getConfigurationJoystick().setUseJoystick(utiliserJoystick.isSelected());
+			int indexJoystick = nomsJoystick.getSelectedIndex();
+			gui.getIhm().getIntefaceJoystick().selectJoystick(indexJoystick);
 			nomsJoystick.setEnabled(utiliserJoystick.isSelected());
 		}
 	}

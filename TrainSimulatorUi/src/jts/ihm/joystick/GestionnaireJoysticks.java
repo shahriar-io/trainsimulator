@@ -15,13 +15,14 @@ import org.lwjgl.input.Controllers;
  * @author Yannick BISIAUX
  *
  */
-public class GestionnaireJoystick implements InterfaceJoystick {
+public class GestionnaireJoysticks implements InterfaceJoystick {
 	
 	private ConfigurationJoystick confJoystick;
 	private Controller joystick;
 	private ValeursJoystick valeurs;
+	private int numberOfControllers;
 	
-	public GestionnaireJoystick(){
+	public GestionnaireJoysticks(){
 		valeurs = new ValeursJoystick();
 	}
 	
@@ -34,44 +35,44 @@ public class GestionnaireJoystick implements InterfaceJoystick {
 		}
 		try {
 			Controllers.create();
+			numberOfControllers = Controllers.getControllerCount();
 		} catch (LWJGLException e) {
 			Log.getInstance().logInfo("Problème d'initialisation de la liste des joysticks.");
 			e.printStackTrace();
 		}
 	}
 	
-	public void selectJoystick(int i){
-		//if(confJoystick.isUtiliserJoystick()){
-			joystick = Controllers.getController(i);
+	public void selectJoystick(int numeroJoystick){
+		if(numeroJoystick<numberOfControllers){
+			joystick = Controllers.getController(numeroJoystick);
 			joystick.poll();
 			valeurs.init(joystick.getAxisCount(), joystick.getButtonCount());
-			
+			joystick.poll();
+			for(int i=0; i<valeurs.getNbAxes(); i++){
+				valeurs.initAxe(i, joystick.getAxisValue(i));
+			}
+
 			Log.getInstance().logWarning(joystick.getName() + " selectionne : "
 					+ joystick.getAxisCount() + " axes / " + joystick.getButtonCount() + " boutons", false);
-		//} else {
-		//	Log.getInstance().logWarning("Pas de joystick sélectionné", false);
-		//}
+		}
 	}
 	
 	public ConfigurationJoystick getConfJoystick(){ return this.confJoystick; }
 	
 	public void refreshValeurs(){
-		//if(confJoystick.isUtiliserJoystick()){
-			joystick.poll();
+		joystick.poll();
 
-			for(int i=0; i<valeurs.getNbAxes(); i++){
-				valeurs.setAxe(i, joystick.getAxisValue(i));
-			}
+		for(int i=0; i<valeurs.getNbAxes(); i++){
+			valeurs.setAxe(i, joystick.getAxisValue(i));
+		}
 
-			for(int i=0; i<valeurs.getNbBoutons(); i++){
-				valeurs.setBouton(i, joystick.isButtonPressed(i));
-			}
-		//}
+		for(int i=0; i<valeurs.getNbBoutons(); i++){
+			valeurs.setBouton(i, joystick.isButtonPressed(i));
+		}
 	}
 	
 	public List<String> getJoystickNames(){
 		List<String> noms = new ArrayList<String>();
-		int numberOfControllers = Controllers.getControllerCount();
 
 		for (int i=0;i<numberOfControllers;i++)	{
 			String nom = Controllers.getController(i).getName();

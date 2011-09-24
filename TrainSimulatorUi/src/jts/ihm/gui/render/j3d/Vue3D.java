@@ -1,7 +1,9 @@
 package jts.ihm.gui.render.j3d;
 
 import java.awt.Color;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.List;
 
 import javax.media.j3d.AmbientLight;
@@ -40,25 +42,15 @@ public class Vue3D /*extends Applet */implements InterfaceJ3D {
 
 	private SimpleUniverse simpleU;
 	private BranchGroup parent;
-	//private BranchGroup voiture1;
-	private TransformGroup voiture1tg;
-	//private BranchGroup voiture2;
-	private TransformGroup voiture2tg;
 	
 	private DirectionalLight soleil;
 	private Background ciel;
 	
+	private Loader loader3ds;
+	private Loader loaderObj;
+	
 	public Vue3D(Canvas3D c3d){
-		//setLayout(new BorderLayout());
-		//GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
-		//Canvas3D canvas3D = new Canvas3D(config);
-	    //this.add(canvas3D, BorderLayout.CENTER);
-	    
-	    //if (c3d != null){
-	    	simpleU = new SimpleUniverse(c3d);
-	    /*} else {
-	    	simpleU = new SimpleUniverse(canvas3D);
-	    }*/
+	    simpleU = new SimpleUniverse(c3d);
 	    simpleU.getViewingPlatform().setNominalViewingTransform();
 	    
 	    createSceneGraph();
@@ -69,6 +61,8 @@ public class Vue3D /*extends Applet */implements InterfaceJ3D {
 	    view.setBackClipDistance(100);
 	    view.setFieldOfView(0.6*Math.PI);
 
+	    loader3ds = new Loader3DS();
+	    loaderObj = new ObjectFile();
 	}
 	
 	private void createSceneGraph() {
@@ -78,27 +72,6 @@ public class Vue3D /*extends Applet */implements InterfaceJ3D {
 	    ciel.setCapability(Background.ALLOW_COLOR_WRITE);
 	    ciel.setApplicationBounds(new BoundingSphere(new Point3d(0, 0, 0), 80));
 	    parent.addChild(ciel);
-	    
-	    /*parent.addChild(new ColorCube(0.4));*/
-	    
-	    /*TransformGroup tg = new TransformGroup();
-	    Transform3D translation;
-	    translation = new Transform3D();
-	    translation.setTranslation(new Vector3f (0, 0, 20));
-	    tg.setTransform(translation);
-	    Sphere sphere = new Sphere(1.2f);
-	    sphere.getAppearance().setColoringAttributes(new ColoringAttributes(0.1f, 0.8f, 0.8f, ColoringAttributes.NICEST));
-	    tg.addChild(sphere);
-	    parent.addChild(tg);*/
-	    
-	    /*TransformGroup tg2 = new TransformGroup();
-	    Transform3D translation2;
-	    translation2 = new Transform3D();
-	    translation2.setTranslation(new Vector3f (0, 0, -20));
-	    tg2.setTransform(translation2);
-	    Box box = new Box();
-	    tg2.addChild(box);
-	    parent.addChild(tg2);*/
 	    
 	    
 	    AmbientLight light = new AmbientLight(new Color3f(0.5f, 0.5f, 0.5f));
@@ -137,15 +110,16 @@ public class Vue3D /*extends Applet */implements InterfaceJ3D {
 	
 	public void chargerObjet(float x, float y, float z, String nomObjet){
 		String nomComplet = REPERTOIRE_OBJETS + nomObjet;
-	    Loader loader3ds = new Loader3DS();
-	    ObjectFile of = new ObjectFile();
+		File fichierObjet = new File(nomComplet);
+	    
 	    Scene sceneLoaded = null;
 	    
 		try {
-			if(nomObjet.endsWith(".3DS")){
+			if(nomObjet.endsWith(".3DS")||nomObjet.endsWith(".3ds")){
 				sceneLoaded = loader3ds.load(nomComplet);
 			} else if(nomObjet.endsWith(".obj")) {
-				sceneLoaded = of.load(nomComplet);
+				loaderObj.setBasePath(fichierObjet.getParentFile().getAbsolutePath());
+				sceneLoaded = loaderObj.load(new FileReader(fichierObjet.getAbsolutePath()));
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();

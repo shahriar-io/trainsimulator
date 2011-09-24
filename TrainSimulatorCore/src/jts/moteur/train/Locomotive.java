@@ -18,6 +18,6 @@ public class Locomotive extends Wagon {
 	 * @return
 	 */
 	public double getForceTraction(double vitesse, double commandeVitesse){
-		return commandeVitesse*200;
+		return commandeVitesse*320;
 	}
 }

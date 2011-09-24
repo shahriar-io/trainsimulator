@@ -1,11 +1,12 @@
 package jts.ihm;
 
 import jts.InterfaceControleur;
+import jts.conf.ConfigurationJoystick;
 import jts.ihm.clavier.EcouteurClavier;
 import jts.ihm.clavier.InterfaceClavier;
 import jts.ihm.gui.Gui;
 import jts.ihm.gui.InterfaceGraphique;
-import jts.ihm.joystick.GestionnaireJoystick;
+import jts.ihm.joystick.GestionnaireJoysticks;
 import jts.ihm.joystick.InterfaceJoystick;
 import jts.ihm.langues.DefaultLangueManager;
 import jts.ihm.langues.Langue;
@@ -49,9 +50,12 @@ public class Ihm implements InterfaceHommeMachine {
 		clavier = new EcouteurClavier();
 		clavier.init();
 		frameInit.setProgression(20);
-		joystick = new GestionnaireJoystick();
+		joystick = new GestionnaireJoysticks();
 		joystick.init();
-		joystick.selectJoystick(controleur.getConfiguration().getConfigurationJoystick().getNumeroJoystick());
+		ConfigurationJoystick confJoystick = controleur.getConfiguration().getConfigurationJoystick();
+		if(confJoystick.isUseJoystick()){
+			joystick.selectJoystick(confJoystick.getNumeroJoystick());
+		}
 		frameInit.setProgression(40);
 		langueManager = new DefaultLangueManager();
 		langueManager.init();
@@ -60,7 +64,6 @@ public class Ihm implements InterfaceHommeMachine {
 		try {
 			fakeProgression();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		gui = new Gui(this);

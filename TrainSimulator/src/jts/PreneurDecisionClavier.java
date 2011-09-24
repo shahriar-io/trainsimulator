@@ -12,6 +12,7 @@ public class PreneurDecisionClavier {
 
 	private MoteurPhysique moteurPhysique;
 	private boolean[] touchesPrecedentes;
+	private boolean[] touchesCourantes;
 	
 	public PreneurDecisionClavier(MoteurPhysique moteurPhysique){
 		this.moteurPhysique = moteurPhysique;
@@ -19,18 +20,27 @@ public class PreneurDecisionClavier {
 	}
 	
 	public void prendreDecisions(boolean[] touchesClavier){
-		if(touchesClavier[ToucheClavier.D.ordinal()]){
+		touchesCourantes = touchesClavier;
+		if(touchesCourantes[ToucheClavier.D.ordinal()]){
 			this.moteurPhysique.setDeltaCommandeVolant(0.5f);
 		}
-		if(touchesClavier[ToucheClavier.Q.ordinal()]){
+		if(touchesCourantes[ToucheClavier.Q.ordinal()]){
 			this.moteurPhysique.setDeltaCommandeVolant(-0.5f);
 		}
-		if(touchesClavier[ToucheClavier.G.ordinal()]&&!touchesPrecedentes[ToucheClavier.G.ordinal()]){
+		if(isFrontMontant(ToucheClavier.G)){
 			this.moteurPhysique.getLigne().getCircuit().getTrainJoueur().switchNextDivergence();
 		}
 		
 		for(int i=0; i< touchesPrecedentes.length; i++){
-			touchesPrecedentes[i] = touchesClavier[i];
+			touchesPrecedentes[i] = touchesCourantes[i];
 		}
+	}
+	
+	private boolean isFrontMontant(ToucheClavier touche){
+		return (touchesCourantes[touche.ordinal()]&&!touchesPrecedentes[touche.ordinal()]);
+	}
+	
+	private boolean isFrontDescendant(ToucheClavier touche){
+		return (!touchesCourantes[touche.ordinal()]&&touchesPrecedentes[touche.ordinal()]);
 	}
 }
