@@ -7,6 +7,8 @@ import jts.conf.Configuration;
 import jts.conf.InterfaceConfiguration;
 import jts.ihm.Ihm;
 import jts.ihm.InterfaceHommeMachine;
+import jts.ihm.audio.AudioPlayer;
+import jts.ihm.audio.InterfaceAudio;
 import jts.ihm.gui.Gui;
 import jts.io.LigneLoader;
 import jts.io.ScenarioLoader;
@@ -30,6 +32,7 @@ public class Controleur implements InterfaceControleur {
 	
 	private InterfaceConfiguration configuration;
 	private InterfaceHommeMachine ihm;
+	private InterfaceAudio audio;
 	private MoteurPhysique moteurPhysique;
 	private PreneurDecisionClavier decisions;
 	
@@ -60,6 +63,8 @@ public class Controleur implements InterfaceControleur {
 			ihm.init();
 			moteurPhysique = new MoteurPhysique(DUREE);
 			decisions = new PreneurDecisionClavier(moteurPhysique);
+			audio = new AudioPlayer();
+			audio.init();
 		}
 	}
 	
@@ -92,6 +97,15 @@ public class Controleur implements InterfaceControleur {
 		}
 		this.moteurPhysique.nextStep();
 		((Gui)this.ihm.getInterfaceGraphique()).afficherLigne(moteurPhysique.getLigne());
+		
+		//Harmoniques 400 et 1200 Hz fonction de la commande moteur.
+		double commande = this.moteurPhysique.getLigne().getCircuit().getTrainJoueur().getCommandeTraction();
+		double frequences[] = {400.0, 1200.0};
+		double amplitudes[] = new double[2];
+		amplitudes[0] = 0.85 * commande;
+		amplitudes[1] = 0.15 * commande;
+		audio.jouerFrequences(frequences, amplitudes, ((double)DUREE/800.0));
+		audio.flush();
 	}
 	
 	public void sauvegarderConfiguration(){
