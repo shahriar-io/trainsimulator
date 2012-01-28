@@ -13,7 +13,7 @@ public interface InterfaceJ3D {
 	
 	public void dessinerSurface(List<Point> frontiere);
 	
-	public void chargerObjet(float x, float y, float z, String nomObjet);
+	public void chargerObjet(float x, float y, float z, float psi, String nomObjet);
 	
 	public void setHeure(float heure);
 }

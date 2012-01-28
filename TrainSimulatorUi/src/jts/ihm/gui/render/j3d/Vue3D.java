@@ -1,6 +1,8 @@
 package jts.ihm.gui.render.j3d;
 
 import java.awt.Color;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -12,6 +14,7 @@ import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Canvas3D;
 import javax.media.j3d.DirectionalLight;
+import javax.media.j3d.GraphicsConfigTemplate3D;
 import javax.media.j3d.LineArray;
 import javax.media.j3d.LineStripArray;
 import javax.media.j3d.Shape3D;
@@ -60,6 +63,13 @@ public class Vue3D /*extends Applet */implements InterfaceJ3D {
 	    View view = simpleU.getViewer().getView();
 	    view.setBackClipDistance(100);
 	    view.setFieldOfView(0.6*Math.PI);
+	    /*view.setSceneAntialiasingEnable(true);
+	    
+	    GraphicsConfigTemplate3D template = new GraphicsConfigTemplate3D();
+	    template.setSceneAntialiasing(template.PREFERRED);
+	    GraphicsConfiguration config =
+	                GraphicsEnvironment.getLocalGraphicsEnvironment().
+	                 getDefaultScreenDevice().getBestConfiguration(template);*/
 
 	    loader3ds = new Loader3DS();
 	    loaderObj = new ObjectFile();
@@ -70,19 +80,19 @@ public class Vue3D /*extends Applet */implements InterfaceJ3D {
 	    
 	    ciel = new Background(new Color3f(0.9f, 0.9f, 1.0f));
 	    ciel.setCapability(Background.ALLOW_COLOR_WRITE);
-	    ciel.setApplicationBounds(new BoundingSphere(new Point3d(0, 0, 0), 80));
+	    ciel.setApplicationBounds(new BoundingSphere(new Point3d(0, 0, 0), 500));
 	    parent.addChild(ciel);
 	    
 	    
 	    AmbientLight light = new AmbientLight(new Color3f(0.5f, 0.5f, 0.5f));
 	    //light.setColor(new Color3f(0.5f, 0.5f, 0.5f));
-	    light.setInfluencingBounds(new BoundingSphere(new Point3d(0, 0, 0), 80));
+	    light.setInfluencingBounds(new BoundingSphere(new Point3d(0, 0, 0), 500));
 	    parent.addChild(light);
 	    
 	    soleil = new DirectionalLight();
 	    soleil.setDirection(new Vector3f(-0.1f, -0.5f, 0.1f));
 	    //light.setColor(new Color3f(0.5f, 0.5f, 0.5f));
-	    soleil.setInfluencingBounds(new BoundingSphere(new Point3d(0, 0, 0), 80));
+	    soleil.setInfluencingBounds(new BoundingSphere(new Point3d(0, 0, 0), 500));
 	    parent.addChild(soleil);
 	  }
 	
@@ -92,6 +102,8 @@ public class Vue3D /*extends Applet */implements InterfaceJ3D {
 		Transform3D rotation = new Transform3D();
 	    mouvement.setTranslation(new Vector3f (x, y, z));
 	    rotation.rotY(theta);
+	    mouvement.mul(rotation);
+	    rotation.rotZ(phi);
 	    mouvement.mul(rotation);
 	    simpleU.getViewingPlatform().getViewPlatformTransform().setTransform(mouvement);
 	}
@@ -108,7 +120,7 @@ public class Vue3D /*extends Applet */implements InterfaceJ3D {
 		simpleU.addBranchGraph(bg);
 	}
 	
-	public void chargerObjet(float x, float y, float z, String nomObjet){
+	public void chargerObjet(float x, float y, float z, float psi, String nomObjet){
 		String nomComplet = REPERTOIRE_OBJETS + nomObjet;
 		File fichierObjet = new File(nomComplet);
 	    
@@ -132,7 +144,10 @@ public class Vue3D /*extends Applet */implements InterfaceJ3D {
 		if(sceneLoaded != null){
 			BranchGroup scene = sceneLoaded.getSceneGroup();
 			Transform3D translation = new Transform3D();
+			Transform3D rotation = new Transform3D();
 			translation.setTranslation(new Vector3f (x, y, z));
+			rotation.rotY(-psi);
+			translation.mul(rotation);
 			TransformGroup tgObjet = new TransformGroup();
 			tgObjet.setTransform(translation);
 			tgObjet.addChild(scene);
@@ -180,7 +195,6 @@ public class Vue3D /*extends Applet */implements InterfaceJ3D {
 		
 		bg.addChild(surface);
 		simpleU.addBranchGraph(bg);
-		//System.out.println(frontiere.size() +" pts traces");
 	}
 
 	public void setHeure(float heure) {

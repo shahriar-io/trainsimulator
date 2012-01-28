@@ -135,6 +135,7 @@ public class Gui implements InterfaceGraphique {
 						(float)section.getPositionAbsolue().getY(),
 						(float)section.getPositionAbsolue().getZ(),
 						(float)section.getPositionAbsolue().getX(),
+						(float)section.getAngle().getPsi(),
 						section.getNomObjet());
 			}
 			for (CourbeElementaire element : section.getElements()){
@@ -147,6 +148,7 @@ public class Gui implements InterfaceGraphique {
 					(float)objet.getPoint().getY(),
 					(float)objet.getPoint().getZ(),
 					(float)objet.getPoint().getX(),
+					(float)objet.getAngle().getPsi(),
 					objet.getNomObjet());
 		}
 	}
@@ -160,7 +162,7 @@ public class Gui implements InterfaceGraphique {
 		
 		Locomotive locomotiveJoueur = trainJoueur.getLocomotiveTete();
 		Point point = locomotiveJoueur.getObservation();
-		vue3D.deplacerCamera((float)point.getY(), (float)point.getZ(), (float)point.getX(), (float)((Math.PI/2 - locomotiveJoueur.getOrientation().getPsi())), 0);
+		vue3D.deplacerCamera((float)point.getY(), (float)point.getZ(), (float)point.getX(), (float)((Math.PI/2 - locomotiveJoueur.getOrientation().getPsi())), -(float)locomotiveJoueur.getOrientation().getPhi());
 	}
 	
 	private void relocaliserFenetre(){

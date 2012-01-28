@@ -63,7 +63,13 @@ public class GestionnaireJoysticks implements InterfaceJoystick {
 		joystick.poll();
 
 		for(int i=0; i<valeurs.getNbAxes(); i++){
-			valeurs.setAxe(i, joystick.getAxisValue(i));
+			float joystickValue = joystick.getAxisValue(i);
+			//Etablit une plage morte du joystick autour de 0
+			if(Math.abs(joystickValue)>confJoystick.getPlageMorte()){
+				valeurs.setAxe(i, joystick.getAxisValue(i));
+			} else {
+				valeurs.setAxe(i, 0);
+			}
 		}
 
 		for(int i=0; i<valeurs.getNbBoutons(); i++){

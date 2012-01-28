@@ -17,6 +17,7 @@ public class ConfigurationJoystick {
 	
 	protected boolean utiliserJoystick;
 	protected int numeroJoystick;
+	private float plageMorte = 0.1f;
 	protected ConfigurationAction commandeVolant;
 	protected ConfigurationAction commandeFrein;
 	
@@ -90,6 +91,8 @@ public class ConfigurationJoystick {
 	public void setUtiliserJoystick(boolean utiliserJoystick){ this.utiliserJoystick = utiliserJoystick; }
 
 	public int getNumeroJoystick() { return numeroJoystick;	}
+	
+	public float getPlageMorte() { return plageMorte;	}
 
 	public ConfigurationAction getVolant() { return commandeVolant;	}
 
