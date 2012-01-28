@@ -8,6 +8,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.soap.Node;
 
+import jts.log.Log;
 import jts.moteur.geometrie.AngleEuler;
 import jts.moteur.geometrie.Point;
 import jts.moteur.ligne.CircuitSections;
@@ -75,6 +76,14 @@ public class LigneLoader {
 		
 		circuit.rendreAbsolu();
 		
+		for(int i=0; i<circuit.getSections().size(); i++){
+			Section section = circuit.getSections().get(i);
+			Log.getInstance().logDebug("Section n°" + i, false);
+			for(Point point : section.getPointsPassages()){
+				Log.getInstance().logDebug(point.toString(), false);
+			}
+		}
+		
 		Element connexions = (Element)circuitNode.getElementsByTagName("Connexions").item(0);
 		NodeList connexionsNL = connexions.getChildNodes();
 		for(int i=0; i<connexionsNL.getLength(); i++){
@@ -101,7 +110,10 @@ public class LigneLoader {
 					double x = Double.parseDouble(point.getAttribute("x"));
 					double y = Double.parseDouble(point.getAttribute("y"));
 					double z = Double.parseDouble(point.getAttribute("z"));
-					ligne.addObjet(new ObjetScene(new Point(x, y, z), nomObjet));
+					Element angle = (Element)objet.getElementsByTagName("Angle").item(0);
+					double psi = Double.parseDouble(point.getAttribute("psi"));
+					double theta = Double.parseDouble(point.getAttribute("theta"));
+					ligne.addObjet(new ObjetScene(new Point(x, y, z), new AngleEuler(theta*Math.PI/180, 0, psi*Math.PI/180), nomObjet));
 				}
 			}
 		}

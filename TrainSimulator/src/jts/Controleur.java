@@ -42,7 +42,7 @@ public class Controleur implements InterfaceControleur {
 	
 	public void init(){
 		try {
-			Log.init(new File("log.txt"), LogMode.WARNING);
+			Log.init(new File("log.txt"), LogMode.DEBUG);
 		} catch (IOException e) {
 			System.out.println("Impossible de créer un fichier de log");
 			e.printStackTrace();
@@ -64,7 +64,7 @@ public class Controleur implements InterfaceControleur {
 			moteurPhysique = new MoteurPhysique(DUREE);
 			decisions = new PreneurDecisionClavier(moteurPhysique);
 			audio = new AudioPlayer();
-			audio.init();
+			audio.init((double)DUREE/1000.0);
 		}
 	}
 	
@@ -100,11 +100,12 @@ public class Controleur implements InterfaceControleur {
 		
 		//Harmoniques 400 et 1200 Hz fonction de la commande moteur.
 		double commande = this.moteurPhysique.getLigne().getCircuit().getTrainJoueur().getCommandeTraction();
-		double frequences[] = {400.0, 1200.0};
-		double amplitudes[] = new double[2];
-		amplitudes[0] = 0.85 * commande;
-		amplitudes[1] = 0.15 * commande;
-		audio.jouerFrequences(frequences, amplitudes, ((double)DUREE/800.0));
+		double frequences[] = {300.0, 400.0, 1200.0};
+		double amplitudes[] = new double[3];
+		amplitudes[0] = 0.8 * commande;
+		amplitudes[1] = 0.05 * commande;
+		amplitudes[2] = 0.05 * commande;
+		audio.jouerFrequences(frequences, amplitudes);
 		audio.flush();
 	}
 	

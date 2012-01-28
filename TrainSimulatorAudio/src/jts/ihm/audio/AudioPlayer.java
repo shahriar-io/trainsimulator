@@ -26,28 +26,26 @@ public class AudioPlayer implements InterfaceAudio {
 	
 	private int j;
 	
+	private double duree;
 	private AudioFormat audioFormat;
 	private SourceDataLine line;
 	private int bufferSize;
-	private byte audioSamples1[];
-	private byte audioSamples2[];
-	
-	private boolean writeOn1 = true;
+	private byte audioSamples[];
 	
 	public AudioPlayer(){
 		
 	}
 
-	public void init() {
+	public void init(double duree) {
+		this.duree = 2*duree;
 		audioFormat = new AudioFormat(sampleRate, sampleSize, 1, signed, bigEndian);
 		try {
 			line = AudioSystem.getSourceDataLine(audioFormat);
 			line.open(audioFormat);
 			line.start();
 			bufferSize = line.getBufferSize();
-			System.out.println("Buffer size : " + bufferSize);
-			audioSamples1 = new byte[bufferSize];
-			audioSamples2 = new byte[bufferSize];
+			//System.out.println("Buffer size : " + bufferSize);
+			audioSamples = new byte[(int)(sampleRate*this.duree)];
 		} catch (LineUnavailableException lue) {
 			System.out.println("# Erreur : impossible de trouver une ligne de sortie audio au format :");
 			System.out.println("#          " + audioFormat);
@@ -72,40 +70,44 @@ public class AudioPlayer implements InterfaceAudio {
 	public void jouerLa(){
 		FloatControl control = (FloatControl)line.getControl(Type.MASTER_GAIN);
 		control.setValue(0.01f);
-		jouerFrequence(440.0, 1.0);
+		jouerFrequence(440.0);
 	}
 	
-	public void jouerFrequence(double frequence, double duree){
-		int nbSamples = (int)(sampleRate*duree);
-		
-		for (int i=0; i<nbSamples; i++){
-			double ratioFreq = frequence/sampleRate;
-			int val = (int)(maxVal*Math.sin(2*i*ratioFreq*Math.PI));			
-			writeSample(val);
+	public void jouerFrequence(double frequence){
+		if(line.available()>bufferSize - duree*sampleRate){
+			int nbSamples = (int)(sampleRate*duree);
+
+			for (int i=0; i<nbSamples; i++){
+				double ratioFreq = frequence/sampleRate;
+				int val = (int)(maxVal*Math.sin(2*i*ratioFreq*Math.PI));			
+				writeSample(val);
+			}
 		}
 	}
 	
-	public void jouerFrequences(double frequences[], double amplitudes[], double duree){
-		int nbSamples = (int)(sampleRate*duree);
-		
-		for (int i=0; i<nbSamples; i++){
-			double val = 0;
-			for(int k=0; k<frequences.length; k++){
-				double ratioFreq = frequences[k]/sampleRate;
-				val += (amplitudes[k]*maxVal*Math.sin(2*i*ratioFreq*Math.PI + phase));			
-			} 
-			writeSample((int)val);
+	public void jouerFrequences(double frequences[], double amplitudes[]){
+		if(line.available()>5000){
+			int nbSamples = (int)(sampleRate*duree);
+
+			for (int i=0; i<nbSamples; i++){
+				double val = 0;
+				for(int k=0; k<frequences.length; k++){
+					double ratioFreq = frequences[k]/sampleRate;
+					val += (amplitudes[k]*((double)maxVal)*Math.sin(2*((double)i)*ratioFreq*Math.PI + phase));			
+				} 
+				writeSample((int)val);
+			}
 		}
 	}
 	
 	public void flush(){
-		if (writeOn1){
-			line.write(audioSamples1, 0, j);
-		} else {
+		//if (writeOn1){
+			line.write(audioSamples, 0, j);
+		/*} else {
 			line.write(audioSamples2, 0, j);
-		}
+		}*/
 		j=0;
-		writeOn1 = !writeOn1;
+		//writeOn1 = !writeOn1;
 		/*try {
 			Thread.sleep(100);
 		} catch (InterruptedException e) {
@@ -119,12 +121,12 @@ public class AudioPlayer implements InterfaceAudio {
 			flush();
 		}
 		
-		byte[] audioSamples;
+		/*byte[] audioSamples;
 		if(writeOn1){
 			audioSamples = audioSamples1;
 		} else {
 			audioSamples = audioSamples2;
-		}
+		}*/
 		
 		
 		if (nbOctets == 1) {

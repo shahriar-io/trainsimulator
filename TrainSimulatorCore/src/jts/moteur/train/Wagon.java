@@ -69,6 +69,7 @@ public class Wagon {
 		Point pArriere = bogieArriere.getPoint();
 		this.position.setBarycentre(pAvant, pArriere);
 		orientation.setPsi(BasicGeo.getCap(pAvant, pArriere));
+		orientation.setPhi(0.5*(bogieAvant.getAngle().getPhi()+bogieArriere.getAngle().getPhi()));
 		
 		observation.setXYZ(xObservation, yObservation, zObservation);
 		observation.transformer(position, orientation.getPsi());
