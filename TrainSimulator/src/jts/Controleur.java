@@ -73,6 +73,8 @@ public class Controleur implements InterfaceControleur {
 	public void lancerSimu(File fichierLigne, File fichierScenario){
 		Log.getInstance().logInfo("**********  Chargement de la ligne  **********");
 		Ligne ligne = LigneLoader.load(fichierLigne);
+		//Ligne ligne = ScriptLgnReader.load(new File("data/lignes/Circuit_Luzerian.lgn"));
+		//Ligne ligne = LigneLuzerianCreator.create();
 		this.moteurPhysique.setLigne(ligne);
 		
 		Log.getInstance().logInfo("**********  Chargement du scénario  **********");
