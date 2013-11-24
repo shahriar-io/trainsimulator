@@ -1,11 +1,15 @@
-package jts.ihm.gui.render.j3d;
+package jts.ihm.gui.render;
 
+import java.awt.Canvas;
 import java.util.List;
 
 import jts.moteur.geometrie.Point;
+import jts.moteur.ligne.ObjetScene;
 
 
-public interface InterfaceJ3D {
+public interface InterfaceMoteur3D {
+	
+	public Canvas getCanvas();
 
 	public void deplacerCamera(float x, float y, float z, float theta, float phi);
 	
@@ -13,7 +17,7 @@ public interface InterfaceJ3D {
 	
 	public void dessinerSurface(List<Point> frontiere);
 	
-	public void chargerObjet(float x, float y, float z, float psi, String nomObjet);
+	public void chargerObjet(ObjetScene objet);
 	
 	public void setHeure(float heure);
 }

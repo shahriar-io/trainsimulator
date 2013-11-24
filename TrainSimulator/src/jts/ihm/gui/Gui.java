@@ -13,10 +13,8 @@ import javax.swing.JPanel;
 
 import jts.ihm.InterfaceHommeMachine;
 import jts.ihm.gui.ctrl.PanelVisuRoute;
+import jts.ihm.gui.render.InterfaceMoteur3D;
 import jts.ihm.gui.render.PanelConduite;
-import jts.ihm.gui.render.j3d.InterfaceJ3D;
-import jts.ihm.gui.render.j3d.JtsCanvas3D;
-import jts.ihm.gui.render.j3d.Vue3D;
 import jts.log.Log;
 import jts.moteur.geometrie.Point;
 import jts.moteur.ligne.Ligne;
@@ -40,7 +38,7 @@ public class Gui implements InterfaceGraphique {
 	private JFrame fenetre;
 	private JPanel panelCourant;
 	private PanelConduite render;
-	private InterfaceJ3D vue3D;
+	private InterfaceMoteur3D moteur3d;
 	private JFrame fenetreCtrl;
 	private PanelVisuRoute visuRoute;
 	
@@ -106,15 +104,13 @@ public class Gui implements InterfaceGraphique {
 	
 	public void afficherEcranJeu(){
 		PanelConduite panelConduite = new PanelConduite();
-		fenetre.getContentPane().removeAll();
-		fenetre.add(panelConduite);
+		this.fenetre.getContentPane().removeAll();
+		this.fenetre.add(panelConduite);
 		
 		this.render = panelConduite;
-		JtsCanvas3D c3d = this.render.init();
-		this.vue3D = new Vue3D(c3d);
-		fenetre.setFocusable(true);
-		fenetre.requestFocus();
-		fenetre.addKeyListener((KeyListener)ihm.getInterfaceClavier());
+		this.moteur3d = this.render.init((KeyListener)ihm.getInterfaceClavier());
+		this.fenetre.setFocusable(true);
+		this.fenetre.addKeyListener((KeyListener)ihm.getInterfaceClavier());
 		this.relocaliserFenetre();
 		
 		this.fenetreCtrl = new JFrame("Driver Simulator");
@@ -124,6 +120,7 @@ public class Gui implements InterfaceGraphique {
 		this.fenetreCtrl.pack();
 		this.fenetreCtrl.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.fenetreCtrl.setLocation(800, 0);
+		this.fenetreCtrl.addKeyListener((KeyListener)ihm.getInterfaceClavier());
 	}
 	
 	public void chargerTerrain(Ligne ligne){
@@ -141,16 +138,11 @@ public class Gui implements InterfaceGraphique {
 		}*/
 		
 		for (CourbeElementaire element : ligne.getCircuit().getCourbesElementaires()){
-			vue3D.dessinerLigne(element.getPointsRemarquables());
+			moteur3d.dessinerLigne(element.getPointsRemarquables());
 		}
 		
 		for(ObjetScene objet : ligne.getObjets()){
-			vue3D.chargerObjet(
-					(float)objet.getPoint().getY(),
-					(float)objet.getPoint().getZ(),
-					(float)objet.getPoint().getX(),
-					(float)objet.getAngle().getPsi(),
-					objet.getNomObjet());
+			moteur3d.chargerObjet(objet);
 		}
 	}
 
@@ -163,7 +155,8 @@ public class Gui implements InterfaceGraphique {
 		
 		Locomotive locomotiveJoueur = trainJoueur.getLocomotiveTete();
 		Point point = locomotiveJoueur.getObservation();
-		vue3D.deplacerCamera((float)point.getY(), (float)point.getZ(), (float)point.getX(), (float)((Math.PI/2 - locomotiveJoueur.getOrientation().getPsi())), -(float)locomotiveJoueur.getOrientation().getPhi());
+		moteur3d.deplacerCamera((float)point.getY(), (float)point.getZ(), (float)point.getX(), (float)((Math.PI/2 - locomotiveJoueur.getOrientation().getPsi())), -(float)locomotiveJoueur.getOrientation().getPhi());
+		
 	}
 	
 	private void relocaliserFenetre(){

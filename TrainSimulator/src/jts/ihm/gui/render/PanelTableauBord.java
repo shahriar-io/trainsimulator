@@ -7,7 +7,6 @@ import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
 
-
 import jts.moteur.train.Train;
 import jts.util.BasicConvert;
 

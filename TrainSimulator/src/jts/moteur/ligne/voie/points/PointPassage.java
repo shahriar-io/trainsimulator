@@ -1,6 +1,7 @@
 package jts.moteur.ligne.voie.points;
 
 import java.io.IOException;
+import java.util.List;
 
 import jts.io.SauvegardableXml;
 import jts.io.xml.ElementXml;
@@ -85,5 +86,9 @@ public class PointPassage extends PointExtremite implements SauvegardableXml {
 		ElementXml element = super.save();
 		element.setNom("PointPassage");
 		return element;
+	}
+	
+	public ElementXml save(List<PointPassage> pointsPassages){
+		return this.save();
 	}
 }

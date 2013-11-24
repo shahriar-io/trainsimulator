@@ -1,12 +1,13 @@
 package jts.ihm.gui.render;
 
 import java.awt.Dimension;
+import java.awt.event.KeyListener;
+import java.util.logging.Level;
 
 import javax.swing.JPanel;
 
-import jts.ihm.gui.render.j3d.JtsCanvas3D;
-
-import com.sun.j3d.utils.universe.SimpleUniverse;
+import jts.ihm.gui.render.j3d.RenduJ3D;
+import jts.ihm.gui.render.jme.RenduJME;
 
 /**Ceci est le panel de jeu vue intérieur, composé de la vue extérieur et d'un tableau de bord.
  * 
@@ -22,32 +23,41 @@ public class PanelConduite extends JPanel {
 	private JPanel panelCanvas;
 	private PanelTableauBord tableauBord;
 	private PanelAiguillage panelAiguillage;
-	private JtsCanvas3D c3d;
+	//private JtsCanvas3D c3d;
 
 	public PanelConduite(){
 		super();
 	}
 	
-	public JtsCanvas3D init(){
+	public InterfaceMoteur3D init(KeyListener keyListener){
 		this.setLayout(null);
 		this.setFocusable(true);
-		this.requestFocus();
+		//this.requestFocus();
 		
-		c3d = new JtsCanvas3D(SimpleUniverse.getPreferredConfiguration(), PANEL_WIDTH, PANEL_HEIGHT/2);
-        //c3d.setSize(PANEL_WIDTH, PANEL_HEIGHT/2);
-        
+		final InterfaceMoteur3D moteur3d;
+		if(false){
+			moteur3d = new RenduJ3D(PANEL_WIDTH, PANEL_HEIGHT/2);
+		} else {
+			moteur3d = new RenduJME(PANEL_WIDTH, PANEL_HEIGHT/2);
+			((RenduJME)moteur3d).startCanvas();
+			java.util.logging.Logger.getLogger("").setLevel(Level.WARNING);
+		}
+		
         panelCanvas = new JPanel();
-        panelCanvas.add(c3d);
+        panelCanvas.add(moteur3d.getCanvas());
         panelCanvas.setOpaque(false);
         panelCanvas.setPreferredSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT/2));
-        panelCanvas.setFocusable(false);
+        panelCanvas.setFocusable(true);
         panelCanvas.setBounds(0, 0, PANEL_WIDTH, PANEL_HEIGHT/2);
+        panelCanvas.addKeyListener(keyListener);
         this.add(panelCanvas);
         
         tableauBord = new PanelTableauBord();
         tableauBord.init(PANEL_WIDTH, PANEL_HEIGHT/2);
-        tableauBord.setFocusable(false);
+        tableauBord.setFocusable(true);
         tableauBord.setBounds(0, PANEL_HEIGHT/2, PANEL_WIDTH, PANEL_HEIGHT/2);
+        tableauBord.addKeyListener(keyListener);
+        //tableauBord.requestFocus();
         this.add(tableauBord);
         
         this.setVisible(true);
@@ -62,7 +72,7 @@ public class PanelConduite extends JPanel {
 			e.printStackTrace();
 		}*/
         
-        return c3d;
+        return moteur3d;
 	}
 	
 	public PanelTableauBord getTableauBord(){

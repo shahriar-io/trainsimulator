@@ -7,12 +7,10 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import jts.moteur.geometrie.AngleEuler;
-import jts.moteur.geometrie.BasicGeo;
 import jts.moteur.geometrie.Point;
 import jts.moteur.ligne.CircuitSections;
 import jts.moteur.ligne.voie.Section;
 import jts.moteur.ligne.voie.points.PointExtremite;
-import jts.util.BasicConvert;
 
 public class ScriptLgnReader {
 
@@ -75,7 +73,7 @@ public class ScriptLgnReader {
 	}
 
 	public static Section addSection(CircuitSections circuit, String type, Section sectionRef, int numPtSectionRef, int numPtSectionNew, double theta) {
-		PointExtremite ptRef = sectionRef.getPointsPassages().get(numPtSectionRef-1);
+		PointExtremite ptRef = sectionRef.getPointsExtremites().get(numPtSectionRef-1);
 		boolean sensDirectRef = ptRef.getElementBase().getP1().equals(ptRef);
 		
 		Point pointRef = new Point();
@@ -84,17 +82,17 @@ public class ScriptLgnReader {
 		angleRef.opposer();
 		
 		Section newSection = SectionLoader.load(new File("data/sections/" + type + ".xml"), new Point(), new AngleEuler());
-		PointExtremite ptNew = newSection.getPointsPassages().get(numPtSectionNew-1);
+		PointExtremite ptNew = newSection.getPointsExtremites().get(numPtSectionNew-1);
 		boolean sensDirectNew = ptNew.getElementBase().getP1().equals(ptNew);
 		Point pointNew = new Point();
 		AngleEuler angleNew = new AngleEuler();
 		ptNew.getElementBase().recupererPosition(pointNew, angleNew, 0, sensDirectNew);
 		angleNew.opposer();
 		
-		System.out.println("Sens direct ref : " + sensDirectRef);
-		System.out.println("Angle ref : " + BasicConvert.radToDeg(BasicGeo.li2Pi(angleRef.getPsi())) + "°");
-		System.out.println("Sens direct new : " + sensDirectNew);
-		System.out.println("Angle new : " + BasicConvert.radToDeg(BasicGeo.li2Pi(angleNew.getPsi())) + "°");
+		//System.out.println("Sens direct ref : " + sensDirectRef);
+		//System.out.println("Angle ref : " + BasicConvert.radToDeg(BasicGeo.li2Pi(angleRef.getPsi())) + "°");
+		//System.out.println("Sens direct new : " + sensDirectNew);
+		//System.out.println("Angle new : " + BasicConvert.radToDeg(BasicGeo.li2Pi(angleNew.getPsi())) + "°");
 		double deltaAngle = angleRef.getPsi() - (angleNew.getPsi() - Math.PI);
 		newSection.getAngle().setPsi(deltaAngle);
 		newSection.getAngle().setTheta(theta);
@@ -103,6 +101,7 @@ public class ScriptLgnReader {
 				ptRef.getX() - ptNew.getX(),
 				ptRef.getY() - ptNew.getY(),
 				ptRef.getZ() - ptNew.getZ());
+		System.out.println("Ajout " + type + " " + deltaPoint + " cap " + deltaAngle);
 		
 		newSection = SectionLoader.load(new File("data/sections/" + type + ".xml"), deltaPoint, new AngleEuler());
 		newSection.getAngle().setPsi(deltaAngle);

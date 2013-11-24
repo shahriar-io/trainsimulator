@@ -107,7 +107,6 @@ public class EcouteurClavier implements KeyListener, InterfaceClavier{
 
 	@Override
 	public void keyTyped(KeyEvent event) {
-		// TODO Auto-generated method stub
 		
 	}
 

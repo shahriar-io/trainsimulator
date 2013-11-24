@@ -47,10 +47,10 @@ public class CircuitSections {
 	
 	private boolean essayerLierUnidirectionnel(Section s1, Section s2){
 		boolean reussi = false;
-		for (PointExtremite pp1 : s1.getPointsPassages()){
+		for (PointExtremite pp1 : s1.getPointsExtremites()){
 			if(pp1 instanceof PointFrontiere){
 				PointFrontiere pf1 = (PointFrontiere)pp1;
-				for (PointExtremite pp2 : s2.getPointsPassages()){
+				for (PointExtremite pp2 : s2.getPointsExtremites()){
 					if(pp2 instanceof PointFrontiere){
 						PointFrontiere pf2 = (PointFrontiere)pp2;
 						if (pf1.getDistance(pf2)<Point.DISTANCE_NULLE){

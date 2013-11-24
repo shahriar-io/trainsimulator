@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jts.moteur.geometrie.Position;
+import jts.moteur.ligne.signalisation.Panneau;
 import jts.moteur.ligne.voie.elements.CourbeElementaire;
 import jts.moteur.ligne.voie.elements.Transition;
 import jts.moteur.ligne.voie.points.Divergence;
@@ -19,11 +20,13 @@ public class Chemin {
 	private List<CourbeElementaire> elements;
 	private List<Boolean> sensDirects;
 	private List<Divergence> divergences;
+	private List<Panneau> panneaux;
 	
 	public Chemin(){
 		this.elements = new ArrayList<CourbeElementaire>();
 		this.sensDirects = new ArrayList<Boolean>();
 		this.divergences = new ArrayList<Divergence>();
+		this.panneaux = new ArrayList<Panneau>();
 	}
 	
 	public void recalculerChemin(Position position){
@@ -33,8 +36,11 @@ public class Chemin {
 		elements.clear();
 		sensDirects.clear();
 		divergences.clear();
+		panneaux.clear();
 		CourbeElementaire element = position.getElement();
-		while(element != null){
+		double longueurTotale = 0;
+		while(element != null && longueurTotale<10000){
+			longueurTotale += element.getLongueur();
 			elements.add(element);
 			sensDirects.add(sensDirect);
 			if(sensDirect){
@@ -45,6 +51,10 @@ public class Chemin {
 			if(pivot instanceof Divergence){
 				Divergence divergence = (Divergence)pivot;
 				divergences.add(divergence);
+			}
+			if(pivot instanceof Panneau){
+				Panneau panneau = (Panneau)pivot;
+				panneaux.add(panneau);
 			}
 			Transition transition;
 			transition = pivot.getNextElement(element);

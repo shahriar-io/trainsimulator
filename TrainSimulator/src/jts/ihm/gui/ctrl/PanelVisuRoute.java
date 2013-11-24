@@ -2,10 +2,12 @@ package jts.ihm.gui.ctrl;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.geom.Arc2D;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Line2D;
 import java.util.List;
 
 import javax.swing.JPanel;
@@ -15,6 +17,7 @@ import jts.moteur.ligne.Circuit;
 import jts.moteur.ligne.Ligne;
 import jts.moteur.ligne.voie.elements.Arc;
 import jts.moteur.ligne.voie.elements.CourbeElementaire;
+import jts.moteur.ligne.voie.elements.Cubique;
 import jts.moteur.ligne.voie.elements.TypeElement;
 import jts.moteur.ligne.voie.points.Divergence;
 import jts.moteur.ligne.voie.points.PointPassage;
@@ -74,27 +77,37 @@ public class PanelVisuRoute extends JPanel {
 				paintElement(g2d, element);
 			}
 			for (PointPassage pp : circuit.getPointsPassages()){
-				int[] point = getPoint(pp);
+				//int[] point = getPoint(pp);
+				//Point2D p2d = new Point2D.Double(x, y);
 				if(pp instanceof Divergence){
-					g2d.setColor(Color.RED);
-					dessinerPoint(g2d, point[0], point[1]);
+					if(((Divergence)pp).isEnDivergence()){
+						g2d.setColor(Color.ORANGE);
+					} else {
+						g2d.setColor(Color.RED);
+					}
+					//dessinerPoint(g2d, point[0], point[1]);
+					g2d.fill(getPoint2D(pp));
 				} else if(pp.getElementConnecte() == null){
 					g2d.setColor(Color.BLACK);
-					dessinerPoint(g2d, point[0], point[1]);
+					//dessinerPoint(g2d, point[0], point[1]);
+					g2d.fill(getPoint2D(pp));
 				}
 			}
 			
 			g2d.setColor(Color.BLACK);
 			Train trainJ = ligne.getCircuit().getTrainJoueur();
-			int[] pointLoco = getPoint(trainJ.getLocomotiveTete().getPosition());
-			dessinerPoint(g2d, pointLoco[0], pointLoco[1]);
+			//int[] pointLoco = getPoint(trainJ.getLocomotiveTete().getPosition());
+			//dessinerPoint(g2d, pointLoco[0], pointLoco[1]);
+			g2d.fill(getPoint2D(trainJ.getLocomotiveTete().getPosition()));
 			
 			g2d.setColor(Color.GREEN);
-			int[] pointBAv = getPoint(trainJ.getLocomotiveTete().getBogieAvant().getPoint());
-			dessinerPoint(g2d, pointBAv[0], pointBAv[1]);
+			//int[] pointBAv = getPoint(trainJ.getLocomotiveTete().getBogieAvant().getPoint());
+			//dessinerPoint(g2d, pointBAv[0], pointBAv[1]);
+			g2d.fill(getPoint2D(trainJ.getLocomotiveTete().getBogieAvant().getPoint()));
 			
-			int[] pointBAr = getPoint(trainJ.getLocomotiveTete().getBogieArriere().getPoint());
-			dessinerPoint(g2d, pointBAr[0], pointBAr[1]);
+			//int[] pointBAr = getPoint(trainJ.getLocomotiveTete().getBogieArriere().getPoint());
+			//dessinerPoint(g2d, pointBAr[0], pointBAr[1]);
+			g2d.fill(getPoint2D(trainJ.getLocomotiveTete().getBogieArriere().getPoint()));
 			/*g2d.setColor(Color.BLUE);
 			int[] pointProjete = getPoint(voiture.getPositionProjetee());
 			dessinerPoint(g2d, pointProjete[0], pointProjete[1]);
@@ -111,23 +124,38 @@ public class PanelVisuRoute extends JPanel {
 	
 	public void paintElement(Graphics2D g2d, CourbeElementaire element){
 		g2d.setColor(Color.BLUE);
-		int[] pe = getPoint(element.getP1());
-		int[] ps = getPoint(element.getP2());
-		GradientPaint rougeBarre = new GradientPaint(pe[0], pe[1], BLEU,  ps[0], ps[1], ROUGE);
-		g2d.setPaint(rougeBarre);
+		double[] pe = getPointD(element.getP1());
+		double[] ps = getPointD(element.getP2());
+		//GradientPaint rougeBarre = new GradientPaint(pe[0], pe[1], BLEU,  ps[0], ps[1], ROUGE);
+		//g2d.setPaint(rougeBarre);
 		g2d.setColor(Color.BLUE);
 		if(element.getType().equals(TypeElement.ARC)){
-			Point pt = new Point();
 			Arc arc = (Arc)element;
-			arc.recupererPoint(pt, 0.3);
-			int[] pi1 = getPoint(pt);
-			arc.recupererPoint(pt, 0.7);
-			int[] pi2 = getPoint(pt);
-			g2d.drawLine(pe[0], pe[1], pi1[0], pi1[1]);
-			g2d.drawLine(pi1[0], pi1[1], pi2[0], pi2[1]);
-			g2d.drawLine(pi2[0], pi2[1], ps[0], ps[1]);
+			double[] pCentre = getPointD(arc.getCentre());
+			double[] ratios = getRatios();
+			Arc2D.Double arc2d = new Arc2D.Double(
+					pCentre[0] - arc.getRayon()*ratios[0],
+					pCentre[1] - arc.getRayon()*ratios[1],
+					2*arc.getRayon()*ratios[0],
+					2*arc.getRayon()*ratios[1],
+					90 - arc.getAngleOrigine()*180/Math.PI, -arc.getOuverture()*180/Math.PI, Arc2D.OPEN);
+			g2d.draw(arc2d);
+		} else if(element.getType().equals(TypeElement.CUBIQUE)) {
+			Cubique cubique = (Cubique)element;
+			Point pt = new Point();
+			cubique.recupererPoint(pt, 0.3);
+			double[] pi1 = getPointD(pt);
+			cubique.recupererPoint(pt, 0.7);
+			double[] pi2 = getPointD(pt);
+			//g2d.drawLine(pe[0], pe[1], pi1[0], pi1[1]);
+			g2d.draw(new Line2D.Double(pe[0], pe[1], pi1[0], pi1[1]));
+			//g2d.drawLine(pi1[0], pi1[1], pi2[0], pi2[1]);
+			g2d.draw(new Line2D.Double(pi1[0], pi1[1], pi2[0], pi2[1]));
+			//g2d.drawLine(pi2[0], pi2[1], ps[0], ps[1]);
+			g2d.draw(new Line2D.Double(pi2[0], pi2[1], ps[0], ps[1]));
 		} else {
-			g2d.drawLine(pe[0], pe[1], ps[0], ps[1]);
+			//g2d.drawLine(pe[0], pe[1], ps[0], ps[1]);
+			g2d.draw(new Line2D.Double(pe[0], pe[1], ps[0], ps[1]));
 		}
 	}
 	
@@ -151,15 +179,38 @@ public class PanelVisuRoute extends JPanel {
 		}
 	}
 	
-	private void dessinerPoint(Graphics2D g2d, int x, int y){
+	/*private void dessinerPoint(Graphics2D g2d, int x, int y){
 		g2d.fillOval(x-3, y-3, 7, 7);
-	}
+	}*/
 	
 	private int[] getPoint(Point p){
 		int[] point = new int[2];
 		point[0] = (int)((p.getX() - xMin)*X/(xMax - xMin)) + xDecal;
 		point[1] = (int)(Y-(p.getY() - yMin)*Y/(yMax - yMin)) + yDecal;
 		return point;
+	}
+	
+	private double[] getPointD(Point p){
+		double[] point = new double[2];
+		point[0] = ((p.getX() - xMin)*X/(xMax - xMin)) + xDecal;
+		point[1] = (Y-(p.getY() - yMin)*Y/(yMax - yMin)) + yDecal;
+		return point;
+	}
+	
+	private Ellipse2D getPoint2D(Point p){
+		Ellipse2D point = new Ellipse2D.Double(
+				((p.getX() - xMin)*X/(xMax - xMin)) + xDecal - 3,
+				(Y-(p.getY() - yMin)*Y/(yMax - yMin)) + yDecal - 3,
+				7,
+				7);
+		return point;
+	}
+	
+	private double[] getRatios(){
+		double[] ratios = new double[2];
+		ratios[0] = X/(xMax - xMin);
+		ratios[1] = Y/(yMax - yMin);
+		return ratios;
 	}
 	
 	protected void getPoint(Point p, int x, int y){

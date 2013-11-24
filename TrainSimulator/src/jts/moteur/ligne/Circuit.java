@@ -114,7 +114,7 @@ public class Circuit {
 		ElementXml element = new ElementXml("Circuit");
 		ElementXml ppElement = new ElementXml("PointsPassages");
 		for(PointPassage pointPassage : pointsPassages){
-			ppElement.addElement(pointPassage.save());
+			ppElement.addElement(pointPassage.save(pointsPassages));
 		}
 		element.addElement(ppElement);
 		ElementXml ceElement = new ElementXml("CourbesElementaires");

@@ -17,6 +17,7 @@ import jts.moteur.geometrie.Polygone;
 import jts.moteur.ligne.signalisation.PanneauLumineux;
 import jts.moteur.ligne.voie.elements.CourbeElementaire;
 import jts.moteur.ligne.voie.elements.Segment;
+import jts.moteur.ligne.voie.points.Divergence;
 import jts.moteur.ligne.voie.points.PointExtremite;
 
 import org.w3c.dom.Element;
@@ -31,7 +32,7 @@ public class Section implements SauvegardableBinaire, SauvegardableXml {
 	private boolean absolu;
 	private Point positionAbsolue;
 	private AngleEuler angle;
-	private List<PointExtremite> pointsPassages;
+	private List<PointExtremite> pointsExtremites;
 	private List<CourbeElementaire> elements;
 	private Polygone frontiere;
 	
@@ -44,7 +45,7 @@ public class Section implements SauvegardableBinaire, SauvegardableXml {
 	public Section(Point position, AngleEuler angle){
 		this.positionAbsolue = position;
 		this.angle = angle;
-		this.pointsPassages = new ArrayList<PointExtremite>();
+		this.pointsExtremites = new ArrayList<PointExtremite>();
 		this.elements = new ArrayList<CourbeElementaire>();
 		absolu = false;
 	}
@@ -53,11 +54,11 @@ public class Section implements SauvegardableBinaire, SauvegardableXml {
 	
 	public AngleEuler getAngle(){ return this.angle; }
 	
-	public void addPoint(PointExtremite point){ this.pointsPassages.add(point);	}
+	public void addPoint(PointExtremite point){ this.pointsExtremites.add(point); }
 
-	public List<PointExtremite> getPointsPassages() { return pointsPassages;	}
+	public List<PointExtremite> getPointsExtremites() { return pointsExtremites; }
 	
-	public void addElement(CourbeElementaire element){ this.elements.add(element);	}
+	public void addElement(CourbeElementaire element){ this.elements.add(element); }
 
 	public List<CourbeElementaire> getElements() { return elements;	}
 	
@@ -76,7 +77,7 @@ public class Section implements SauvegardableBinaire, SauvegardableXml {
 	 */
 	public void rendreAbsolu(){
 		if (!absolu){
-			for (PointExtremite pp : pointsPassages){
+			for (PointExtremite pp : pointsExtremites){
 				pp.transformer(positionAbsolue, angle.getPsi(), angle.getTheta());
 			}
 			for (CourbeElementaire element : elements){
@@ -95,12 +96,28 @@ public class Section implements SauvegardableBinaire, SauvegardableXml {
 		return false;
 	}
 	
+	public boolean addConnectionAiguille(Section s, int indice1, int indice2, boolean biDirectionnel){
+		boolean reussi = false;
+		PointExtremite pe1 = this.pointsExtremites.get(indice1);
+		PointExtremite pe2 = s.pointsExtremites.get(indice2);
+		if(pe1 instanceof Divergence && pe2 instanceof Divergence){
+			Divergence aiguille1 = (Divergence)pe1;
+			Divergence aiguille2 = (Divergence)pe2;
+			aiguille1.addAiguilleConnecte(aiguille2);
+			if(biDirectionnel){
+				aiguille2.addAiguilleConnecte(aiguille1);
+			}
+			reussi = true;
+		}
+		return reussi;
+	}
+	
 	public void addPanneauLumineux(PanneauLumineux panneauLumineux, int indiceElement, double distance, boolean sensDirect){
 		Point p = new Point();
 		CourbeElementaire element = elements.get(indiceElement);
 		element.recupererPosition(p, new AngleEuler(), distance, sensDirect);
-		panneauLumineux.transformer(p, 0, 0);
-		this.pointsPassages.add(panneauLumineux);
+		panneauLumineux.transformer(p);
+		this.pointsExtremites.add(panneauLumineux);
 		
 		PointExtremite p1 = element.getP1();
 		PointExtremite p2 = element.getP2();
@@ -157,8 +174,8 @@ public class Section implements SauvegardableBinaire, SauvegardableXml {
 		angle.save(dos);
 		
 		//Sauvegarde des points d'entrée
-		dos.writeShort(pointsPassages.size());
-		for (PointExtremite pp : pointsPassages){
+		dos.writeShort(pointsExtremites.size());
+		for (PointExtremite pp : pointsExtremites){
 			pp.save(dos);
 		}
 		
@@ -202,17 +219,30 @@ public class Section implements SauvegardableBinaire, SauvegardableXml {
 	
 	public ElementXml save(){
 		ElementXml element = new ElementXml("Section");
-		element.addAttribut(new AttributXml("desc", "StdAig10dD"));
+		element.addAttribut(new AttributXml("desc", nomObjet));
+		
 		ElementXml ppElement = new ElementXml("PointsPassages");
 		element.addElement(ppElement);
-		for(PointExtremite pointExtremite : pointsPassages){
+		for(PointExtremite pointExtremite : pointsExtremites){
 			ppElement.addElement(pointExtremite.save());
 		}
+		
+		ElementXml elementsElement = new ElementXml("Elements");
+		element.addElement(elementsElement);
+		for(CourbeElementaire ce : elements){
+			int p1 = pointsExtremites.indexOf(ce.getP1())+1;
+			int p2 = pointsExtremites.indexOf(ce.getP2())+1;
+			elementsElement.addElement(ce.save(p1, p2));
+		}
+		
 		ElementXml frontiereElement = new ElementXml("Frontiere");
 		element.addElement(frontiereElement);
 		for(Point point : frontiere.getSommets()){
 			frontiereElement.addElement(point.save());
 		}
+		ElementXml objetElement = new ElementXml("Objet");
+		objetElement.addAttribut(new AttributXml("nom", nomObjet + ".obj"));
+		element.addElement(objetElement);
 		
 		return element;
 	}

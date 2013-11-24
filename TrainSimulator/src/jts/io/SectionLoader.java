@@ -84,8 +84,8 @@ public class SectionLoader {
 				int index1 = Integer.parseInt(element.getAttribute("p1").split("#")[1]);
 				int index2 = Integer.parseInt(element.getAttribute("p2").split("#")[1]);
 				//Conversion numéro => index
-				PointExtremite p1 = section.getPointsPassages().get(index1 - 1);
-				PointExtremite p2 = section.getPointsPassages().get(index2 - 1);
+				PointExtremite p1 = section.getPointsExtremites().get(index1 - 1);
+				PointExtremite p2 = section.getPointsExtremites().get(index2 - 1);
 				
 				if(element.getNodeName().equals("Segment")){
 					Segment segment = new Segment(p1, p2, 0);

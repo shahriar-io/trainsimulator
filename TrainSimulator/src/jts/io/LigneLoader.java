@@ -6,7 +6,6 @@ import java.io.IOException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.soap.Node;
 
 import jts.moteur.geometrie.AngleEuler;
 import jts.moteur.geometrie.Point;
@@ -18,6 +17,7 @@ import jts.moteur.ligne.voie.points.PointPassage;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -69,6 +69,25 @@ public class LigneLoader {
 					boolean typeGauche = type.equals("g");
 					Divergence div = new Divergence(x, y, z, 0, typeGauche);
 					circuit.addPointPassage(div);
+				}
+			}
+		}
+		//On reboucle pour connecter les aiguillages
+		int indiceAiguille = 0;
+		for(int i=0; i<pointsNL.getLength(); i++){
+			if(pointsNL.item(i).getNodeType() == 1){
+				Element point = (Element)pointsNL.item(i);
+				if(point.getNodeName().equals("Divergence")){
+					NodeList aiguillesNL = point.getElementsByTagName("AiguilleConnectee");
+					for(int j=0; j<aiguillesNL.getLength(); j++){
+						if(aiguillesNL.item(j).getNodeType() == 1){
+							Element aiguille = (Element)aiguillesNL.item(j);
+							int indice = Integer.parseInt(aiguille.getAttribute("indice"));
+							Divergence aiguilleConnectee = (Divergence)circuit.getPointsPassages().get(indice);
+							circuit.getAiguillages().get(indiceAiguille).addAiguilleConnecte(aiguilleConnectee);
+						}
+					}
+					indiceAiguille++;
 				}
 			}
 		}

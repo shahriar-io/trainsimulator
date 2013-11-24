@@ -4,6 +4,7 @@ import jts.moteur.geometrie.AngleEuler;
 import jts.moteur.geometrie.BasicGeo;
 import jts.moteur.geometrie.Point;
 import jts.moteur.ligne.voie.elements.CourbeElementaire;
+import jts.util.section.ModeleObjCreator;
 
 /**Cette classe représente un wagon d'un train.
  * 
@@ -68,11 +69,11 @@ public class Wagon {
 		Point pAvant = bogieAvant.getPoint();
 		Point pArriere = bogieArriere.getPoint();
 		this.position.setBarycentre(pAvant, pArriere);
-		orientation.setPsi(BasicGeo.getCap(pAvant, pArriere));
+		orientation.setPsi(BasicGeo.getCap(pArriere, pAvant));
 		orientation.setPhi(0.5*(bogieAvant.getAngle().getPhi()+bogieArriere.getAngle().getPhi()));
 		
-		observation.setXYZ(xObservation, yObservation, zObservation);
-		observation.transformer(position, orientation.getPsi(), orientation.getTheta());
+		observation.setXYZ(xObservation, yObservation, zObservation + ModeleObjCreator.Y_HAUT + ModeleObjCreator.HAUTEUR_RAIL);
+		observation.transformer(position, orientation);
 		
 		return changementElement;
 	}

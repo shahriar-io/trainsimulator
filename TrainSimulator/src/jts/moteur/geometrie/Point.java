@@ -84,18 +84,59 @@ public class Point implements Sauvegardable {
 	/**Effectue une transformation (affine) sur un point en le faisant rotationner autour de l'origine puis en le translatant.
 	 * 
 	 * @param translation point coorconnées de translation
+	 */
+	public void transformer(Point translation){
+		x = x + translation.x;
+		y = y + translation.y;
+		z = z + translation.z;
+	}
+	
+	/**Effectue une transformation (affine) sur un point en le faisant rotationner autour de l'origine puis en le translatant.
+	 * 
+	 * @param translation point coorconnées de translation
+	 * @param psi angle de rotation (cap) en radians
+	 */
+	public void transformer(Point translation, double psi){
+		double xRot = Math.cos(psi)*x + Math.sin(psi)*y;
+		double yRot = - Math.sin(psi)*x + Math.cos(psi)*y;
+		x = xRot;
+		y = yRot;
+		this.transformer(translation);
+	}
+	
+	/**Effectue une transformation (affine) sur un point en le faisant rotationner autour de l'origine puis en le translatant.
+	 * 
+	 * @param translation point coorconnées de translation
 	 * @param psi angle de rotation (cap) en radians
 	 * @param theta angle de rotation (assiette) en radians
 	 */
 	public void transformer(Point translation, double psi, double theta){
-		double y1 = Math.cos(theta)*y - Math.sin(theta)*z;
-		double x2 = Math.cos(psi)*x + Math.sin(psi)*y1 + translation.x;
-		double y2 = - Math.sin(psi)*x + Math.cos(psi)*y1 + translation.y;
-		double z2 = Math.cos(theta)*z + Math.sin(theta)*y;
-		
-		x = x2;
-		y = y2;
-		z = z2;
+		double yRot = Math.cos(theta)*y - Math.sin(theta)*z;
+		double zRot = Math.sin(theta)*y + Math.cos(theta)*z;
+		y = yRot;
+		z = zRot;
+		this.transformer(translation, psi);
+	}
+	
+	/**Effectue une transformation (affine) sur un point en le faisant rotationner autour de l'origine puis en le translatant.
+	 * 
+	 * @param translation point coorconnées de translation
+	 * @param angle <code>AngleEuler</code> angle de rotation
+	 */
+	public void transformer(Point translation, AngleEuler angle){
+		double phi = angle.getPhi();
+		double xRot = Math.cos(phi)*x + Math.sin(phi)*z;
+		double zRot = - Math.sin(phi)*x + Math.cos(phi)*z;
+		x = xRot;
+		z = zRot;
+		this.transformer(translation, angle.getPsi(), angle.getTheta());
+	}
+	
+	public void rotPhi(double phi){
+		double xRot = Math.cos(phi)*x + Math.sin(phi)*z;
+		double zRot = - Math.sin(phi)*x + Math.cos(phi)*z;
+		x = xRot;
+		z = zRot;
 	}
 	
 	/**Place le point au milieu des deux autres.

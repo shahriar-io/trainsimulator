@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
 
+import jts.io.xml.AttributXml;
 import jts.io.xml.ElementXml;
 import jts.moteur.geometrie.Point;
 
@@ -48,6 +49,7 @@ public abstract class PanneauLumineux extends Panneau {
 	public ElementXml save(){
 		ElementXml element = super.save();
 		element.setNom("PanneauLumineux");
+		element.addAttribut(new AttributXml("type", this.getClass().getCanonicalName()));
 		return element;
 	}
 }

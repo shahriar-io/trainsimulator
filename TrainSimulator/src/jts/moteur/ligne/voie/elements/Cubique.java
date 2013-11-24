@@ -41,10 +41,10 @@ public class Cubique extends CourbeElementaire {
 		angle.setPsi(psi0 + courbureFin*Math.pow(ratio*longueur, 2)/(2*longueur));
 	}
 
-	protected void recupererPoint(Point point, double ratio) {
+	public void recupererPoint(Point point, double ratio) {
 		point.setX(courbureFin*Math.pow(ratio*longueur, 3)/(6*longueur));
 		point.setY(ratio * longueur);
-		point.transformer(p1, psi0, 0);
+		point.transformer(p1, psi0);
 	}
 	
 	/**Permet d'effectuer une transformation affine sur cet élément.

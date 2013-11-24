@@ -1,5 +1,6 @@
 package jts.ihm.gui.render.j3d;
 
+import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
@@ -12,7 +13,6 @@ import javax.media.j3d.AmbientLight;
 import javax.media.j3d.Background;
 import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.BranchGroup;
-import javax.media.j3d.Canvas3D;
 import javax.media.j3d.DirectionalLight;
 import javax.media.j3d.GraphicsConfigTemplate3D;
 import javax.media.j3d.LineArray;
@@ -25,7 +25,9 @@ import javax.vecmath.Color3f;
 import javax.vecmath.Point3d;
 import javax.vecmath.Vector3f;
 
+import jts.ihm.gui.render.InterfaceMoteur3D;
 import jts.moteur.geometrie.Point;
+import jts.moteur.ligne.ObjetScene;
 
 import com.microcrowd.loader.java3d.max3ds.Loader3DS;
 import com.sun.j3d.loaders.IncorrectFormatException;
@@ -39,7 +41,7 @@ import com.sun.j3d.utils.geometry.Stripifier;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 
 
-public class Vue3D /*extends Applet */implements InterfaceJ3D {
+public class RenduJ3D implements InterfaceMoteur3D {
 	
 	private static String REPERTOIRE_OBJETS = "data/objets/";
 
@@ -54,8 +56,9 @@ public class Vue3D /*extends Applet */implements InterfaceJ3D {
 	
 	private JtsCanvas3D c3d;
 	
-	public Vue3D(JtsCanvas3D c3d){
-		this.c3d = c3d;
+	public RenduJ3D(int width, int height){
+		//this.c3d = c3d;
+		c3d = new JtsCanvas3D(SimpleUniverse.getPreferredConfiguration(), width, height);
 	    simpleU = new SimpleUniverse(c3d);
 	    simpleU.getViewingPlatform().setNominalViewingTransform();
 	    
@@ -76,6 +79,10 @@ public class Vue3D /*extends Applet */implements InterfaceJ3D {
 	   
 	    loader3ds = new Loader3DS();
 	    loaderObj = new ObjectFile();
+	}
+	
+	public Canvas getCanvas(){
+		return this.c3d;
 	}
 	
 	private void createSceneGraph() {
@@ -104,7 +111,7 @@ public class Vue3D /*extends Applet */implements InterfaceJ3D {
 		Transform3D mouvement = new Transform3D();
 		Transform3D rotation = new Transform3D();
 	    mouvement.setTranslation(new Vector3f (x, y, z));
-	    rotation.rotY(theta);
+	    rotation.rotY(theta+Math.PI);
 	    mouvement.mul(rotation);
 	    rotation.rotZ(phi);
 	    mouvement.mul(rotation);
@@ -124,7 +131,8 @@ public class Vue3D /*extends Applet */implements InterfaceJ3D {
 		simpleU.addBranchGraph(bg);
 	}
 	
-	public void chargerObjet(float x, float y, float z, float psi, String nomObjet){
+	public void chargerObjet(ObjetScene objet){
+		String nomObjet = objet.getNomObjet();
 		String nomComplet = REPERTOIRE_OBJETS + nomObjet;
 		File fichierObjet = new File(nomComplet);
 	    
@@ -149,8 +157,8 @@ public class Vue3D /*extends Applet */implements InterfaceJ3D {
 			BranchGroup scene = sceneLoaded.getSceneGroup();
 			Transform3D translation = new Transform3D();
 			Transform3D rotation = new Transform3D();
-			translation.setTranslation(new Vector3f (x, y, z));
-			rotation.rotY(-psi);
+			translation.setTranslation(toVector(objet.getPoint()));
+			rotation.rotY(-(float)objet.getAngle().getPsi());
 			translation.mul(rotation);
 			TransformGroup tgObjet = new TransformGroup();
 			tgObjet.setTransform(translation);
@@ -205,5 +213,11 @@ public class Vue3D /*extends Applet */implements InterfaceJ3D {
 		float cos = (float)Math.cos((heure - 12.0f)/12.0*Math.PI);
 		float coeff = (cos + 1)/2.0f;
 		ciel.setColor(0.9f*coeff, 0.9f*coeff, 1.0f*coeff);
+	}
+	
+	private static Vector3f toVector(Point p){
+		return new Vector3f ((float)p.getY(),
+				(float)p.getZ(),
+				(float)p.getX());
 	}
 }

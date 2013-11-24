@@ -23,7 +23,7 @@ public class CircuitConverter {
 		List<CourbeElementaire> courbesElementaires = new ArrayList<CourbeElementaire>();
 		
 		for(Section section : circuitSections.getSections()){
-			for(PointExtremite pointExtremite : section.getPointsPassages()){
+			for(PointExtremite pointExtremite : section.getPointsExtremites()){
 				pointsExtremite.add(pointExtremite);
 			}
 			for(CourbeElementaire courbe : section.getElements()){

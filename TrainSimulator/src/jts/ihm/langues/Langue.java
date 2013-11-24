@@ -12,6 +12,7 @@ import java.util.Map;
 public enum Langue {
 
 	FRANCAIS("fr", "français"),
+	ESPERANTO("eo", "esperanto"),
 	ANGLAIS("en", "english"),
 	ALLEMAND("de", "deutsch");
 	

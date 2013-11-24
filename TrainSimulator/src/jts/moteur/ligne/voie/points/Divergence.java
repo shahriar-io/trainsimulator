@@ -1,6 +1,8 @@
 package jts.moteur.ligne.voie.points;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import jts.io.SauvegardableXml;
 import jts.io.xml.AttributXml;
@@ -24,6 +26,8 @@ public class Divergence extends PointPassage implements SauvegardableXml {
 	
 	private CourbeElementaire voieDeviee;
 	
+	private List<Divergence> aiguillesConnectees;
+	
 	public Divergence(boolean typeGauche){
 		this(0, 0, 0, 0, typeGauche);
 	}
@@ -32,6 +36,7 @@ public class Divergence extends PointPassage implements SauvegardableXml {
 		super(x, y, z, phi);
 		this.aiguillageEnDivergence = false;
 		this.typeGauche = typeGauche;
+		this.aiguillesConnectees = new ArrayList<Divergence>();
 	}
 	
 	/**Permet d'ajouter un élément à une divergence. Les éléments seront remplis dans l'ordre : element, voieNormale, voieDeviee.
@@ -48,15 +53,23 @@ public class Divergence extends PointPassage implements SauvegardableXml {
 		}
 		return set;
 	}
+	
+	public void addAiguilleConnecte(Divergence aiguille){
+		this.aiguillesConnectees.add(aiguille);
+		//aiguille.aiguillesConnectees.add(this);
+	}
 
 	/**Permet de changer l'aiguillage de place.
 	 * 
 	 */
 	public void switcher(){
 		aiguillageEnDivergence = !aiguillageEnDivergence;
+		for(Divergence divergence : aiguillesConnectees){
+			divergence.aiguillageEnDivergence = !divergence.aiguillageEnDivergence;
+		}
 		System.out.println("Switch !");
 	}
-
+	
 	public Transition getNextElement(CourbeElementaire elementCourant) {
 		CourbeElementaire next = null;
 		boolean sensAller = false;
@@ -89,6 +102,8 @@ public class Divergence extends PointPassage implements SauvegardableXml {
 	
 	public boolean isTypeGauche(){ return this.typeGauche; }
 	
+	public boolean isEnDivergence(){ return this.aiguillageEnDivergence; }
+	
 	public void load(Element element) throws IOException {
 		
 	}
@@ -117,6 +132,17 @@ public class Divergence extends PointPassage implements SauvegardableXml {
 		ElementXml element = super.save();
 		element.setNom("Divergence");
 		element.addAttribut(new AttributXml("type", type));
+		return element;
+	}
+	
+	public ElementXml save(List<PointPassage> pointsPassages){
+		ElementXml element = this.save();
+		for(Divergence divergence : aiguillesConnectees){
+			int indice = pointsPassages.indexOf(divergence);
+			ElementXml elementAiguilleConnectee = new ElementXml("AiguilleConnectee");
+			elementAiguilleConnectee.addAttribut(new AttributXml("indice", Integer.toString(indice)));
+			element.addElement(elementAiguilleConnectee);
+		}
 		return element;
 	}
 }
