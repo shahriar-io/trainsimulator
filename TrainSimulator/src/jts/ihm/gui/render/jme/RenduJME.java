@@ -12,6 +12,7 @@ import jts.moteur.ligne.ObjetScene;
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.plugins.FileLocator;
 import com.jme3.light.AmbientLight;
+import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
@@ -47,13 +48,13 @@ public class RenduJME extends SimpleApplication implements InterfaceMoteur3D {
 		settings.setWidth(width);
 		settings.setHeight(height);
 		settings.setSamples(16);
-		settings.setUseInput(false);
+		//settings.setUseInput(false);
 		
 		this.setSettings(settings);
 		this.createCanvas();
 		
 		JmeCanvasContext ctx = (JmeCanvasContext)this.getContext();
-		ctx.setSystemListener(this);
+		//ctx.setSystemListener(this);
 		Dimension dim = new Dimension(width, height);
 		ctx.getCanvas().setPreferredSize(dim);
 		
@@ -64,6 +65,8 @@ public class RenduJME extends SimpleApplication implements InterfaceMoteur3D {
 		assetManager.registerLocator(".", FileLocator.class);
 		
 		AmbientLight sun = new AmbientLight();
+		//DirectionalLight sun = new DirectionalLight();
+		//sun.setDirection((new Vector3f(-1, -4, -1).normalizeLocal()));
         rootNode.addLight(sun);
         
         cam.setFrustumPerspective(45, (float)height/(float)width, 1, 2000);
@@ -77,10 +80,10 @@ public class RenduJME extends SimpleApplication implements InterfaceMoteur3D {
                 "Common/MatDefs/Terrain/Terrain.j3md");
      
         mat_terrain.setTexture("Alpha", assetManager.loadTexture(
-                "Textures/Terrain/splat/alphamap.png"));
+                "data/objets/textures/alphamap.png"));
      
         Texture grass = assetManager.loadTexture(
-                "Textures/Terrain/splat/grass.jpg");
+                "data/objets/textures/grass.jpg");
         grass.setWrap(WrapMode.Repeat);
         mat_terrain.setTexture("Tex1", grass);
         mat_terrain.setFloat("Tex1Scale", 64f);
@@ -88,7 +91,7 @@ public class RenduJME extends SimpleApplication implements InterfaceMoteur3D {
         mat_terrain.setFloat("Tex3Scale", 128f);
      
         Texture dirt = assetManager.loadTexture(
-                "Textures/Terrain/splat/dirt.jpg");
+                "data/objets/textures/dirt.jpg");
         dirt.setWrap(WrapMode.Repeat);
         mat_terrain.setTexture("Tex2", dirt);
         mat_terrain.setFloat("Tex2Scale", 32f);
@@ -104,11 +107,13 @@ public class RenduJME extends SimpleApplication implements InterfaceMoteur3D {
      
         TerrainLodControl control = new TerrainLodControl(terrain, getCamera());
         terrain.addControl(control);
+        
+        System.out.println(inputManager);
 	}
 
 	public void creerCiel() {
 		rootNode.attachChild(SkyFactory.createSky(
-                assetManager, "data/objets/ciel.jpg", true));
+                assetManager, "data/objets/textures/ciel.jpg", true));
 	}
 
 	public Canvas getCanvas() {

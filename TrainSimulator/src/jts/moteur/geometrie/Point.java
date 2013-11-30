@@ -175,7 +175,7 @@ public class Point implements Sauvegardable {
 	}
 	
 	public String toString(){
-		String str = "(" + x + ", " + y + ", " + z + ")";
+		String str = "(" + DF.format(x) + ";" + DF.format(y) + ";" + DF.format(z) + ")";
 		return str;
 	}
 	

@@ -94,8 +94,12 @@ public class Controleur implements InterfaceControleur {
 		
 		if(configuration.getConfigurationJoystick().isUseJoystick()){
 			ihm.getIntefaceJoystick().refreshValeurs();
-			this.moteurPhysique.setDeltaCommandeVolant(-ihm.getIntefaceJoystick().getValeurs().getAxe(0));
+			double valeur = ihm.getIntefaceJoystick().getValeurs().getAxe(0);
+			this.moteurPhysique.setDeltaCommandeVolant(-Math.signum(valeur)*Math.pow(valeur, 2.0));
 			this.moteurPhysique.setDeltaCommandeFrein(0);
+			if(ihm.getIntefaceJoystick().getValeurs().getFrontMontant(0)){
+				this.moteurPhysique.getLigne().getCircuit().getTrainJoueur().switchNextDivergence();
+			}
 		}
 		this.moteurPhysique.nextStep();
 		((Gui)this.ihm.getInterfaceGraphique()).afficherLigne(moteurPhysique.getLigne());

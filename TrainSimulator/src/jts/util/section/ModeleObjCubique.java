@@ -11,7 +11,7 @@ import jts.util.obj.ModeleObj;
 
 public class ModeleObjCubique extends ModeleObjCreator {
 	
-	private static double ANGLE_DISCRETISATION = 1.0*Math.PI/360;
+	private static double ANGLE_DISCRETISATION = 0.5*Math.PI/360;
 	
 	private int nbVoies;
 	private double ouverture;

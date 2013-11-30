@@ -7,10 +7,12 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import jts.moteur.geometrie.AngleEuler;
+import jts.moteur.geometrie.BasicGeo;
 import jts.moteur.geometrie.Point;
 import jts.moteur.ligne.CircuitSections;
 import jts.moteur.ligne.voie.Section;
 import jts.moteur.ligne.voie.points.PointExtremite;
+import jts.util.BasicConvert;
 
 public class ScriptLgnReader {
 
@@ -93,7 +95,7 @@ public class ScriptLgnReader {
 		//System.out.println("Angle ref : " + BasicConvert.radToDeg(BasicGeo.li2Pi(angleRef.getPsi())) + "°");
 		//System.out.println("Sens direct new : " + sensDirectNew);
 		//System.out.println("Angle new : " + BasicConvert.radToDeg(BasicGeo.li2Pi(angleNew.getPsi())) + "°");
-		double deltaAngle = angleRef.getPsi() - (angleNew.getPsi() - Math.PI);
+		double deltaAngle = BasicGeo.li2Pi(angleRef.getPsi() - (angleNew.getPsi() - Math.PI));
 		newSection.getAngle().setPsi(deltaAngle);
 		newSection.getAngle().setTheta(theta);
 		newSection.rendreAbsolu();
@@ -101,7 +103,7 @@ public class ScriptLgnReader {
 				ptRef.getX() - ptNew.getX(),
 				ptRef.getY() - ptNew.getY(),
 				ptRef.getZ() - ptNew.getZ());
-		System.out.println("Ajout " + type + " " + deltaPoint + " cap " + deltaAngle);
+		System.out.println("Ajout " + type + " " + deltaPoint + " cap " + Point.DF.format(deltaAngle) + "/" + Point.DF.format(BasicConvert.radToDeg(deltaAngle)));
 		
 		newSection = SectionLoader.load(new File("data/sections/" + type + ".xml"), deltaPoint, new AngleEuler());
 		newSection.getAngle().setPsi(deltaAngle);

@@ -9,7 +9,7 @@ import jts.util.obj.ModeleObj;
 
 public class ModeleObjCourbe extends ModeleObjCreator {
 	
-	private static double ANGLE_DISCRETISATION = 2.0*Math.PI/360;
+	private static double ANGLE_DISCRETISATION = Math.PI/360;
 	
 	private int nbVoies;
 	private double ouverture;

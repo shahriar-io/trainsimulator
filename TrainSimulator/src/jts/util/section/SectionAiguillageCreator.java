@@ -23,30 +23,43 @@ public class SectionAiguillageCreator {
 	private double longueurPrincipale;
 	private double longueurDeviation;
 	private double rayon;
-	private String nom;
-	private ModeleObjCourbe moc;
+	private String[] nom;
+	private ModeleObjAiguillage moa;
 
 	public SectionAiguillageCreator(double ouvertureDeg, double longueurPrincipale, double longueurDeviation){
 		this.ouverture = BasicConvert.degToRad(ouvertureDeg);
 		this.longueurPrincipale = longueurPrincipale;
 		this.longueurDeviation = longueurDeviation;
-		this.nom = "StdAig" + (int)ouvertureDeg + "dDtest";
+		this.nom = new String[2];
+		this.nom[0] = "StdAig" + (int)ouvertureDeg + "dD";
+		this.nom[1] = "StdAig" + (int)ouvertureDeg + "dG";
 		this.rayon = ECARTEMENT_STD/(2*(1-Math.cos(ouverture)));
 		System.out.println(this.rayon);
 		System.out.println(longueurDeviation-rayon*Math.sin(ouverture));
-		//this.moc = new ModeleObjCourbe(nbVoies, rayon, ouverture, roulis, nom);
+		this.moa = new ModeleObjAiguillage(longueurPrincipale, longueurDeviation, rayon, ouverture, nom);
 	}
 
-	public Section getSection() {
+	public Section getSection(boolean versionDroite) {
 		Section section = new Section();
-		section.setNomObjet(nom);
+		if(versionDroite){
+			section.setNomObjet(nom[0]);
+		} else {
+			section.setNomObjet(nom[1]);
+		}
 
 		double yCercle = longueurDeviation-rayon*Math.sin(ouverture);
 		PointFrontiere p1 = new PointFrontiere();
 		PointFrontiere p2 = new PointFrontiere(0, longueurPrincipale, 0, 0);
-		Divergence p3 = new Divergence(0, yCercle, 0, 0, false);
-		PointFrontiere p4 = new PointFrontiere(ECARTEMENT_STD/2, longueurDeviation, 0, 0);
-		Point centre = new Point(rayon, yCercle);
+		Divergence p3 = new Divergence(0, yCercle, 0, 0, !versionDroite);
+		PointFrontiere p4;
+		Point centre;
+		if(versionDroite){
+			p4 = new PointFrontiere(ECARTEMENT_STD/2, longueurDeviation, 0, 0);
+			centre = new Point(rayon, yCercle);
+		} else {
+			p4 = new PointFrontiere(-ECARTEMENT_STD/2, longueurDeviation, 0, 0);
+			centre = new Point(-rayon, yCercle);
+		}
 
 		section.getPointsExtremites().add(p1);
 		section.getPointsExtremites().add(p2);
@@ -54,7 +67,11 @@ public class SectionAiguillageCreator {
 		section.getPointsExtremites().add(p4);
 		section.getElements().add(new Segment(p1, p3, 0));
 		section.getElements().add(new Segment(p3, p2, 0));
-		section.getElements().add(new Arc(p3, p4, 0, centre, rayon, -Math.PI/2, ouverture));
+		if(versionDroite){
+			section.getElements().add(new Arc(p3, p4, 0, centre, rayon, -Math.PI/2, ouverture));
+		} else {
+			section.getElements().add(new Arc(p3, p4, 0, centre, rayon, Math.PI/2, -ouverture));
+		}
 
 
 		int nbSousSections = (int)(rayon*ouverture)/50;
@@ -80,19 +97,30 @@ public class SectionAiguillageCreator {
 	}
 
 	public void createAndSave(String folder){
-		Section section = getSection();
-
+		Section section = getSection(true);
 		try{
-			FileWriter fw = new FileWriter(new File(folder + "/sections/" + nom + ".xml"));
+			FileWriter fw = new FileWriter(new File(folder + "/sections/" + nom[0] + ".xml"));
 			BufferedWriter writer = new BufferedWriter(fw);
-			section.save("", writer, nom);
+			section.save("", writer, nom[0]);
 			writer.close();
 			fw.close();
 		} catch(IOException e){
 			e.printStackTrace();
 		}
-		//moc.createAndSave(folder + "/objets");
-		System.out.println(nom + " cree");
+		
+		section = getSection(false);
+		try{
+			FileWriter fw = new FileWriter(new File(folder + "/sections/" + nom[1] + ".xml"));
+			BufferedWriter writer = new BufferedWriter(fw);
+			section.save("", writer, nom[1]);
+			writer.close();
+			fw.close();
+		} catch(IOException e){
+			e.printStackTrace();
+		}
+		moa.createAndSave(folder + "/objets");
+		System.out.println(nom[0] + " cree");
+		System.out.println(nom[1] + " cree");
 	}
 
 	public static void main(String[] args) {

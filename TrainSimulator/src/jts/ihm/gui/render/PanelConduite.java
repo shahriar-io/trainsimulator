@@ -44,6 +44,8 @@ public class PanelConduite extends JPanel {
 		}
 		
         panelCanvas = new JPanel();
+        panelCanvas.setLayout(null);
+        moteur3d.getCanvas().setBounds(0, 0, PANEL_WIDTH, PANEL_HEIGHT/2);
         panelCanvas.add(moteur3d.getCanvas());
         panelCanvas.setOpaque(false);
         panelCanvas.setPreferredSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT/2));

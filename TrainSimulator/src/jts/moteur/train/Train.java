@@ -37,7 +37,7 @@ public class Train {
 	public void avancer(double dt){
 		double acceleration = 0;
 		for(Locomotive locomotive : locomotives){
-			acceleration += locomotive.getForceTraction(vitesse, commandeTraction);
+			acceleration += locomotive.getForceTraction(vitesse, commandeTraction) - 3.6*Math.signum(vitesse);
 		}
 		acceleration = acceleration * 1000 / masse;
 		this.vitesse += acceleration*dt;

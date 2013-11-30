@@ -202,7 +202,7 @@ public class RenduJ3D implements InterfaceMoteur3D {
         st.stripify(gi);
         gi.recomputeIndices();
 
-        surface.setAppearance(CreateurVoiture.createMaterialAppearance());
+        //surface.setAppearance(CreateurVoiture.createMaterialAppearance());
         surface.setGeometry(gi.getGeometryArray());
 		
 		bg.addChild(surface);

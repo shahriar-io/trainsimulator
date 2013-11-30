@@ -25,12 +25,12 @@ public class MoteurPhysique {
 		trainJoueur.avancer(dt);
 	}
 	
-	public void setDeltaCommandeVolant(float deltaCommandeVolant){
+	public void setDeltaCommandeVolant(double deltaCommandeVolant){
 		Train trainJoueur = this.ligne.getCircuit().getTrainJoueur();
-		trainJoueur.modifierCommandeVolant(deltaCommandeVolant*dt);
+		trainJoueur.modifierCommandeVolant(deltaCommandeVolant*dt*2);
 	}
 	
-	public void setDeltaCommandeFrein(float deltaCommandeFrein){
+	public void setDeltaCommandeFrein(double deltaCommandeFrein){
 		Train trainJoueur = this.ligne.getCircuit().getTrainJoueur();
 		trainJoueur.modifierCommandeFrein(deltaCommandeFrein*dt);
 	}
