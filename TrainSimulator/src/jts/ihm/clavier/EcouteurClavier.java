@@ -111,4 +111,6 @@ public class EcouteurClavier implements KeyListener, InterfaceClavier{
 	}
 
 	public boolean[] getTouchePressee() { return this.touches; }
+	
+	public void setTouchePressee(boolean pressee, ToucheClavier touche) { this.touches[touche.ordinal()] = pressee; }
 }

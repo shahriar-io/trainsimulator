@@ -36,9 +36,10 @@ public abstract class PointExtremite extends Point implements SauvegardableXml {
 	/**Permet de récupérer l'élément suivant accédé par ce point depuis l'élément courant.
 	 * 
 	 * @param elementCourant élément sur lequel se trouve le train.
+	 * @param transitionPhysique <b>true</b> si cela correspond au franchissement d'un train, <b>false</b> pour les calculs de chemin
 	 * @return <code>Transition</code> : le nouvel élément et son sens de parcours.
 	 */
-	public abstract Transition getNextElement(CourbeElementaire elementCourant);
+	public abstract Transition getNextElement(CourbeElementaire elementCourant, boolean transitionPhysique);
 	
 	public CourbeElementaire getElementBase(){ return this.elementBase; }
 

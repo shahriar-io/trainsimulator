@@ -64,7 +64,7 @@ public class Position {
 				pivot = element.getP1();
 			}
 			Transition transition;
-			transition = pivot.getNextElement(element);
+			transition = pivot.getNextElement(element, true);
 			sensDirect = transition.isSensDirect();
 			element = transition.getElement();
 			

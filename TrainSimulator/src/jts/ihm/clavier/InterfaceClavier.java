@@ -18,4 +18,6 @@ public interface InterfaceClavier {
 	 * @return
 	 */
 	public boolean[] getTouchePressee();
+	
+	public void setTouchePressee(boolean pressee, ToucheClavier touche);
 }

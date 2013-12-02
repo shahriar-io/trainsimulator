@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +19,7 @@ import jts.util.BasicConvert;
 public class SectionAiguillageCreator {
 
 	private static double ECARTEMENT_STD = 4.0;
+	private static DecimalFormat DF = new DecimalFormat("0.##");
 
 	private double ouverture;
 	private double longueurPrincipale;
@@ -31,8 +33,9 @@ public class SectionAiguillageCreator {
 		this.longueurPrincipale = longueurPrincipale;
 		this.longueurDeviation = longueurDeviation;
 		this.nom = new String[2];
-		this.nom[0] = "StdAig" + (int)ouvertureDeg + "dD";
-		this.nom[1] = "StdAig" + (int)ouvertureDeg + "dG";
+		String ouvertureDegStr = DF.format(ouvertureDeg).replace(',', 'p');
+		this.nom[0] = "StdAig" + ouvertureDegStr + "dD";
+		this.nom[1] = "StdAig" + ouvertureDegStr + "dG";
 		this.rayon = ECARTEMENT_STD/(2*(1-Math.cos(ouverture)));
 		System.out.println(this.rayon);
 		System.out.println(longueurDeviation-rayon*Math.sin(ouverture));

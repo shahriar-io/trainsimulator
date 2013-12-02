@@ -76,8 +76,8 @@ public class Train {
 				tamponCommande = 0;
 			}
 		}
-		commandeTraction = Math.max(nouvelleCommande, -1);
-		commandeTraction = Math.min(nouvelleCommande, 1);
+		//Commande bornée entre -1 et 1
+		commandeTraction = Math.min(Math.max(nouvelleCommande, -1), 1);
 	}
 	
 	public void modifierCommandeFrein(double deltaCF){

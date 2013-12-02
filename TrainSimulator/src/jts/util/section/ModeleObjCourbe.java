@@ -36,6 +36,7 @@ public class ModeleObjCourbe extends ModeleObjCreator {
 	private void createObjet() {
 		nbSousSections = (int)(ouverture/ANGLE_DISCRETISATION);
 		double maxTexture = (rayon*ouverture/5)/nbSousSections;
+		maxTexture = ((int)((maxTexture+0.5)*2))/2.0;
 		obj = new ModeleObj();
 		obj.addPointTexture(new Point(0, 0));
 		obj.addPointTexture(new Point(0.21, 0));

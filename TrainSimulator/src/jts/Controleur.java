@@ -2,6 +2,8 @@ package jts;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import jts.conf.Configuration;
 import jts.conf.InterfaceConfiguration;
@@ -47,6 +49,7 @@ public class Controleur implements InterfaceControleur {
 			System.out.println("Impossible de créer un fichier de log");
 			e.printStackTrace();
 		}
+		Logger.getLogger("").setLevel(Level.WARNING);
 		configuration = new Configuration();
 		ihm = new Ihm(this);
 		ihm.preinit();
@@ -73,8 +76,6 @@ public class Controleur implements InterfaceControleur {
 	public void lancerSimu(File fichierLigne, File fichierScenario){
 		Log.getInstance().logInfo("**********  Chargement de la ligne  **********");
 		Ligne ligne = LigneLoader.load(fichierLigne);
-		//Ligne ligne = ScriptLgnReader.load(new File("data/lignes/Circuit_Luzerian.lgn"));
-		//Ligne ligne = LigneLuzerianCreator.create();
 		this.moteurPhysique.setLigne(ligne);
 		
 		Log.getInstance().logInfo("**********  Chargement du scénario  **********");
@@ -94,7 +95,7 @@ public class Controleur implements InterfaceControleur {
 		
 		if(configuration.getConfigurationJoystick().isUseJoystick()){
 			ihm.getIntefaceJoystick().refreshValeurs();
-			double valeur = ihm.getIntefaceJoystick().getValeurs().getAxe(0);
+			double valeur = ihm.getIntefaceJoystick().getValeurs().getAxe(4);
 			this.moteurPhysique.setDeltaCommandeVolant(-Math.signum(valeur)*Math.pow(valeur, 2.0));
 			this.moteurPhysique.setDeltaCommandeFrein(0);
 			if(ihm.getIntefaceJoystick().getValeurs().getFrontMontant(0)){
@@ -106,11 +107,12 @@ public class Controleur implements InterfaceControleur {
 		
 		//Harmoniques 400 et 1200 Hz fonction de la commande moteur.
 		double commande = this.moteurPhysique.getLigne().getCircuit().getTrainJoueur().getCommandeTraction();
-		double frequences[] = {300.0, 400.0, 1200.0};
+		double frequenceVitesse = this.moteurPhysique.getLigne().getCircuit().getTrainJoueur().getVitesse()*10.0;
+		double frequences[] = {400.0, 1200.0, frequenceVitesse};
 		double amplitudes[] = new double[3];
-		amplitudes[0] = 0.8 * commande;
-		amplitudes[1] = 0.05 * commande;
-		amplitudes[2] = 0.05 * commande;
+		amplitudes[0] = 0.85 * commande * 0.6;
+		amplitudes[1] = 0.15 * commande * 0.6;
+		//amplitudes[2] = 0.4;
 		audio.jouerFrequences(frequences, amplitudes);
 		audio.flush();
 	}

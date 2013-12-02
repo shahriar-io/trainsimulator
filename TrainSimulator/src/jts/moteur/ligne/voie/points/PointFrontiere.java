@@ -27,14 +27,13 @@ public class PointFrontiere extends PointExtremite implements SauvegardableXml {
 		super(x, y, z, phi);
 	}
 	
-	public Transition getNextElement(CourbeElementaire elementCourant) {
+	public Transition getNextElement(CourbeElementaire elementCourant, boolean transitionPhysique) {
 		CourbeElementaire next = null;
 		boolean sensAller = true;
 		
 		//On ne s'intéresse à l'élément suivant que s'il y a connexion.
 		if(connexion != null){
 			next = connexion.elementBase;
-			//System.out.println("nextlength : " + next.getLongueur());
 			if (next.getP1().equals(this)){
 				sensAller = true;
 			} else {

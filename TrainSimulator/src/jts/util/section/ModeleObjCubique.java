@@ -53,6 +53,7 @@ public class ModeleObjCubique extends ModeleObjCreator {
 		
 		nbSousSections = (int)(ouverture/ANGLE_DISCRETISATION);
 		double maxTexture = (sFin/5)/nbSousSections;
+		maxTexture = ((int)((maxTexture+0.5)*2))/2.0;
 		if(versionDroite){
 			cubique = new Cubique(pf1, pf2, 0, 1/rayon, ouverture);
 		} else {

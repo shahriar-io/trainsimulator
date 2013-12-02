@@ -1,11 +1,10 @@
 package jts.ihm.gui.render;
 
 import java.awt.Dimension;
-import java.awt.event.KeyListener;
-import java.util.logging.Level;
 
 import javax.swing.JPanel;
 
+import jts.ihm.clavier.EcouteurClavier;
 import jts.ihm.gui.render.j3d.RenduJ3D;
 import jts.ihm.gui.render.jme.RenduJME;
 
@@ -29,7 +28,7 @@ public class PanelConduite extends JPanel {
 		super();
 	}
 	
-	public InterfaceMoteur3D init(KeyListener keyListener){
+	public InterfaceMoteur3D init(EcouteurClavier ecouteur){
 		this.setLayout(null);
 		this.setFocusable(true);
 		//this.requestFocus();
@@ -38,9 +37,8 @@ public class PanelConduite extends JPanel {
 		if(false){
 			moteur3d = new RenduJ3D(PANEL_WIDTH, PANEL_HEIGHT/2);
 		} else {
-			moteur3d = new RenduJME(PANEL_WIDTH, PANEL_HEIGHT/2);
+			moteur3d = new RenduJME(PANEL_WIDTH, PANEL_HEIGHT/2, ecouteur);
 			((RenduJME)moteur3d).startCanvas();
-			java.util.logging.Logger.getLogger("").setLevel(Level.WARNING);
 		}
 		
         panelCanvas = new JPanel();
@@ -51,14 +49,14 @@ public class PanelConduite extends JPanel {
         panelCanvas.setPreferredSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT/2));
         panelCanvas.setFocusable(true);
         panelCanvas.setBounds(0, 0, PANEL_WIDTH, PANEL_HEIGHT/2);
-        panelCanvas.addKeyListener(keyListener);
+        panelCanvas.addKeyListener(ecouteur);
         this.add(panelCanvas);
         
         tableauBord = new PanelTableauBord();
         tableauBord.init(PANEL_WIDTH, PANEL_HEIGHT/2);
         tableauBord.setFocusable(true);
         tableauBord.setBounds(0, PANEL_HEIGHT/2, PANEL_WIDTH, PANEL_HEIGHT/2);
-        tableauBord.addKeyListener(keyListener);
+        tableauBord.addKeyListener(ecouteur);
         //tableauBord.requestFocus();
         this.add(tableauBord);
         

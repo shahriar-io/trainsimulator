@@ -29,7 +29,7 @@ public class PointPassage extends PointExtremite implements SauvegardableXml {
 	}
 
 	@Override
-	public Transition getNextElement(CourbeElementaire elementCourant) {
+	public Transition getNextElement(CourbeElementaire elementCourant, boolean transitionPhysique) {
 		CourbeElementaire next = null;
 		boolean sensAller = false;
 		

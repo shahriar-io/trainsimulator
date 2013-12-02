@@ -70,7 +70,7 @@ public class Divergence extends PointPassage implements SauvegardableXml {
 		System.out.println("Switch !");
 	}
 	
-	public Transition getNextElement(CourbeElementaire elementCourant) {
+	public Transition getNextElement(CourbeElementaire elementCourant, boolean transitionPhysique) {
 		CourbeElementaire next = null;
 		boolean sensAller = false;
 		
@@ -81,9 +81,9 @@ public class Divergence extends PointPassage implements SauvegardableXml {
 			} else {
 				next = elementConnecte;
 			}
-		} else if((elementCourant.equals(elementConnecte))&&(!aiguillageEnDivergence)) {
+		} else if((elementCourant.equals(elementConnecte))&&(!aiguillageEnDivergence || transitionPhysique)) {
 			next = elementBase;
-		} else if((elementCourant.equals(voieDeviee))&&(aiguillageEnDivergence)) {
+		} else if((elementCourant.equals(voieDeviee))&&(aiguillageEnDivergence || transitionPhysique)) {
 			next = elementBase;
 		}
 		

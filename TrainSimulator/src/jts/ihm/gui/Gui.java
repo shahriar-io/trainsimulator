@@ -12,6 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import jts.ihm.InterfaceHommeMachine;
+import jts.ihm.clavier.EcouteurClavier;
 import jts.ihm.gui.ctrl.PanelVisuRoute;
 import jts.ihm.gui.render.InterfaceMoteur3D;
 import jts.ihm.gui.render.PanelConduite;
@@ -108,7 +109,7 @@ public class Gui implements InterfaceGraphique {
 		this.fenetre.add(panelConduite);
 		
 		this.render = panelConduite;
-		this.moteur3d = this.render.init((KeyListener)ihm.getInterfaceClavier());
+		this.moteur3d = this.render.init((EcouteurClavier)ihm.getInterfaceClavier());
 		this.fenetre.setFocusable(true);
 		this.fenetre.addKeyListener((KeyListener)ihm.getInterfaceClavier());
 		this.relocaliserFenetre();

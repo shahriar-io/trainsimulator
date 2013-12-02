@@ -57,7 +57,7 @@ public class Chemin {
 				panneaux.add(panneau);
 			}
 			Transition transition;
-			transition = pivot.getNextElement(element);
+			transition = pivot.getNextElement(element, false);
 			sensDirect = transition.isSensDirect();
 			element = transition.getElement();
 		}

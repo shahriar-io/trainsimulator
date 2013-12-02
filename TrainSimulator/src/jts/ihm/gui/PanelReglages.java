@@ -67,7 +67,8 @@ public class PanelReglages extends JPanel implements ActionListener, ItemListene
 		this.nomsJoystick.setBounds(100, 70, 200, 30);
 		this.nomsJoystick.setModel(new DefaultComboBoxModel(gui.getIhm().getIntefaceJoystick().getJoystickNames().toArray()));
 		this.nomsJoystick.addItemListener(this);
-		this.nomsJoystick.setSelectedIndex(gui.getIhm().getControleur().getConfiguration().getConfigurationJoystick().getNumeroJoystick());
+		int index = Math.min(gui.getIhm().getControleur().getConfiguration().getConfigurationJoystick().getNumeroJoystick(), nomsJoystick.getModel().getSize()-1);
+		this.nomsJoystick.setSelectedIndex(index);
 		this.nomsJoystick.setEnabled(utiliserJoystick.isSelected());
 		this.add(nomsJoystick);
 		
