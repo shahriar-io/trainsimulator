@@ -8,6 +8,7 @@ import java.awt.RenderingHints;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JPanel;
@@ -48,11 +49,11 @@ public class PanelVisuRoute extends JPanel {
 	
 	private VisuCtrlMouseListener ml;
 	
-	//private JLabel plus;
-	//private JLabel moins;
-	
 	private Ligne ligne;
 	private RenderingHints rh;
+	
+	private List<Ellipse2D> ptsExtremites2d;
+	private List<Point> ptsExtremites;
 	
 	public PanelVisuRoute(){
 		super();
@@ -63,12 +64,16 @@ public class PanelVisuRoute extends JPanel {
 		this.addMouseMotionListener(ml);
 		this.rh = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		
+		this.ptsExtremites2d = new ArrayList<Ellipse2D>();
+		this.ptsExtremites = new ArrayList<Point>();
+		
 		this.setPreferredSize(DIMENSION);
 		this.repaint();
 	}
 	
 	public void paint(Graphics g){
 		super.paint(g);
+		this.ptsExtremites2d.clear();
 		Graphics2D g2d = (Graphics2D)g;
 		g2d.setRenderingHints(rh);
 		if (ligne != null){
@@ -77,48 +82,28 @@ public class PanelVisuRoute extends JPanel {
 				paintElement(g2d, element);
 			}
 			for (PointPassage pp : circuit.getPointsPassages()){
-				//int[] point = getPoint(pp);
-				//Point2D p2d = new Point2D.Double(x, y);
 				if(pp instanceof Divergence){
 					if(((Divergence)pp).isEnDivergence()){
 						g2d.setColor(Color.ORANGE);
 					} else {
 						g2d.setColor(Color.RED);
 					}
-					//dessinerPoint(g2d, point[0], point[1]);
 					g2d.fill(getPoint2D(pp));
 				} else if(pp.getElementConnecte() == null){
 					g2d.setColor(Color.BLACK);
-					//dessinerPoint(g2d, point[0], point[1]);
-					g2d.fill(getPoint2D(pp));
+					Ellipse2D point = getPoint2D(pp);
+					this.ptsExtremites2d.add(point);
+					g2d.fill(point);
 				}
 			}
 			
 			g2d.setColor(Color.BLACK);
 			Train trainJ = ligne.getCircuit().getTrainJoueur();
-			//int[] pointLoco = getPoint(trainJ.getLocomotiveTete().getPosition());
-			//dessinerPoint(g2d, pointLoco[0], pointLoco[1]);
 			g2d.fill(getPoint2D(trainJ.getLocomotiveTete().getPosition()));
 			
 			g2d.setColor(Color.GREEN);
-			//int[] pointBAv = getPoint(trainJ.getLocomotiveTete().getBogieAvant().getPoint());
-			//dessinerPoint(g2d, pointBAv[0], pointBAv[1]);
 			g2d.fill(getPoint2D(trainJ.getLocomotiveTete().getBogieAvant().getPoint()));
-			
-			//int[] pointBAr = getPoint(trainJ.getLocomotiveTete().getBogieArriere().getPoint());
-			//dessinerPoint(g2d, pointBAr[0], pointBAr[1]);
 			g2d.fill(getPoint2D(trainJ.getLocomotiveTete().getBogieArriere().getPoint()));
-			/*g2d.setColor(Color.BLUE);
-			int[] pointProjete = getPoint(voiture.getPositionProjetee());
-			dessinerPoint(g2d, pointProjete[0], pointProjete[1]);
-			paintFrontiere(g2d, voiture.getCarrosserie());*/
-			
-			/*for (Voiture voiturePNJ : scene.getVoitures()){
-				g2d.setColor(Color.YELLOW);
-				int[] pointVoitureAvPNJ = getPoint(voiturePNJ.getPositionAvant());
-				dessinerPoint(g2d, pointVoitureAvPNJ[0], pointVoitureAvPNJ[1]);
-				paintFrontiere(g2d, voiturePNJ.getCarrosserie());
-			}*/
 		}
 	}
 	
@@ -126,8 +111,7 @@ public class PanelVisuRoute extends JPanel {
 		g2d.setColor(Color.BLUE);
 		double[] pe = getPointD(element.getP1());
 		double[] ps = getPointD(element.getP2());
-		//GradientPaint rougeBarre = new GradientPaint(pe[0], pe[1], BLEU,  ps[0], ps[1], ROUGE);
-		//g2d.setPaint(rougeBarre);
+
 		g2d.setColor(Color.BLUE);
 		if(element.getType().equals(TypeElement.ARC)){
 			Arc arc = (Arc)element;
@@ -147,14 +131,10 @@ public class PanelVisuRoute extends JPanel {
 			double[] pi1 = getPointD(pt);
 			cubique.recupererPoint(pt, 0.7);
 			double[] pi2 = getPointD(pt);
-			//g2d.drawLine(pe[0], pe[1], pi1[0], pi1[1]);
 			g2d.draw(new Line2D.Double(pe[0], pe[1], pi1[0], pi1[1]));
-			//g2d.drawLine(pi1[0], pi1[1], pi2[0], pi2[1]);
 			g2d.draw(new Line2D.Double(pi1[0], pi1[1], pi2[0], pi2[1]));
-			//g2d.drawLine(pi2[0], pi2[1], ps[0], ps[1]);
 			g2d.draw(new Line2D.Double(pi2[0], pi2[1], ps[0], ps[1]));
 		} else {
-			//g2d.drawLine(pe[0], pe[1], ps[0], ps[1]);
 			g2d.draw(new Line2D.Double(pe[0], pe[1], ps[0], ps[1]));
 		}
 	}
@@ -164,24 +144,17 @@ public class PanelVisuRoute extends JPanel {
 		if (frontiere.size()>2){
 			int[] p1 = getPoint(frontiere.get(0));
 			int[] p2 = getPoint(frontiere.get(1));
-			//int[] p3;
-			//g2d.drawLine(p1[0], p1[1], p2[0], p2[1]);
+			
 			for (int i=0; i<frontiere.size()-1; i++){
 				p1 = getPoint(frontiere.get(i));
 				p2 = getPoint(frontiere.get(i+1));
-				//p3 = getPoint(frontiere.get(i+2));
 				g2d.drawLine(p1[0], p1[1], p2[0], p2[1]);
-				//g2d.drawLine(p2[0], p2[1], p3[0], p3[1]);
 			}
 			p1 = getPoint(frontiere.get(frontiere.size()-1));
 			p2 = getPoint(frontiere.get(0));
 			g2d.drawLine(p1[0], p1[1], p2[0], p2[1]);
 		}
 	}
-	
-	/*private void dessinerPoint(Graphics2D g2d, int x, int y){
-		g2d.fillOval(x-3, y-3, 7, 7);
-	}*/
 	
 	private int[] getPoint(Point p){
 		int[] point = new int[2];
@@ -213,16 +186,24 @@ public class PanelVisuRoute extends JPanel {
 		return ratios;
 	}
 	
-	protected void getPoint(Point p, int x, int y){
-		//int[] point = new int[2];
-		/*p.
-		point[0] = (int)((p.x - xMin)*X/(xMax - xMin));
-		point[1] = (int)(Y-(p.y - yMin)*Y/(yMax - yMin));*/
-		//return point;
-	}
-	
 	public void setLigne(Ligne ligne){
 		this.ligne = ligne;
+		this.ptsExtremites.clear();
+		for(PointPassage pp : ligne.getCircuit().getPointsPassages()){
+			if(pp.getElementConnecte() == null){
+				this.ptsExtremites.add(pp);
+			}
+		}
+	}
+	
+	public void clicGauche(int x, int y){
+		for(int i=0; i<ptsExtremites2d.size(); i++){
+			Ellipse2D pt2d = ptsExtremites2d.get(i);
+			if(pt2d.contains(x, y)){
+				Point p = this.ptsExtremites.get(i);
+				System.out.println(p);
+			}
+		}
 	}
 	
 	protected void appliquerFacteur(double facteur){

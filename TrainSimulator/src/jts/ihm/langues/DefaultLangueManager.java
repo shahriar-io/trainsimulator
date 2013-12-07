@@ -27,12 +27,15 @@ public class DefaultLangueManager implements LangueManager {
 		
 		Traduction traduction = new Traduction();
 		for(File file : FOLDER.listFiles()){
-			traduction.parse(file, true);
-			for(int i=0; i<nbLangues; i++){
-				if (traduction.getLanguage().equals(Langue.values()[i].getCode())){
-					fichiersTraductions[i] = file;
+			if(file.getName().endsWith(".xml")){
+				traduction.parse(file, true);
+				for(int i=0; i<nbLangues; i++){
+					if (traduction.getLanguage().equals(Langue.values()[i].getCode())){
+						fichiersTraductions[i] = file;
+					}
 				}
 			}
+			
 		}
 	}
 	

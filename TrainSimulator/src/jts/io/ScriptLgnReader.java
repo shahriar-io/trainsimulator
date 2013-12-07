@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
+import jts.log.Log;
+import jts.log.LogMode;
 import jts.moteur.geometrie.AngleEuler;
 import jts.moteur.geometrie.BasicGeo;
 import jts.moteur.geometrie.Point;
@@ -13,6 +15,7 @@ import jts.moteur.ligne.CircuitSections;
 import jts.moteur.ligne.voie.Section;
 import jts.moteur.ligne.voie.points.PointExtremite;
 import jts.util.BasicConvert;
+import jts.util.section.SectionLigneDroiteCreator;
 
 public class ScriptLgnReader {
 
@@ -70,11 +73,29 @@ public class ScriptLgnReader {
 		return circuit;
 	}
 	
+	public static Section addSection(CircuitSections circuit, String type, int numPtSectionRef, int numPtSectionNew) {
+		return addSection(circuit, type, circuit.getSections().get(circuit.getSections().size()-1), numPtSectionRef, numPtSectionNew, 0);
+	}
+	
 	public static Section addSection(CircuitSections circuit, String type, Section sectionRef, int numPtSectionRef, int numPtSectionNew) {
 		return addSection(circuit, type, sectionRef, numPtSectionRef, numPtSectionNew, 0);
 	}
+	
+	public static Section addSection(CircuitSections circuit, double longueur, Section sectionRef, int numPtSectionRef, int numPtSectionNew, double theta) {
+		SectionLigneDroiteCreator sldc = new SectionLigneDroiteCreator(1, longueur);
+		Section newSection1 = sldc.getSection();
+		Section newSection2 = sldc.getSection();
+		newSection2.setNomObjet(null);
+		return addSection(circuit, newSection1.getNomObjet(), newSection1, newSection2, sectionRef, numPtSectionRef, numPtSectionNew, theta);
+	}
 
 	public static Section addSection(CircuitSections circuit, String type, Section sectionRef, int numPtSectionRef, int numPtSectionNew, double theta) {
+		Section newSection1 = SectionLoader.load(new File("data/sections/" + type + ".xml"), new Point(), new AngleEuler());
+		Section newSection2 = SectionLoader.load(new File("data/sections/" + type + ".xml"), new Point(), new AngleEuler());
+		return addSection(circuit, type, newSection1, newSection2, sectionRef, numPtSectionRef, numPtSectionNew, theta);
+	}
+	
+	public static Section addSection(CircuitSections circuit, String type, Section newSection1, Section newSection2, Section sectionRef, int numPtSectionRef, int numPtSectionNew, double theta) {
 		PointExtremite ptRef = sectionRef.getPointsExtremites().get(numPtSectionRef-1);
 		boolean sensDirectRef = ptRef.getElementBase().getP1().equals(ptRef);
 		
@@ -83,35 +104,30 @@ public class ScriptLgnReader {
 		ptRef.getElementBase().recupererPosition(pointRef, angleRef, 0, sensDirectRef);
 		angleRef.opposer();
 		
-		Section newSection = SectionLoader.load(new File("data/sections/" + type + ".xml"), new Point(), new AngleEuler());
-		PointExtremite ptNew = newSection.getPointsExtremites().get(numPtSectionNew-1);
+		PointExtremite ptNew = newSection1.getPointsExtremites().get(numPtSectionNew-1);
 		boolean sensDirectNew = ptNew.getElementBase().getP1().equals(ptNew);
 		Point pointNew = new Point();
 		AngleEuler angleNew = new AngleEuler();
 		ptNew.getElementBase().recupererPosition(pointNew, angleNew, 0, sensDirectNew);
 		angleNew.opposer();
 		
-		//System.out.println("Sens direct ref : " + sensDirectRef);
-		//System.out.println("Angle ref : " + BasicConvert.radToDeg(BasicGeo.li2Pi(angleRef.getPsi())) + "°");
-		//System.out.println("Sens direct new : " + sensDirectNew);
-		//System.out.println("Angle new : " + BasicConvert.radToDeg(BasicGeo.li2Pi(angleNew.getPsi())) + "°");
 		double deltaAngle = BasicGeo.li2Pi(angleRef.getPsi() - (angleNew.getPsi() - Math.PI));
-		newSection.getAngle().setPsi(deltaAngle);
-		newSection.getAngle().setTheta(theta);
-		newSection.rendreAbsolu();
+		newSection1.getAngle().setPsi(deltaAngle);
+		newSection1.getAngle().setTheta(theta);
+		newSection1.rendreAbsolu();
 		Point deltaPoint = new Point(
 				ptRef.getX() - ptNew.getX(),
 				ptRef.getY() - ptNew.getY(),
 				ptRef.getZ() - ptNew.getZ());
 		System.out.println("Ajout " + type + " " + deltaPoint + " cap " + Point.DF.format(deltaAngle) + "/" + Point.DF.format(BasicConvert.radToDeg(deltaAngle)));
 		
-		newSection = SectionLoader.load(new File("data/sections/" + type + ".xml"), deltaPoint, new AngleEuler());
-		newSection.getAngle().setPsi(deltaAngle);
-		newSection.getAngle().setTheta(theta);
-		circuit.addSection(newSection);
-		newSection.rendreAbsolu();
-		circuit.essayerLienBidirectionnel(sectionRef, newSection);
-		return newSection;
+		newSection2.getAngle().setPsi(deltaAngle);
+		newSection2.getAngle().setTheta(theta);
+		newSection2.getPositionAbsolue().setXYZ(deltaPoint.getX(), deltaPoint.getY(), deltaPoint.getZ());
+		circuit.addSection(newSection2);
+		newSection2.rendreAbsolu();
+		circuit.essayerLienBidirectionnel(sectionRef, newSection2);
+		return newSection2;
 	}
 
 	public static Section addSection(CircuitSections circuit, String type, double x, double y, double z, double theta, double psi) {

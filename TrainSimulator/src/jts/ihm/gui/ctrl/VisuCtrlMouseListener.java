@@ -37,7 +37,9 @@ public class VisuCtrlMouseListener extends MouseAdapter implements MouseListener
 	}
 
 	public void mouseReleased(MouseEvent event) {
-		if(event.getButton() == MouseEvent.BUTTON2){
+		if(event.getButton() == MouseEvent.BUTTON1){
+			visuRoute.clicGauche(event.getX(), event.getY());
+		} else if(event.getButton() == MouseEvent.BUTTON2){
 			isMolettePressed = false;
 			visuRoute.appliquerChangementPDV();
 		}

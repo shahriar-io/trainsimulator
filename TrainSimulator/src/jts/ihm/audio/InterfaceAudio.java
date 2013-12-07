@@ -30,6 +30,13 @@ public interface InterfaceAudio {
 	 * @param amplitudes leurs amplitudes respectives [0;1]
 	 */
 	public void jouerFrequences(double frequences[], double amplitudes[]);
+	
+	/**Joue un son sur la duréee définie précédemment. Modifie la phase des fréquances du son
+	 * par celle de la sinusoïde correspondante en fin d'écriture.
+	 * 
+	 * @param son un <code>Son</code> à jouer
+	 */
+	public void jouerSon(Son son);
 
 	/**Envoie un paquet de données vers la carte son.
 	 * 

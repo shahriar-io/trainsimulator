@@ -37,7 +37,7 @@ public class Train {
 	public void avancer(double dt){
 		double acceleration = 0;
 		for(Locomotive locomotive : locomotives){
-			acceleration += locomotive.getForceTraction(vitesse, commandeTraction) - 3.6*Math.signum(vitesse);
+			acceleration += locomotive.getForceTraction(vitesse, commandeTraction) - 3.6*Math.signum(vitesse) - 0.014*vitesse - 0.01*vitesse*vitesse*Math.signum(vitesse);
 		}
 		acceleration = acceleration * 1000 / masse;
 		this.vitesse += acceleration*dt;
@@ -87,7 +87,9 @@ public class Train {
 	}
 	
 	public void switchNextDivergence(){
-		this.chemin.getDivergences().get(0).switcher();
-		this.chemin.recalculerChemin(this.locomotives.get(0).getBogieAvant().getPositionCourbe());
+		if(!this.chemin.getDivergences().isEmpty()){
+			this.chemin.getDivergences().get(0).switcher();
+			this.chemin.recalculerChemin(this.locomotives.get(0).getBogieAvant().getPositionCourbe());
+		}
 	}
 }

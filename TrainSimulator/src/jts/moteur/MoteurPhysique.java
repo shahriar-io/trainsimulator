@@ -34,6 +34,11 @@ public class MoteurPhysique {
 		Train trainJoueur = this.ligne.getCircuit().getTrainJoueur();
 		trainJoueur.modifierCommandeFrein(deltaCommandeFrein*dt);
 	}
+	
+	public void changerProchainAiguillage(){
+		Train trainJoueur = this.ligne.getCircuit().getTrainJoueur();
+		trainJoueur.switchNextDivergence();
+	}
 
 	public Ligne getLigne() { return ligne;	}
 

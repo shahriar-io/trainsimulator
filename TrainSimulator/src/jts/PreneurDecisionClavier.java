@@ -28,7 +28,7 @@ public class PreneurDecisionClavier {
 			this.moteurPhysique.setDeltaCommandeVolant(-0.5f);
 		}
 		if(isFrontMontant(ToucheClavier.G)){
-			this.moteurPhysique.getLigne().getCircuit().getTrainJoueur().switchNextDivergence();
+			this.moteurPhysique.changerProchainAiguillage();
 		}
 		
 		for(int i=0; i< touchesPrecedentes.length; i++){

@@ -53,6 +53,7 @@ public class RenduJME extends SimpleApplication implements InterfaceMoteur3D {
 		settings.setWidth(width);
 		settings.setHeight(height);
 		settings.setSamples(8);
+		settings.setFrameRate(60);
 
 		this.setSettings(settings);
 		this.createCanvas();
@@ -62,6 +63,8 @@ public class RenduJME extends SimpleApplication implements InterfaceMoteur3D {
 		ctx.getCanvas().setPreferredSize(dim);
 
 		this.setPauseOnLostFocus(false);
+		this.setDisplayStatView(false);
+		this.setDisplayFps(false);
 	}
 
 	public void simpleInitApp() {
@@ -110,7 +113,7 @@ public class RenduJME extends SimpleApplication implements InterfaceMoteur3D {
 
 		terrain.setMaterial(mat_terrain);
 		terrain.setLocalTranslation(-1500, 0, 0);
-		terrain.setLocalScale(8f, 1f, 8f);
+		terrain.setLocalScale(9f, 1f, 9f);
 		rootNode.attachChild(terrain);
 
 		TerrainLodControl control = new TerrainLodControl(terrain, getCamera());

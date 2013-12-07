@@ -44,6 +44,8 @@ public class SectionLigneDroiteCreator {
 			
 			Segment segment = new Segment(p1, p2, 0);
 			segment.calculerLongueur();
+			p1.setElement(segment);
+			p2.setElement(segment);
 			
 			section.getPointsExtremites().add(p1);
 			section.getPointsExtremites().add(p2);

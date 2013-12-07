@@ -15,7 +15,7 @@ import javax.sound.sampled.FloatControl.Type;
 public class AudioPlayer implements InterfaceAudio {
 	
 	private float sampleRate = 20500;  // fréquence d'échantillonnage
-	private int sampleSize = 8;        // nombre de bits par échantillon : ici un octet
+	private int sampleSize = 16;        // nombre de bits par échantillon : ici un octet
 	private boolean bigEndian = true;  // ordre des octets dans l'échantillon (si sampleSize = 16)
 	private boolean signed = true;     // les échantillons sont signés (valeurs de -128 à 127)
 	
@@ -45,7 +45,8 @@ public class AudioPlayer implements InterfaceAudio {
 			line.start();
 			bufferSize = line.getBufferSize();
 			//System.out.println("Buffer size : " + bufferSize);
-			audioSamples = new byte[(int)(sampleRate*this.duree)];
+			//audioSamples = new byte[(int)(sampleRate*this.duree)];
+			audioSamples = new byte[bufferSize];
 		} catch (LineUnavailableException lue) {
 			System.out.println("# Erreur : impossible de trouver une ligne de sortie audio au format :");
 			System.out.println("#          " + audioFormat);
@@ -100,34 +101,34 @@ public class AudioPlayer implements InterfaceAudio {
 		}
 	}
 	
+	public void jouerSon(Son son){
+		int nbSamples = (int)(sampleRate*duree);
+		double[] phasesf = new double[son.getNombreElements()];
+		if(line.available()>2*nbSamples){
+			for (int i=1; i<=nbSamples; i++){
+				double val = 0;
+				for(int k=0; k<son.getNombreElements(); k++){
+					double ratioFreq = son.getFrequences().get(k)/sampleRate;
+					phasesf[k] = 2*((double)i)*ratioFreq*Math.PI + son.getPhases().get(k);
+					val += (son.getAmplitudes().get(k)*((double)maxVal)*Math.sin(phasesf[k]));			
+				} 
+				writeSample((int)val);
+			}
+			for(int k=0; k<son.getNombreElements(); k++){
+				son.setPhase(k, phasesf[k]);
+			}
+		}
+	}
+	
 	public void flush(){
-		//if (writeOn1){
-			line.write(audioSamples, 0, j);
-		/*} else {
-			line.write(audioSamples2, 0, j);
-		}*/
+		line.write(audioSamples, 0, j);
 		j=0;
-		//writeOn1 = !writeOn1;
-		/*try {
-			Thread.sleep(100);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
 	}
 
 	private void writeSample(int val) {
 		if(j == bufferSize){
 			flush();
 		}
-		
-		/*byte[] audioSamples;
-		if(writeOn1){
-			audioSamples = audioSamples1;
-		} else {
-			audioSamples = audioSamples2;
-		}*/
-		
 		
 		if (nbOctets == 1) {
 			// Un seul octet : il suffit de le mettre dans le tableau

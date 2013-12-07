@@ -11,6 +11,8 @@ import jts.ihm.Ihm;
 import jts.ihm.InterfaceHommeMachine;
 import jts.ihm.audio.AudioPlayer;
 import jts.ihm.audio.InterfaceAudio;
+import jts.ihm.audio.InterpolationSon;
+import jts.ihm.audio.Son;
 import jts.ihm.gui.Gui;
 import jts.io.LigneLoader;
 import jts.io.ScenarioLoader;
@@ -38,8 +40,35 @@ public class Controleur implements InterfaceControleur {
 	private MoteurPhysique moteurPhysique;
 	private PreneurDecisionClavier decisions;
 	
+	
+	private InterpolationSon interpolationSon;
+	
 	public Controleur(){
-		
+		interpolationSon = new InterpolationSon(4);
+		Son son1 = new Son();
+		son1.addComposante(0, 0.1);
+		son1.addComposante(0, 0.1);
+		son1.addComposante(0, 0.2);
+		son1.addComposante(0, 0.2);
+		Son son2 = new Son();
+		son2.addComposante(78, 0.1);
+		son2.addComposante(92, 0.1);
+		son2.addComposante(146, 0.2);
+		son2.addComposante(176, 0.2);
+		Son son3 = new Son();
+		son3.addComposante(155, 0.2);
+		son3.addComposante(432, 0.2);
+		son3.addComposante(635, 0.1);
+		son3.addComposante(654, 0.1);
+		Son son4 = new Son();
+		son4.addComposante(300, 0.2);
+		son4.addComposante(800, 0.2);
+		son4.addComposante(1200, 0.05);
+		son4.addComposante(1300, 0.05);
+		interpolationSon.addSon(son1, 0);
+		interpolationSon.addSon(son2, 30/3.6);
+		interpolationSon.addSon(son3, 120/3.6);
+		interpolationSon.addSon(son4, 240/3.6);
 	}
 	
 	public void init(){
@@ -99,7 +128,7 @@ public class Controleur implements InterfaceControleur {
 			this.moteurPhysique.setDeltaCommandeVolant(-Math.signum(valeur)*Math.pow(valeur, 2.0));
 			this.moteurPhysique.setDeltaCommandeFrein(0);
 			if(ihm.getIntefaceJoystick().getValeurs().getFrontMontant(0)){
-				this.moteurPhysique.getLigne().getCircuit().getTrainJoueur().switchNextDivergence();
+				this.moteurPhysique.changerProchainAiguillage();
 			}
 		}
 		this.moteurPhysique.nextStep();
@@ -107,13 +136,22 @@ public class Controleur implements InterfaceControleur {
 		
 		//Harmoniques 400 et 1200 Hz fonction de la commande moteur.
 		double commande = this.moteurPhysique.getLigne().getCircuit().getTrainJoueur().getCommandeTraction();
-		double frequenceVitesse = this.moteurPhysique.getLigne().getCircuit().getTrainJoueur().getVitesse()*10.0;
-		double frequences[] = {400.0, 1200.0, frequenceVitesse};
-		double amplitudes[] = new double[3];
-		amplitudes[0] = 0.85 * commande * 0.6;
-		amplitudes[1] = 0.15 * commande * 0.6;
+		double vitesse = this.moteurPhysique.getLigne().getCircuit().getTrainJoueur().getVitesse();
+		//double frequences[] = {400.0, 1200.0, frequenceVitesse};
+		//double amplitudes[] = new double[3];
+		//amplitudes[0] = 0.85 * commande * 0.6;
+		//amplitudes[1] = 0.15 * commande * 0.6;
+		//double frequenceVitesse1 = vitesse*17.5;
+		//double frequenceVitesse2 = vitesse*21.1;
 		//amplitudes[2] = 0.4;
-		audio.jouerFrequences(frequences, amplitudes);
+		Son son = interpolationSon.getSon(vitesse);
+		//son.getFrequences().set(0, vitesse*17.5);
+		son.getAmplitudes().set(0, commande*0.2);
+		//son.getFrequences().set(1, vitesse*21.1);
+		son.getAmplitudes().set(1, commande*0.2);
+		son.getAmplitudes().set(2, commande*0.2);
+		son.getAmplitudes().set(3, commande*0.2);
+		audio.jouerSon(son);
 		audio.flush();
 	}
 	
