@@ -40,6 +40,8 @@ public interface InterfaceConfiguration {
 	 */
 	public ConfigurationJoystick getConfigurationJoystick();
 	
+	public ConfigurationGraphique getConfigurationGraphique();
+	
 	/**Charge le fichier de configuration correspondant.
 	 * 
 	 * @param file

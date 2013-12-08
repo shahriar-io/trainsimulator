@@ -1,6 +1,7 @@
 package jts.ihm.gui;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -39,6 +40,7 @@ public class PanelReglages extends JPanel implements ActionListener, ItemListene
 	private JLabel labelInterfaceGraphique;
 	private JLabel labelChoixLangue;
 	private JComboBox<String> langages;
+	private JComboBox<JtsDimension> resolutions;
 	
 	private JButton menuPrincipal;
 	private JButton sauvegarde;
@@ -90,6 +92,14 @@ public class PanelReglages extends JPanel implements ActionListener, ItemListene
 		this.langages.setSelectedIndex(Langue.getOrdinalFromLangue(langue));
 		this.langages.addItemListener(this);
 		this.add(langages);
+		
+		this.resolutions = new JComboBox<JtsDimension>();
+		this.resolutions.setBounds(575, 110, 150, 30);
+		this.resolutions.setModel(new DefaultComboBoxModel(gui.getDimensionsPossibles().toArray()));
+		//Langue langue = Langue.getLangueFromCode(this.gui.getIhm().getControleur().getConfiguration().getLangueCode());
+		//this.resolutions.setSelectedIndex(Langue.getOrdinalFromLangue(langue));
+		this.resolutions.addItemListener(this);
+		this.add(resolutions);
 		
 		this.add(Gui.creerArriereFondTransparent(420, 20, 360, 130));
 		
@@ -143,6 +153,10 @@ public class PanelReglages extends JPanel implements ActionListener, ItemListene
 			int indexJoystick = nomsJoystick.getSelectedIndex();
 			this.gui.getIhm().getControleur().getConfiguration().getConfigurationJoystick().setNumeroJoystick(indexJoystick);
 			this.gui.getIhm().getIntefaceJoystick().selectJoystick(indexJoystick);
+		} else if(event.getSource().equals(resolutions)){
+			int indexResolution = resolutions.getSelectedIndex();
+			JtsDimension resolution = this.gui.getDimensionsPossibles().get(indexResolution);
+			this.gui.getIhm().getControleur().getConfiguration().getConfigurationGraphique().setDimension(resolution);
 		}
 	}
 }

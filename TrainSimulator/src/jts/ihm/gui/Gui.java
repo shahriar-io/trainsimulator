@@ -5,6 +5,8 @@ import java.awt.Font;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -36,6 +38,7 @@ public class Gui implements InterfaceGraphique {
 	
 	private InterfaceHommeMachine ihm;
 	
+	private List<JtsDimension> dimensionsPossibles;
 	private JFrame fenetre;
 	private JPanel panelCourant;
 	private PanelConduite render;
@@ -49,7 +52,20 @@ public class Gui implements InterfaceGraphique {
 	
 	public InterfaceHommeMachine getIhm(){ return this.ihm; }
 	
+	public List<JtsDimension> getDimensionsPossibles(){ return this.dimensionsPossibles; }
+	
 	public void init() {
+		dimensionsPossibles = new ArrayList<JtsDimension>();
+		dimensionsPossibles.add(new JtsDimension(640, 480));
+		dimensionsPossibles.add(new JtsDimension(800, 600));
+		dimensionsPossibles.add(new JtsDimension(1024, 768));
+		dimensionsPossibles.add(new JtsDimension(1280, 720));
+		dimensionsPossibles.add(new JtsDimension(1280, 1024));
+		dimensionsPossibles.add(new JtsDimension(1366, 768));
+		dimensionsPossibles.add(new JtsDimension(1600, 900));
+		dimensionsPossibles.add(new JtsDimension(1600, 1024));
+		dimensionsPossibles.add(new JtsDimension(1920, 1080));
+		
 		panelCourant = new PanelDemarrage(this);
 		try {
 			((PanelDemarrage)panelCourant).chargerArriereFond();
@@ -109,7 +125,8 @@ public class Gui implements InterfaceGraphique {
 		this.fenetre.add(panelConduite);
 		
 		this.render = panelConduite;
-		this.moteur3d = this.render.init((EcouteurClavier)ihm.getInterfaceClavier());
+		this.moteur3d = this.render.init(this.ihm.getControleur().getConfiguration().getConfigurationGraphique().getDimension(),
+				(EcouteurClavier)ihm.getInterfaceClavier());
 		this.fenetre.setFocusable(true);
 		this.fenetre.addKeyListener((KeyListener)ihm.getInterfaceClavier());
 		this.relocaliserFenetre();

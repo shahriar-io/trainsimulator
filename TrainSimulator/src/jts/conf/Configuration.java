@@ -25,6 +25,7 @@ public class Configuration implements InterfaceConfiguration {
 	private String codeLangue;
 	
 	private ConfigurationJoystick configurationJoystick;
+	private ConfigurationGraphique configurationGraphique;
 	
 	public Configuration(){
 		firstUse = true;
@@ -41,6 +42,8 @@ public class Configuration implements InterfaceConfiguration {
 	
 	public ConfigurationJoystick getConfigurationJoystick() { return configurationJoystick; }
 	
+	public ConfigurationGraphique getConfigurationGraphique() { return configurationGraphique; }
+	
 	//A mutualiser avec la même dans Traduction
 	public static Element getUniqueElement(Element rootElement, String eltName){
 		return (Element)rootElement.getElementsByTagName(eltName).item(0);
@@ -56,6 +59,8 @@ public class Configuration implements InterfaceConfiguration {
 			codeLangue = root.getAttribute("codeLangue");
 			configurationJoystick = new ConfigurationJoystick();
 			configurationJoystick.load(getUniqueElement(root, "Joystick"));
+			configurationGraphique = new ConfigurationGraphique();
+			configurationGraphique.load(getUniqueElement(root, "Graphique"));
 		} catch (ParserConfigurationException e) {
 			System.out.println("Erreur de parse sur le fichier " + file.toString());
 			e.printStackTrace();
@@ -76,6 +81,7 @@ public class Configuration implements InterfaceConfiguration {
 		buffer.write("<Configuration firstUse=\"" + firstUse + "\" codeLangue=\"" + codeLangue + "\">");
 		buffer.newLine();
 		configurationJoystick.save(buffer, "  ");
+		configurationGraphique.save(buffer, "  ");
 		buffer.write("</Configuration>");
 		buffer.close();
 		fw.close();
