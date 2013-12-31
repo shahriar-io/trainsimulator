@@ -36,7 +36,7 @@ public class AngleEuler {
 	 */
 	public void opposer(){
 		this.theta = -this.theta;
-		//this.phi = this.phi;
+		this.phi = -this.phi;
 		this.psi = this.psi - Math.PI;
 	}
 	

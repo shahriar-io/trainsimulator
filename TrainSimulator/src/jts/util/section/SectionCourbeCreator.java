@@ -105,7 +105,7 @@ public class SectionCourbeCreator {
 		} catch(IOException e){
 			e.printStackTrace();
 		}
-		moc.createAndSave(folder + "/objets");
+		moc.createAndSave(folder + "/objets", section);
 		System.out.println(nom + " cree");
 	}
 

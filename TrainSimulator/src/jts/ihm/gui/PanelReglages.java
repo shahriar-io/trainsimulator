@@ -1,7 +1,6 @@
 package jts.ihm.gui;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -60,7 +59,7 @@ public class PanelReglages extends JPanel implements ActionListener, ItemListene
 		
 		this.utiliserJoystick = new JCheckBox(tpr.getUtilisationJoystick());
 		this.utiliserJoystick.setBounds(200, 30, 160, 30);
-		this.utiliserJoystick.setBackground(new Color(255, 255, 255, 0));
+		this.utiliserJoystick.setBackground(new Color(200, 200, 200));
 		this.utiliserJoystick.addActionListener(this);
 		this.utiliserJoystick.setSelected(gui.getIhm().getControleur().getConfiguration().getConfigurationJoystick().isUseJoystick());
 		this.add(utiliserJoystick);
@@ -75,6 +74,11 @@ public class PanelReglages extends JPanel implements ActionListener, ItemListene
 		this.add(nomsJoystick);
 		
 		this.add(Gui.creerArriereFondTransparent(20, 20, 360, 490));
+		
+		/*JPanel panelFond2 = new JPanel();
+		panelFond2.setBackground(new Color(200, 200, 200, 200));
+		panelFond2.setBounds(420, 20, 360, 130);
+		this.add(panelFond2);*/
 		
 		this.labelInterfaceGraphique = new JLabel(tpr.getInterfaceGraphique());
 		this.labelInterfaceGraphique.setBounds(440, 30, 200, 30);
@@ -102,6 +106,8 @@ public class PanelReglages extends JPanel implements ActionListener, ItemListene
 		this.add(resolutions);
 		
 		this.add(Gui.creerArriereFondTransparent(420, 20, 360, 130));
+		
+		
 		
 		this.menuPrincipal = new JButton(tpr.getMenuPrincipal());
 		this.menuPrincipal.setBounds(120, 530, 160, 30);

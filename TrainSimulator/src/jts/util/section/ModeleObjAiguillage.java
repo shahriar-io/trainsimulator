@@ -1,12 +1,21 @@
 package jts.util.section;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import jts.moteur.geometrie.Point;
+import jts.moteur.ligne.voie.Section;
 import jts.moteur.ligne.voie.elements.Arc;
-import jts.moteur.ligne.voie.points.PointFrontiere;
+import jts.moteur.ligne.voie.elements.Segment;
+import jts.moteur.ligne.voie.points.PointPassage;
+import jts.util.obj.Extrusion;
+import jts.util.obj.Facette;
 import jts.util.obj.Groupe;
-import jts.util.obj.ModeleObj;
+import jts.util.obj.Objet3D;
+import jts.util.obj.Patron;
+import jts.util.obj.VertexPosition;
+import jts.util.obj.VertexTexture;
 
 public class ModeleObjAiguillage extends ModeleObjCreator {
 	
@@ -15,13 +24,17 @@ public class ModeleObjAiguillage extends ModeleObjCreator {
 	private double longueurPrincipale;
 	private double longueurDeviation;
 	private double rayon;
+	
 	private double yCercle;
+	private double alphaInt;
+	private double yInt;
+	
 	private double ouverture;
 	private int nbSousSections;
 	private String[] nom;
 	private Arc arc;
 
-	private ModeleObj[] obj;
+	private Objet3D[] obj;
 
 	public ModeleObjAiguillage(double longueurPrincipale, double longueurDeviation, double rayon, double ouverture, String[] nom){
 		this.longueurPrincipale = longueurPrincipale;
@@ -29,14 +42,18 @@ public class ModeleObjAiguillage extends ModeleObjCreator {
 		this.rayon = rayon;
 		this.ouverture = ouverture;
 		this.nom = nom;
-		this.obj = new ModeleObj[2];
+		this.obj = new Objet3D[4];
 	}
 
-	public void createAndSave(String folder){
-		obj[0] = this.createObjet(true);
-		obj[1] = this.createObjet(false);
-		obj[0].write(new File(folder + "/" + nom[0] + ".obj"));
-		obj[1].write(new File(folder + "/" + nom[1] + ".obj"));
+	public void createAndSave(String folder, Section[] sections){
+		obj[0] = this.createObjet(true, false, sections[0]);
+		obj[1] = this.createObjet(false, false, sections[1]);
+		obj[2] = this.createObjet(true, true, sections[2]);
+		obj[3] = this.createObjet(false, true, sections[3]);
+		obj[0].writeObj(new File(folder + "/" + nom[0] + ".obj"));
+		obj[1].writeObj(new File(folder + "/" + nom[1] + ".obj"));
+		obj[2].writeObj(new File(folder + "/" + nom[2] + ".obj"));
+		obj[3].writeObj(new File(folder + "/" + nom[3] + ".obj"));
 	}
 
 	/*public void createAndSave(String nom, String folder){
@@ -44,161 +61,278 @@ public class ModeleObjAiguillage extends ModeleObjCreator {
 		obj.write(new File(folder + "/" + nom + ".obj"));
 	}*/
 
-	private ModeleObj createObjet(boolean versionDroite) {
-		nbSousSections = (int)(ouverture/ANGLE_DISCRETISATION);
-		PointFrontiere pf1 = new PointFrontiere();
-		PointFrontiere pf2 = new PointFrontiere();
+	private Objet3D createObjet(boolean versionDroite, boolean versionFin, Section section) {
+		//nbSousSections = (int)(ouverture/ANGLE_DISCRETISATION);
 		yCercle = longueurDeviation-rayon*Math.sin(ouverture);
-		if(versionDroite){
-			arc = new Arc(pf1, pf2, 0, new Point(rayon, yCercle), rayon, -Math.PI/2, ouverture);
-		} else {
-			arc = new Arc(pf1, pf2, 0, new Point(-rayon, yCercle), rayon, Math.PI/2, -ouverture);
-		}
+		alphaInt = Math.acos((rayon - X_RAIL)/(rayon + X_RAIL));
+		nbSousSections = (int)(alphaInt/ANGLE_DISCRETISATION);
+		yInt = (rayon + X_RAIL)*Math.sin(alphaInt) + yCercle;
+		
+		arc = (Arc)section.getElements().get(section.getElements().size()-1);
 		if(!versionDroite){
 			rayon = -rayon;
 		}
 		
-		ModeleObj obj = new ModeleObj();
-		obj.addPointTexture(new Point(0, 0));
-		obj.addPointTexture(new Point(0.21, 0));
-		obj.addPointTexture(new Point(0.79, 0));
-		obj.addPointTexture(new Point(1, 0));
+		Objet3D obj = new Objet3D("textures_sections.mtl");
+		obj.addTexture(new VertexTexture(0, 0));
+		obj.addTexture(new VertexTexture(0.21, 0));
+		obj.addTexture(new VertexTexture(0.35, 0));
+		obj.addTexture(new VertexTexture(0.65, 0));
+		obj.addTexture(new VertexTexture(0.79, 0));
+		obj.addTexture(new VertexTexture(1, 0));
 		
 		double maxTexture = yCercle/5;
-		maxTexture = ((int)((maxTexture+0.5)*10))/10.0;
-		obj.addPointTexture(new Point(0, maxTexture));
-		obj.addPointTexture(new Point(0.21, maxTexture));
-		obj.addPointTexture(new Point(0.79, maxTexture));
-		obj.addPointTexture(new Point(1, maxTexture));
+		maxTexture = ((int)((maxTexture+0.1)*10))/10.0;
+		obj.addTexture(new VertexTexture(0, maxTexture));
+		obj.addTexture(new VertexTexture(0.21, maxTexture));
+		obj.addTexture(new VertexTexture(0.35, maxTexture));
+		obj.addTexture(new VertexTexture(0.65, maxTexture));
+		obj.addTexture(new VertexTexture(0.79, maxTexture));
+		obj.addTexture(new VertexTexture(1, maxTexture));
 		
-		maxTexture = (longueurDeviation-yCercle)/5;
-		maxTexture = ((int)((maxTexture+0.5)*10))/10.0;
-		obj.addPointTexture(new Point(0, maxTexture));
-		obj.addPointTexture(new Point(0.25, maxTexture));
-		obj.addPointTexture(new Point(0.75, maxTexture));
-		obj.addPointTexture(new Point(1, maxTexture));
+		maxTexture = (rayon*alphaInt/5)/nbSousSections;
+		maxTexture = ((int)((Math.abs(maxTexture)+0.1)*10))/10.0;
+		obj.addTexture(new VertexTexture(0, maxTexture));
+		obj.addTexture(new VertexTexture(0.21, maxTexture));
+		obj.addTexture(new VertexTexture(0.35, maxTexture));
+		obj.addTexture(new VertexTexture(0.65, maxTexture));
+		obj.addTexture(new VertexTexture(0.79, maxTexture));
+		obj.addTexture(new VertexTexture(1, maxTexture));
 		
-		maxTexture = (longueurPrincipale-longueurDeviation)/5;
-		maxTexture = ((int)((maxTexture+0.5)*10))/10.0;
-		obj.addPointTexture(new Point(0, maxTexture));
-		obj.addPointTexture(new Point(0.21, maxTexture));
-		obj.addPointTexture(new Point(0.79, maxTexture));
-		obj.addPointTexture(new Point(1, maxTexture));
+		obj.addTexture(new VertexTexture(0.5, 0));
+		obj.addTexture(new VertexTexture(0.5, maxTexture));
 		
-		Groupe groupe;
-		Point p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20;
-		groupe = new Groupe("ballast", "Ballast");
+		maxTexture = (longueurPrincipale-yInt)/5;
+		maxTexture = ((int)((Math.abs(maxTexture)+0.1)*10))/10.0;
+		obj.addTexture(new VertexTexture(0, maxTexture));
+		obj.addTexture(new VertexTexture(0.21, maxTexture));
+		obj.addTexture(new VertexTexture(0.35, maxTexture));
+		obj.addTexture(new VertexTexture(0.65, maxTexture));
+		obj.addTexture(new VertexTexture(0.79, maxTexture));
+		obj.addTexture(new VertexTexture(1, maxTexture));
 		
-		p1 = new Point(-X_BAS, 0, Y_BAS);
-		p2 = new Point(-X_HAUT, 0, Y_HAUT);
-		p3 = new Point(X_HAUT, 0, Y_HAUT);
-		p4 = new Point(X_BAS, 0, Y_BAS);
-		p5 = new Point(-X_BAS, yCercle, Y_BAS);
-		p6 = new Point(-X_HAUT, yCercle, Y_HAUT);
-		p7 = new Point(X_HAUT, yCercle, Y_HAUT);
-		p8 = new Point(X_BAS, yCercle, Y_BAS);
-		ModeleObjCreator.createParallelepipede(obj, groupe, p1, p2, p3, p4, p5, p6, p7, p8);
-		if(versionDroite){
-			p9 = new Point(-X_BAS, longueurDeviation, Y_BAS);
-			p10 = new Point(-X_HAUT, longueurDeviation, Y_HAUT);
-			p11 = new Point(X_HAUT+1, longueurDeviation, Y_HAUT);
-			p12 = new Point(X_BAS+1, longueurDeviation, Y_BAS);
+		maxTexture = (rayon*(ouverture-alphaInt)/5);
+		maxTexture = ((int)((Math.abs(maxTexture)+0.1)*10))/10.0;
+		obj.addTexture(new VertexTexture(0, maxTexture));
+		obj.addTexture(new VertexTexture(0.21, maxTexture));
+		obj.addTexture(new VertexTexture(0.35, maxTexture));
+		obj.addTexture(new VertexTexture(0.65, maxTexture));
+		obj.addTexture(new VertexTexture(0.79, maxTexture));
+		obj.addTexture(new VertexTexture(1, maxTexture));
+		
+		Patron patron = createBallast();
+		Extrusion ballast = new Extrusion(obj, false, "ballast1", "Ballast", section.getElements().get(0), patron, false);
+		ballast.build(1);
+		obj.addGroupe(ballast);
+		paint(obj, ballast, 0);
+		
+		patron = createRail(-X_RAIL);
+		Extrusion railG = new Extrusion(obj, false, "rail_gauche_1", "Rail", section.getElements().get(0), patron, false);
+		railG.build(1);
+		obj.addGroupe(railG);
+		
+		patron = createRail(X_RAIL);
+		Extrusion railD = new Extrusion(obj, false, "rail_droite_1", "Rail", section.getElements().get(0), patron, false);
+		railD.build(1);
+		obj.addGroupe(railD);
+		
+		if(versionFin){
+			patron = createBallast();
+			ballast = new Extrusion(obj, false, "ballast2", "Ballast", section.getElements().get(1), patron, false);
+			ballast.build(nbSousSections);
+			obj.addGroupe(ballast);
+			for(int i=0; i<nbSousSections; i++){
+				paint(obj, ballast, i*5, 6);
+			}
+			
+			patron = createRail(-X_RAIL);
+			railG = new Extrusion(obj, false, "rail_gauche_2", "Rail", section.getElements().get(1), patron, false);
+			railG.build(nbSousSections);
+			obj.addGroupe(railG);
+			
+			patron = createRail(X_RAIL);
+			railD = new Extrusion(obj, false, "rail_droite_2", "Rail", section.getElements().get(1), patron, false);
+			railD.build(nbSousSections);
+			obj.addGroupe(railD);
 		} else {
-			p9 = new Point(-X_BAS-1, longueurDeviation, Y_BAS);
-			p10 = new Point(-X_HAUT-1, longueurDeviation, Y_HAUT);
-			p11 = new Point(X_HAUT, longueurDeviation, Y_HAUT);
-			p12 = new Point(X_BAS, longueurDeviation, Y_BAS);
+			if(versionDroite){
+				patron = createRail(-X_RAIL);
+				railG = new Extrusion(obj, false, "rail_gauche_2", "Rail", section.getElements().get(1), patron, false);
+				railG.build(1);
+				obj.addGroupe(railG);
+				
+				patron = createRail(X_RAIL);
+				railD = new Extrusion(obj, false, "rail_droite_2", "Rail", section.getElements().get(2), patron, false);
+				railD.build(nbSousSections);
+				obj.addGroupe(railD);
+			} else {
+				patron = createRail(-X_RAIL);
+				railG = new Extrusion(obj, false, "rail_gauche_2", "Rail", section.getElements().get(2), patron, false);
+				railG.build(nbSousSections);
+				obj.addGroupe(railG);
+				
+				patron = createRail(X_RAIL);
+				railD = new Extrusion(obj, false, "rail_droite_2", "Rail", section.getElements().get(1), patron, false);
+				railD.build(1);
+				obj.addGroupe(railD);
+			}
+			
+			nbSousSections = (int)(alphaInt/ANGLE_DISCRETISATION);
+			List<Point> pts = new ArrayList<Point>();
+			pts.add(new Point(-X_BAS, Y_BAS));
+			pts.add(new Point(-X_HAUT, Y_HAUT-0.05));
+			pts.add(new Point(-X_RAIL, Y_HAUT));
+			pts.add(new Point(0, Y_HAUT));
+			pts.add(new Point(X_RAIL, Y_HAUT));
+			pts.add(new Point(X_HAUT, Y_HAUT-0.05));
+			pts.add(new Point(X_BAS, Y_BAS));
+			
+			Groupe ballast2 = new Groupe(obj, "ballast2", "Ballast");
+			List<VertexPosition> vps = new ArrayList<VertexPosition>();
+			
+			for(Point p : pts){
+				vps.add(addPosition(p, new Point(0, yCercle), 0, ballast2));
+			}
+			
+			if(!versionDroite){
+				rayon = -rayon;
+			}
+			double alpha = 0;
+			double yInt = 0;
+			for(int i=1; i<=nbSousSections; i++){
+				alpha = (i*alphaInt)/nbSousSections;
+				yInt = (rayon + X_RAIL)*Math.sin(alpha) + yCercle;
+				Point pInt = new Point();
+				arc.recupererPoint(pInt, alpha/ouverture);
+				if(versionDroite){
+					vps.add(addPosition(pts.get(0), new Point(0, yInt), 0, ballast2));
+					vps.add(addPosition(pts.get(1), new Point(0, yInt), 0, ballast2));
+					vps.add(addPosition(pts.get(2), new Point(0, yInt), 0, ballast2));
+					vps.add(addPosition(pts.get(3), new Point(pInt.getX()/2, yInt), 0, ballast2));
+					vps.add(addPosition(pts.get(4), pInt, alpha, ballast2));
+					vps.add(addPosition(pts.get(5), pInt, alpha, ballast2));
+					vps.add(addPosition(pts.get(6), pInt, alpha, ballast2));
+				} else {
+					vps.add(addPosition(pts.get(0), pInt, -alpha, ballast2));
+					vps.add(addPosition(pts.get(1), pInt, -alpha, ballast2));
+					vps.add(addPosition(pts.get(2), pInt, -alpha, ballast2));
+					vps.add(addPosition(pts.get(3), new Point(pInt.getX()/2, yInt), 0, ballast2));
+					vps.add(addPosition(pts.get(4), new Point(0, yInt), 0, ballast2));
+					vps.add(addPosition(pts.get(5), new Point(0, yInt), 0, ballast2));
+					vps.add(addPosition(pts.get(6), new Point(0, yInt), 0, ballast2));
+				}
+				Facette facette;
+				
+				facette = new Facette(vps, 7*i, 7*(i-1), 7*(i-1)+1, 7*i+1);
+				ballast2.addFacette(facette);
+				facette.getSommets()[0].setTexture(obj.getTextures().get(12));
+				facette.getSommets()[1].setTexture(obj.getTextures().get(0));
+				facette.getSommets()[2].setTexture(obj.getTextures().get(1));
+				facette.getSommets()[3].setTexture(obj.getTextures().get(13));
+				
+				facette = new Facette(vps, 7*i+1, 7*(i-1)+1, 7*(i-1)+2, 7*i+2);
+				ballast2.addFacette(facette);
+				facette.getSommets()[0].setTexture(obj.getTextures().get(13));
+				facette.getSommets()[1].setTexture(obj.getTextures().get(1));
+				facette.getSommets()[2].setTexture(obj.getTextures().get(2));
+				facette.getSommets()[3].setTexture(obj.getTextures().get(14));
+				
+				facette = new Facette(vps, 7*i+2, 7*(i-1)+2, 7*(i-1)+3, 7*i+3);
+				ballast2.addFacette(facette);
+				facette.getSommets()[0].setTexture(obj.getTextures().get(14));
+				facette.getSommets()[1].setTexture(obj.getTextures().get(2));
+				facette.getSommets()[2].setTexture(obj.getTextures().get(18));
+				facette.getSommets()[3].setTexture(obj.getTextures().get(19));
+				
+				facette = new Facette(vps, 7*i+3, 7*(i-1)+3, 7*(i-1)+4, 7*i+4);
+				ballast2.addFacette(facette);
+				facette.getSommets()[0].setTexture(obj.getTextures().get(19));
+				facette.getSommets()[1].setTexture(obj.getTextures().get(18));
+				facette.getSommets()[2].setTexture(obj.getTextures().get(3));
+				facette.getSommets()[3].setTexture(obj.getTextures().get(15));
+				
+				facette = new Facette(vps, 7*i+4, 7*(i-1)+4, 7*(i-1)+5, 7*i+5);
+				ballast2.addFacette(facette);
+				facette.getSommets()[0].setTexture(obj.getTextures().get(15));
+				facette.getSommets()[1].setTexture(obj.getTextures().get(3));
+				facette.getSommets()[2].setTexture(obj.getTextures().get(4));
+				facette.getSommets()[3].setTexture(obj.getTextures().get(16));
+				
+				facette = new Facette(vps, 7*i+5, 7*(i-1)+5, 7*(i-1)+6, 7*i+6);
+				ballast2.addFacette(facette);
+				facette.getSommets()[0].setTexture(obj.getTextures().get(16));
+				facette.getSommets()[1].setTexture(obj.getTextures().get(4));
+				facette.getSommets()[2].setTexture(obj.getTextures().get(5));
+				facette.getSommets()[3].setTexture(obj.getTextures().get(17));
+			}
+			
+			Segment segment = new Segment(new PointPassage(0, yInt, 0, 0), new PointPassage(0, longueurPrincipale, 0, 0), 0);
+			Arc newArc = null;
+			if(versionDroite){
+				newArc = new Arc(arc.getP1(), arc.getP2(), 0, arc.getCentre(), arc.getRayon(), -Math.PI/2+alpha, ouverture-alpha);
+				
+				patron = createRail(-X_RAIL);
+				railG = new Extrusion(obj, false, "rail_gauche_2", "Rail", /*newArc*/section.getElements().get(2), patron, false);
+				railG.build(nbSousSections);
+				obj.addGroupe(railG);
+				
+				patron = createRail(X_RAIL);
+				railD = new Extrusion(obj, false, "rail_droite_3", "Rail", /*segment*/section.getElements().get(1), patron, false);
+				railD.build(1);
+				obj.addGroupe(railD);
+				
+				patron = createBallast();
+				ballast = new Extrusion(obj, false, "ballast3", "Ballast", segment, patron, false);
+				ballast.build(1);
+				obj.addGroupe(ballast);
+				paint(obj, ballast, 0, 14);
+				
+				patron = createBallast();
+				ballast = new Extrusion(obj, false, "ballast4", "Ballast", newArc, patron, false);
+				ballast.build(1);
+				obj.addGroupe(ballast);
+				paint(obj, ballast, 0, 20);
+			} else {
+				newArc = new Arc(arc.getP1(), arc.getP2(), 0, arc.getCentre(), arc.getRayon(), Math.PI/2-alpha, -ouverture+alpha);
+				
+				patron = createRail(-X_RAIL);
+				railG = new Extrusion(obj, false, "rail_gauche_2", "Rail", /*segment*/section.getElements().get(1), patron, false);
+				railG.build(1);
+				obj.addGroupe(railG);
+				
+				patron = createRail(X_RAIL);
+				railD = new Extrusion(obj, false, "rail_droite_2", "Rail", /*newArc*/section.getElements().get(2), patron, false);
+				railD.build(nbSousSections);
+				obj.addGroupe(railD);
+				
+				patron = createBallast();
+				ballast = new Extrusion(obj, false, "ballast3", "Ballast", segment, patron, false);
+				ballast.build(1);
+				obj.addGroupe(ballast);
+				paint(obj, ballast, 0, 14);
+				
+				patron = createBallast();
+				ballast = new Extrusion(obj, false, "ballast4", "Ballast", newArc, patron, false);
+				ballast.build(1);
+				obj.addGroupe(ballast);
+				paint(obj, ballast, 0, 20);
+			}
+			
+			obj.addGroupe(ballast2);
 		}
-		ModeleObjCreator.createParallelepipede(obj, groupe, p5, p6, p7, p8, p9, p10, p11, p12, 4);
-		obj.addPoint(p9);
-		obj.addPoint(p10);
-		obj.addPoint(p11);
-		obj.addPoint(p12);
-		p13 = new Point(-X_BAS, longueurDeviation, Y_BAS);
-		p14 = new Point(-X_HAUT, longueurDeviation, Y_HAUT);
-		p15 = new Point(X_HAUT, longueurDeviation, Y_HAUT);
-		p16 = new Point(X_BAS, longueurDeviation, Y_BAS);
-		p17 = new Point(-X_BAS, longueurPrincipale, Y_BAS);
-		p18 = new Point(-X_HAUT, longueurPrincipale, Y_HAUT);
-		p19 = new Point(X_HAUT, longueurPrincipale, Y_HAUT);
-		p20 = new Point(X_BAS, longueurPrincipale, Y_BAS);
-		ModeleObjCreator.createParallelepipede(obj, groupe, p13, p14, p15, p16, p17, p18, p19, p20, 8);
-		obj.addPoint(p17);
-		obj.addPoint(p18);
-		obj.addPoint(p19);
-		obj.addPoint(p20);
-		
-		obj.addGroupe(groupe);
-		
-		groupe = new Groupe("rails", "Rail");
-		this.createRailDroit(obj, groupe, X_RAIL);
-		this.createRailDroit(obj, groupe, -X_RAIL);
-		this.createRailCourbe(obj, groupe, X_RAIL, versionDroite);
-		this.createRailCourbe(obj, groupe, -X_RAIL, versionDroite);
-		obj.addGroupe(groupe);
 		
 		return obj;
 	}
 	
-	private void createRailDroit(ModeleObj obj, Groupe groupe, double x0) {
-		Point p1 = new Point(x0 - 0.0325, 0, Y_HAUT);
-		Point p2 = new Point(x0 - 0.0325, 0, Y_HAUT + HAUTEUR_RAIL);
-		Point p3 = new Point(x0 + 0.0325, 0, Y_HAUT + HAUTEUR_RAIL);
-		Point p4 = new Point(x0 + 0.0325, 0, Y_HAUT);
-		Point p5 = new Point(x0 - 0.0325, longueurPrincipale, Y_HAUT);
-		Point p6 = new Point(x0 - 0.0325, longueurPrincipale, Y_HAUT + HAUTEUR_RAIL);
-		Point p7 = new Point(x0 + 0.0325, longueurPrincipale, Y_HAUT + HAUTEUR_RAIL);
-		Point p8 = new Point(x0 + 0.0325, longueurPrincipale, Y_HAUT);
-		ModeleObjCreator.createParallelepipede(obj, groupe, p1, p2, p3, p4, p5, p6, p7, p8);
-		obj.addPoint(p5);
-		obj.addPoint(p6);
-		obj.addPoint(p7);
-		obj.addPoint(p8);
-	}
-	
-	private void createRailCourbe(ModeleObj obj, Groupe groupe, double x0, boolean versionDroite) {
-		Point p1 = new Point(x0 - 0.0325, yCercle, Y_HAUT);
-		Point p2 = new Point(x0 - 0.0325, yCercle, Y_HAUT + HAUTEUR_RAIL);
-		Point p3 = new Point(x0 + 0.0325, yCercle, Y_HAUT + HAUTEUR_RAIL);
-		Point p4 = new Point(x0 + 0.0325, yCercle, Y_HAUT);
-		Point p5 = new Point();
-		Point p6 = new Point();
-		Point p7 = new Point();
-		Point p8 = new Point();
-		for(int j=0; j<nbSousSections; j++){
-			double psi;
-			if(versionDroite){
-				psi = (j+1)*ouverture/nbSousSections;
-			} else {
-				psi = -(j+1)*ouverture/nbSousSections;
-			}
-			
-			p5 = new Point(+x0-0.0325, 0, Y_HAUT);
-			p5.transformer(new Point(-rayon, 0));
-			p5.transformer(new Point(rayon, yCercle), psi);
-			p6 = new Point(+x0-0.0325, 0, Y_HAUT + HAUTEUR_RAIL);
-			p6.transformer(new Point(-rayon, 0));
-			p6.transformer(new Point(rayon, yCercle), psi);
-			p7 = new Point(+x0+0.0325, 0,  Y_HAUT + HAUTEUR_RAIL);
-			p7.transformer(new Point(-rayon, 0));
-			p7.transformer(new Point(rayon, yCercle), psi);
-			p8 = new Point(+x0+0.0325, 0, Y_HAUT);
-			p8.transformer(new Point(-rayon, 0));
-			p8.transformer(new Point(rayon, yCercle), psi);
-			ModeleObjCreator.createParallelepipede(obj, groupe, p1, p2, p3, p4, p5, p6, p7, p8);
-			
-			p1 = p5;
-			p2 = p6;
-			p3 = p7;
-			p4 = p8;
-		}
-		obj.addPoint(p5);
-		obj.addPoint(p6);
-		obj.addPoint(p7);
-		obj.addPoint(p8);
+	private VertexPosition addPosition(Point p, Point translation, double psi, Groupe groupe){
+		Point newP = new Point(p.getX(), 0, p.getY());
+		newP.transformer(translation, psi);
+		VertexPosition vp = new VertexPosition(newP);
+		groupe.addPosition(vp);
+		return vp;
 	}
 
-	public ModeleObj[] getObj(){
+	public Objet3D[] getObj(){
 		return this.obj;
 	}
 }

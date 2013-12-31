@@ -8,5 +8,6 @@ package jts.moteur.ligne.voie.elements;
 public enum TypeElement {
 	SEGMENT,
 	ARC,
-	CUBIQUE;
+	CUBIQUE,
+	BSPLINE;
 }

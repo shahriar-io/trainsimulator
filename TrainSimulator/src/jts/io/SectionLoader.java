@@ -17,8 +17,9 @@ import jts.moteur.ligne.voie.elements.Arc;
 import jts.moteur.ligne.voie.elements.Cubique;
 import jts.moteur.ligne.voie.elements.Segment;
 import jts.moteur.ligne.voie.points.Divergence;
-import jts.moteur.ligne.voie.points.PointFrontiere;
 import jts.moteur.ligne.voie.points.PointExtremite;
+import jts.moteur.ligne.voie.points.PointFrontiere;
+import jts.moteur.ligne.voie.points.PointPassage;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -72,6 +73,9 @@ public class SectionLoader {
 					boolean typeGauche = type.equals("g");
 					Divergence div = new Divergence(x, y, 0, 0, typeGauche);
 					section.addPoint(div);
+				}  else if(point.getNodeName().equals("PointPassage")){
+					PointPassage pp = new PointPassage(x, y, 0, phi);
+					section.addPoint(pp);
 				}
 			}
 		}

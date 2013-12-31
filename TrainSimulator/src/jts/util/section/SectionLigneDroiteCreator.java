@@ -76,7 +76,7 @@ public class SectionLigneDroiteCreator {
 		} catch(IOException e){
 			e.printStackTrace();
 		}
-		mold.createAndSave(folder + "/objets");
+		mold.createAndSave(folder + "/objets", section);
 		System.out.println(nom + " cree");
 	}
 

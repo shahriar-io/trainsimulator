@@ -2,10 +2,12 @@ package jts.util.section;
 
 import java.io.File;
 
-import jts.moteur.geometrie.AngleEuler;
-import jts.moteur.geometrie.Point;
-import jts.util.obj.Groupe;
-import jts.util.obj.ModeleObj;
+import jts.moteur.ligne.voie.Section;
+import jts.moteur.ligne.voie.elements.Arc;
+import jts.util.obj.Extrusion;
+import jts.util.obj.Objet3D;
+import jts.util.obj.Patron;
+import jts.util.obj.VertexTexture;
 
 public class ModeleObjCourbe extends ModeleObjCreator {
 	
@@ -18,7 +20,7 @@ public class ModeleObjCourbe extends ModeleObjCreator {
 	private String nom;
 	private int nbSousSections;
 	
-	private ModeleObj obj;
+	private Objet3D obj;
 	
 	public ModeleObjCourbe(int nbVoies, double rayon, double ouverture, double roulis, String nom){
 		this.nbVoies = nbVoies;
@@ -28,124 +30,56 @@ public class ModeleObjCourbe extends ModeleObjCreator {
 		this.nom = nom;
 	}
 	
-	public void createAndSave(String folder){
-		this.createObjet();
-		obj.write(new File(folder + "/" + nom + ".obj"));
+	public void createAndSave(String folder, Section section){
+		this.createObjet(section);
+		obj.writeObj(new File(folder + "/" + nom + ".obj"));
 	}
 
-	private void createObjet() {
+	private void createObjet(Section section) {
 		nbSousSections = (int)(ouverture/ANGLE_DISCRETISATION);
 		double maxTexture = (rayon*ouverture/5)/nbSousSections;
 		maxTexture = ((int)((maxTexture+0.5)*2))/2.0;
-		obj = new ModeleObj();
-		obj.addPointTexture(new Point(0, 0));
-		obj.addPointTexture(new Point(0.21, 0));
-		obj.addPointTexture(new Point(0.79, 0));
-		obj.addPointTexture(new Point(1, 0));
-		obj.addPointTexture(new Point(0, maxTexture));
-		obj.addPointTexture(new Point(0.21, maxTexture));
-		obj.addPointTexture(new Point(0.79, maxTexture));
-		obj.addPointTexture(new Point(1, maxTexture));
-		Groupe groupe;
-		Point p1, p2, p3, p4, p5, p6, p7, p8;
-		
-		double xVoie = -2*(nbVoies-1);
-		groupe = new Groupe("ballast", "Ballast");
-		p1 = new Point(-X_BAS+xVoie, 0, Y_BAS);
-		p1.transformer(new Point(), new AngleEuler(0, roulis, 0));
-		p2 = new Point(-X_HAUT+xVoie, 0, Y_HAUT);
-		p2.transformer(new Point(), new AngleEuler(0, roulis, 0));
-		p3 = new Point(X_HAUT+xVoie, 0, Y_HAUT);
-		p3.transformer(new Point(), new AngleEuler(0, roulis, 0));
-		p4 = new Point(X_BAS+xVoie, 0, Y_BAS);
-		p4.transformer(new Point(), new AngleEuler(0, roulis, 0));
-		p5 = new Point();
-		p6 = new Point();
-		p7 = new Point();
-		p8 = new Point();
+		obj = new Objet3D("textures_sections.mtl");
+		obj.addTexture(new VertexTexture(0, 0));
+		obj.addTexture(new VertexTexture(0.21, 0));
+		obj.addTexture(new VertexTexture(0.35, 0));
+		obj.addTexture(new VertexTexture(0.65, 0));
+		obj.addTexture(new VertexTexture(0.79, 0));
+		obj.addTexture(new VertexTexture(1, 0));
+		obj.addTexture(new VertexTexture(0, maxTexture));
+		obj.addTexture(new VertexTexture(0.21, maxTexture));
+		obj.addTexture(new VertexTexture(0.35, maxTexture));
+		obj.addTexture(new VertexTexture(0.65, maxTexture));
+		obj.addTexture(new VertexTexture(0.79, maxTexture));
+		obj.addTexture(new VertexTexture(1, maxTexture));
 		
 		for(int i=0; i<nbVoies; i++){
-			xVoie = 2*(2*i+1-nbVoies);
+			double xVoie = 2*(2*i+1-nbVoies);
+			
+			//Création du ballast
+			Arc arc = (Arc)section.getElements().get(i);
+			
+			Patron patron = createBallast();
+			Extrusion ballast = new Extrusion(obj, false, "ballast" + (i+1), "Ballast", arc, patron, false);
+			ballast.build(nbSousSections);
+			obj.addGroupe(ballast);
 			for(int j=0; j<nbSousSections; j++){
-				double psi = (j+1)*ouverture/nbSousSections;
-				
-				p5 = new Point(-X_BAS+xVoie, 0, Y_BAS);
-				p5.transformer(new Point(-rayon, 0),  new AngleEuler(0, roulis, 0));
-				p5.transformer(new Point(rayon, 0), psi);
-				p6 = new Point(-X_HAUT+xVoie, 0, Y_HAUT);
-				p6.transformer(new Point(-rayon, 0),  new AngleEuler(0, roulis, 0));
-				p6.transformer(new Point(rayon, 0), psi);
-				p7 = new Point(X_HAUT+xVoie, 0,  Y_HAUT);
-				p7.transformer(new Point(-rayon, 0),  new AngleEuler(0, roulis, 0));
-				p7.transformer(new Point(rayon, 0), psi);
-				p8 = new Point(X_BAS+xVoie, 0, Y_BAS);
-				p8.transformer(new Point(-rayon, 0),  new AngleEuler(0, roulis, 0));
-				p8.transformer(new Point(rayon, 0), psi);
-				ModeleObjCreator.createParallelepipede(obj, groupe, p1, p2, p3, p4, p5, p6, p7, p8);
-				
-				p1 = p5;
-				p2 = p6;
-				p3 = p7;
-				p4 = p8;
+				paint(obj, ballast, 5*j);
 			}
-			obj.addPoint(p5);
-			obj.addPoint(p6);
-			obj.addPoint(p7);
-			obj.addPoint(p8);
-			obj.addGroupe(groupe);
-		}
-		
-		groupe = new Groupe("rails", "Rail");
-		for(int i=0; i<nbVoies; i++){
-			xVoie = 2*(2*i+1-nbVoies);
-			createRail(groupe, -X_RAIL+xVoie);
-			createRail(groupe, X_RAIL+xVoie);
-			obj.addGroupe(groupe);
+			
+			patron = createRail(xVoie - 0.75);
+			Extrusion railG = new Extrusion(obj, false, "rail_gauche_" + (i+1), "Rail", arc, patron, false);
+			railG.build(nbSousSections);
+			obj.addGroupe(railG);
+			
+			patron = createRail(xVoie + 0.75);
+			Extrusion railD = new Extrusion(obj, false, "rail_droite_" + (i+1), "Rail", arc, patron, false);
+			railD.build(nbSousSections);
+			obj.addGroupe(railD);
 		}
 	}
 	
-	private void createRail(Groupe groupe, double x0) {
-		Point p1 = new Point(x0 - 0.0325, 0, Y_HAUT);
-		p1.transformer(new Point(), new AngleEuler(0, roulis, 0));
-		Point p2 = new Point(x0 - 0.0325, 0, Y_HAUT + HAUTEUR_RAIL);
-		p2.transformer(new Point(), new AngleEuler(0, roulis, 0));
-		Point p3 = new Point(x0 + 0.0325, 0, Y_HAUT + HAUTEUR_RAIL);
-		p3.transformer(new Point(), new AngleEuler(0, roulis, 0));
-		Point p4 = new Point(x0 + 0.0325, 0, Y_HAUT);
-		p4.transformer(new Point(), new AngleEuler(0, roulis, 0));
-		Point p5 = new Point();
-		Point p6 = new Point();
-		Point p7 = new Point();
-		Point p8 = new Point();
-		for(int j=0; j<nbSousSections; j++){
-			double psi = (j+1)*ouverture/nbSousSections;
-			
-			p5 = new Point(+x0-0.0325, 0, Y_HAUT);
-			p5.transformer(new Point(-rayon, 0),  new AngleEuler(0, roulis, 0));
-			p5.transformer(new Point(rayon, 0), psi);
-			p6 = new Point(+x0-0.0325, 0, Y_HAUT + HAUTEUR_RAIL);
-			p6.transformer(new Point(-rayon, 0),  new AngleEuler(0, roulis, 0));
-			p6.transformer(new Point(rayon, 0), psi);
-			p7 = new Point(+x0+0.0325, 0,  Y_HAUT + HAUTEUR_RAIL);
-			p7.transformer(new Point(-rayon, 0),  new AngleEuler(0, roulis, 0));
-			p7.transformer(new Point(rayon, 0), psi);
-			p8 = new Point(+x0+0.0325, 0, Y_HAUT);
-			p8.transformer(new Point(-rayon, 0),  new AngleEuler(0, roulis, 0));
-			p8.transformer(new Point(rayon, 0), psi);
-			ModeleObjCreator.createParallelepipede(obj, groupe, p1, p2, p3, p4, p5, p6, p7, p8);
-			
-			p1 = p5;
-			p2 = p6;
-			p3 = p7;
-			p4 = p8;
-		}
-		obj.addPoint(p5);
-		obj.addPoint(p6);
-		obj.addPoint(p7);
-		obj.addPoint(p8);
-	}
-	
-	public ModeleObj getObj(){
+	public Objet3D getObj(){
 		return this.obj;
 	}
 }

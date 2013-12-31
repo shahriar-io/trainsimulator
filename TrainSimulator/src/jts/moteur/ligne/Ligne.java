@@ -7,6 +7,7 @@ import java.util.List;
 
 import jts.io.xml.AttributXml;
 import jts.io.xml.ElementXml;
+import jts.moteur.geometrie.CoordonneesGps;
 
 /**Cette classe représente une ligne ferroviaire parcourable dans la simulation.
  * 
@@ -16,6 +17,7 @@ import jts.io.xml.ElementXml;
 public class Ligne {
 
 	private String name;
+	private CoordonneesGps origine;
 	private Circuit circuit;
 	private List<ObjetScene> objets;
 	
@@ -27,6 +29,10 @@ public class Ligne {
 	
 	public void setName(String name){ this.name = name; }
 	
+	public CoordonneesGps getOrigine() { return origine; }
+
+	public void setOrigine(CoordonneesGps origine) { this.origine = origine; }
+
 	public Circuit getCircuit(){ return this.circuit; }
 	
 	public void setCircuit(Circuit circuit){ this.circuit = circuit; }
@@ -61,6 +67,7 @@ public class Ligne {
 	public ElementXml save(){
 		ElementXml element = new ElementXml("Ligne");
 		element.addAttribut(new AttributXml("name", name));
+		element.addElement(origine.save());
 		element.addElement(circuit.save());
 		ElementXml objetsElement = new ElementXml("Objets");
 		element.addElement(objetsElement);

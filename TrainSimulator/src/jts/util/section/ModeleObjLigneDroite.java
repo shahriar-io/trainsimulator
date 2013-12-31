@@ -2,9 +2,12 @@ package jts.util.section;
 
 import java.io.File;
 
-import jts.moteur.geometrie.Point;
-import jts.util.obj.Groupe;
-import jts.util.obj.ModeleObj;
+import jts.moteur.ligne.voie.Section;
+import jts.moteur.ligne.voie.elements.Segment;
+import jts.util.obj.Extrusion;
+import jts.util.obj.Objet3D;
+import jts.util.obj.Patron;
+import jts.util.obj.VertexTexture;
 
 public class ModeleObjLigneDroite extends ModeleObjCreator {
 	
@@ -12,7 +15,7 @@ public class ModeleObjLigneDroite extends ModeleObjCreator {
 	private int nbVoies;
 	private String nom;
 	
-	private ModeleObj obj;
+	private Objet3D obj;
 	
 	public ModeleObjLigneDroite(int nbVoies, double longueur, String nom){
 		this.nbVoies = nbVoies;
@@ -20,76 +23,57 @@ public class ModeleObjLigneDroite extends ModeleObjCreator {
 		this.nom = nom;
 	}
 	
-	public void createAndSave(String folder){
-		this.createAndSave(this.nom, folder);
+	public void createAndSave(String folder, Section section){
+		this.createAndSave(this.nom, folder, section);
 	}
 	
-	public void createAndSave(String nom, String folder){
-		this.createObjet();
-		obj.write(new File(folder + "/" + nom + ".obj"));
+	public void createAndSave(String nom, String folder, Section section){
+		this.createObjet(section);
+		obj.writeObj(new File(folder + "/" + nom + ".obj"));
 	}
 
-	private void createObjet() {
-		obj = new ModeleObj();
-		obj.addPointTexture(new Point(0, 0));
-		obj.addPointTexture(new Point(0.21, 0));
-		obj.addPointTexture(new Point(0.79, 0));
-		obj.addPointTexture(new Point(1, 0));
-		obj.addPointTexture(new Point(0, longueur/5));
-		obj.addPointTexture(new Point(0.21, longueur/5));
-		obj.addPointTexture(new Point(0.79, longueur/5));
-		obj.addPointTexture(new Point(1, longueur/5));
-		Groupe groupe;
-		Point p1, p2, p3, p4, p5, p6, p7, p8;
+	private void createObjet(Section section) {
+		obj = new Objet3D("textures_sections.mtl");
+		obj.addTexture(new VertexTexture(0, 0));
+		obj.addTexture(new VertexTexture(0.21, 0));
+		obj.addTexture(new VertexTexture(0.35, 0));
+		obj.addTexture(new VertexTexture(0.65, 0));
+		obj.addTexture(new VertexTexture(0.79, 0));
+		obj.addTexture(new VertexTexture(1, 0));
+		obj.addTexture(new VertexTexture(0, longueur/5));
+		obj.addTexture(new VertexTexture(0.21, longueur/5));
+		obj.addTexture(new VertexTexture(0.35, longueur/5));
+		obj.addTexture(new VertexTexture(0.65, longueur/5));
+		obj.addTexture(new VertexTexture(0.79, longueur/5));
+		obj.addTexture(new VertexTexture(1, longueur/5));
 		
 		double xVoie = -2*(nbVoies-1);
-		groupe = new Groupe("ballast", "Ballast");
 		for(int i=0; i<nbVoies; i++){
 			xVoie = 2*(2*i+1-nbVoies);
 			
-			p1 = new Point(-X_BAS+xVoie, -longueur/2, Y_BAS);
-			p2 = new Point(-X_HAUT+xVoie, -longueur/2, Y_HAUT);
-			p3 = new Point(X_HAUT+xVoie, -longueur/2, Y_HAUT);
-			p4 = new Point(X_BAS+xVoie, -longueur/2, Y_BAS);
-			p5 = new Point(-X_BAS+xVoie, longueur/2, Y_BAS);
-			p6 = new Point(-X_HAUT+xVoie, longueur/2, Y_HAUT);
-			p7 = new Point(X_HAUT+xVoie, longueur/2, Y_HAUT);
-			p8 = new Point(X_BAS+xVoie, longueur/2, Y_BAS);
+			//Création du ballast
+			Segment segment = (Segment)section.getElements().get(i);
 			
-			ModeleObjCreator.createParallelepipede(obj, groupe, p1, p2, p3, p4, p5, p6, p7, p8);
-			obj.addPoint(p5);
-			obj.addPoint(p6);
-			obj.addPoint(p7);
-			obj.addPoint(p8);
-			obj.addGroupe(groupe);
+			Patron patron = createBallast();
+			Extrusion ballast = new Extrusion(obj, false, "ballast" + (i+1), "Ballast", segment, patron, false);
+			ballast.build(1);
+			obj.addGroupe(ballast);
+			paint(obj, ballast, 0);
+			
+			//Création des rails
+			patron = createRail(-X_RAIL);
+			Extrusion railG = new Extrusion(obj, false, "rail_gauche_" + (i+1), "Rail", segment, patron, false);
+			railG.build(1);
+			obj.addGroupe(railG);
+			
+			patron = createRail(X_RAIL);
+			Extrusion railD = new Extrusion(obj, false, "rail_droite_" + (i+1), "Rail", segment, patron, false);
+			railD.build(1);
+			obj.addGroupe(railD);
 		}
-		
-		groupe = new Groupe("rails", "Rail");
-		for(int i=0; i<nbVoies; i++){
-			xVoie = 2*(2*i+1-nbVoies);
-			createRail(groupe, X_RAIL+xVoie);
-			createRail(groupe, -X_RAIL+xVoie);
-			obj.addGroupe(groupe);
-		}
-	}
-
-	private void createRail(Groupe groupe, double x0) {
-		Point p1 = new Point(x0 - 0.0325, -longueur/2, Y_HAUT);
-		Point p2 = new Point(x0 - 0.0325, -longueur/2, Y_HAUT + HAUTEUR_RAIL);
-		Point p3 = new Point(x0 + 0.0325, -longueur/2, Y_HAUT + HAUTEUR_RAIL);
-		Point p4 = new Point(x0 + 0.0325, -longueur/2, Y_HAUT);
-		Point p5 = new Point(x0 - 0.0325, longueur/2, Y_HAUT);
-		Point p6 = new Point(x0 - 0.0325, longueur/2, Y_HAUT + HAUTEUR_RAIL);
-		Point p7 = new Point(x0 + 0.0325, longueur/2, Y_HAUT + HAUTEUR_RAIL);
-		Point p8 = new Point(x0 + 0.0325, longueur/2, Y_HAUT);
-		ModeleObjCreator.createParallelepipede(obj, groupe, p1, p2, p3, p4, p5, p6, p7, p8);
-		obj.addPoint(p5);
-		obj.addPoint(p6);
-		obj.addPoint(p7);
-		obj.addPoint(p8);
 	}
 	
-	public ModeleObj getObj(){
+	public Objet3D getObj(){
 		return this.obj;
 	}
 }

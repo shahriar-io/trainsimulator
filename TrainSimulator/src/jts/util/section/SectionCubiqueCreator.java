@@ -47,29 +47,30 @@ public class SectionCubiqueCreator {
 	}
 	
 	public void createAndSave(String folder){
-		Section section = getSection(true);
+		Section[] sections = new Section[2];
+		sections[0] = getSection(true);
 		try{
 			FileWriter fw = new FileWriter(new File(folder + "/sections/" + nom[0] + ".xml"));
 			BufferedWriter writer = new BufferedWriter(fw);
-			section.save("", writer, nom[0]);
+			sections[0].save("", writer, nom[0]);
 			writer.close();
 			fw.close();
 		} catch(IOException e){
 			e.printStackTrace();
 		}
 		
-		section = getSection(false);
+		sections[1] = getSection(false);
 		try{
 			FileWriter fw = new FileWriter(new File(folder + "/sections/" + nom[1] + ".xml"));
 			BufferedWriter writer = new BufferedWriter(fw);
-			section.save("", writer, nom[1]);
+			sections[1].save("", writer, nom[1]);
 			writer.close();
 			fw.close();
 		} catch(IOException e){
 			e.printStackTrace();
 		}
 		
-		moc.createAndSave(folder + "/objets");
+		moc.createAndSave(folder + "/objets", sections);
 		System.out.println(nom[0] + " cree");
 		System.out.println(nom[1] + " cree");
 	}

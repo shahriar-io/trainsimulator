@@ -124,7 +124,7 @@ public abstract class CourbeElementaire implements SauvegardableBinaire{
 	 * @param point la position de la voiture (maj)
 	 * @param abscisse l'abscisse curviligne
 	 */
-	protected abstract void recupererPoint(Point point, double ratio);
+	public abstract void recupererPoint(Point point, double ratio);
 	
 	/**Permet de récupérer l'angle d'une voiture située à une abscisse curviligne sur cet élément.
 	 * 

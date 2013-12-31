@@ -16,7 +16,9 @@ import com.jme3.asset.plugins.FileLocator;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.light.AmbientLight;
+import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
@@ -54,6 +56,7 @@ public class RenduJME extends SimpleApplication implements InterfaceMoteur3D {
 		settings.setHeight(height);
 		settings.setSamples(8);
 		settings.setFrameRate(60);
+		//settings.setRenderer(AppSettings.LWJGL_OPENGL1);
 
 		this.setSettings(settings);
 		this.createCanvas();
@@ -73,11 +76,13 @@ public class RenduJME extends SimpleApplication implements InterfaceMoteur3D {
 		assetManager.registerLocator(".", FileLocator.class);
 
 		AmbientLight sun = new AmbientLight();
+		sun.setColor(ColorRGBA.Gray);
 		rootNode.addLight(sun);
 
-		/*DirectionalLight sun2 = new DirectionalLight();
+		DirectionalLight sun2 = new DirectionalLight();
+		sun2.setColor(ColorRGBA.Gray);
 		sun2.setDirection((new Vector3f(-1, -4, -1).normalizeLocal()));
-		rootNode.addLight(sun2);*/
+		rootNode.addLight(sun2);
 
 		cam.setFrustumPerspective(45, (float)height/(float)width, 1, 2000);
 
@@ -135,11 +140,29 @@ public class RenduJME extends SimpleApplication implements InterfaceMoteur3D {
 		inputManager.addMapping("B", new KeyTrigger(KeyInput.KEY_B));
 		inputManager.addMapping("C", new KeyTrigger(KeyInput.KEY_C));
 		inputManager.addMapping("D", new KeyTrigger(KeyInput.KEY_D));
-		inputManager.addMapping("G", new KeyTrigger(KeyInput.KEY_E));
-		inputManager.addMapping("G", new KeyTrigger(KeyInput.KEY_F));
+		inputManager.addMapping("E", new KeyTrigger(KeyInput.KEY_E));
+		inputManager.addMapping("F", new KeyTrigger(KeyInput.KEY_F));
 		inputManager.addMapping("G", new KeyTrigger(KeyInput.KEY_G));
+		inputManager.addMapping("H", new KeyTrigger(KeyInput.KEY_H));
+		inputManager.addMapping("I", new KeyTrigger(KeyInput.KEY_I));
+		inputManager.addMapping("J", new KeyTrigger(KeyInput.KEY_J));
+		inputManager.addMapping("K", new KeyTrigger(KeyInput.KEY_K));
+		inputManager.addMapping("L", new KeyTrigger(KeyInput.KEY_L));
+		inputManager.addMapping("M", new KeyTrigger(KeyInput.KEY_M));
+		inputManager.addMapping("N", new KeyTrigger(KeyInput.KEY_N));
+		inputManager.addMapping("O", new KeyTrigger(KeyInput.KEY_O));
+		inputManager.addMapping("P", new KeyTrigger(KeyInput.KEY_P));
 		inputManager.addMapping("Q", new KeyTrigger(KeyInput.KEY_Q));
-		inputManager.addListener(actionListener,"A","B","C","D","E","F","G","Q");
+		inputManager.addMapping("R", new KeyTrigger(KeyInput.KEY_R));
+		inputManager.addMapping("S", new KeyTrigger(KeyInput.KEY_S));
+		inputManager.addMapping("T", new KeyTrigger(KeyInput.KEY_T));
+		inputManager.addMapping("U", new KeyTrigger(KeyInput.KEY_U));
+		inputManager.addMapping("V", new KeyTrigger(KeyInput.KEY_V));
+		inputManager.addMapping("W", new KeyTrigger(KeyInput.KEY_W));
+		inputManager.addMapping("X", new KeyTrigger(KeyInput.KEY_X));
+		inputManager.addMapping("Y", new KeyTrigger(KeyInput.KEY_Y));
+		inputManager.addMapping("Z", new KeyTrigger(KeyInput.KEY_Z));
+		inputManager.addListener(actionListener,"A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z");
 	}
 
 	public Canvas getCanvas() {
