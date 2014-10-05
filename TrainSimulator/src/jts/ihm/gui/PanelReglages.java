@@ -17,6 +17,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import jts.conf.JmeRenderer;
 import jts.ihm.langues.Langue;
 import jts.ihm.langues.traduction.TraductionPanelReglages;
 
@@ -40,6 +41,7 @@ public class PanelReglages extends JPanel implements ActionListener, ItemListene
 	private JLabel labelChoixLangue;
 	private JComboBox<String> langages;
 	private JComboBox<JtsDimension> resolutions;
+	private JComboBox<String> renderers;
 	
 	private JButton menuPrincipal;
 	private JButton sauvegarde;
@@ -100,12 +102,19 @@ public class PanelReglages extends JPanel implements ActionListener, ItemListene
 		this.resolutions = new JComboBox<JtsDimension>();
 		this.resolutions.setBounds(575, 110, 150, 30);
 		this.resolutions.setModel(new DefaultComboBoxModel(gui.getDimensionsPossibles().toArray()));
-		//Langue langue = Langue.getLangueFromCode(this.gui.getIhm().getControleur().getConfiguration().getLangueCode());
-		//this.resolutions.setSelectedIndex(Langue.getOrdinalFromLangue(langue));
+		this.resolutions.setSelectedIndex(gui.getDimensionsPossibles().indexOf(this.gui.getIhm().getControleur().getConfiguration().getConfigurationGraphique().getDimension()));
 		this.resolutions.addItemListener(this);
 		this.add(resolutions);
 		
-		this.add(Gui.creerArriereFondTransparent(420, 20, 360, 130));
+		this.renderers = new JComboBox<String>();
+		this.renderers.setBounds(575, 150, 150, 30);
+		this.renderers.setModel(new DefaultComboBoxModel(JmeRenderer.getNoms()));
+		JmeRenderer jmeRenderer = this.gui.getIhm().getControleur().getConfiguration().getConfigurationGraphique().getRenderer();
+		this.renderers.setSelectedIndex(jmeRenderer.ordinal());
+		this.renderers.addItemListener(this);
+		this.add(renderers);
+		
+		this.add(Gui.creerArriereFondTransparent(420, 20, 360, 170));
 		
 		
 		
@@ -163,6 +172,9 @@ public class PanelReglages extends JPanel implements ActionListener, ItemListene
 			int indexResolution = resolutions.getSelectedIndex();
 			JtsDimension resolution = this.gui.getDimensionsPossibles().get(indexResolution);
 			this.gui.getIhm().getControleur().getConfiguration().getConfigurationGraphique().setDimension(resolution);
+		} else if(event.getSource().equals(renderers)){
+			int indexRenderer = renderers.getSelectedIndex();
+			this.gui.getIhm().getControleur().getConfiguration().getConfigurationGraphique().setRenderer(JmeRenderer.values()[indexRenderer]);
 		}
 	}
 }

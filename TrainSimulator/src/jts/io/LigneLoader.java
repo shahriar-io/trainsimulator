@@ -12,6 +12,7 @@ import jts.moteur.geometrie.Point;
 import jts.moteur.ligne.Circuit;
 import jts.moteur.ligne.Ligne;
 import jts.moteur.ligne.ObjetScene;
+import jts.moteur.ligne.voie.elements.CourbeElementaire;
 import jts.moteur.ligne.voie.points.Divergence;
 import jts.moteur.ligne.voie.points.PointPassage;
 
@@ -98,6 +99,8 @@ public class LigneLoader {
 				Element courbe = (Element)courbesNL.item(i);
 				int p1 = Integer.parseInt(courbe.getAttribute("p1").split("#")[1]);
 				int p2 = Integer.parseInt(courbe.getAttribute("p2").split("#")[1]);
+				boolean inversionPhi1 = Boolean.parseBoolean(courbe.getAttribute("inversionPhi1"));
+				boolean inversionPhi2 = Boolean.parseBoolean(courbe.getAttribute("inversionPhi2"));
 				
 				if(courbe.getNodeName().equals("Segment")){
 					circuit.addSegment(p1, p2);
@@ -118,6 +121,13 @@ public class LigneLoader {
 					circuit.addCubique(p1, p2, 0/*theta ???*/, courbureFin, psiFin, psi0);
 				}
 				
+				CourbeElementaire ce = circuit.getCourbesElementaires().get(circuit.getCourbesElementaires().size()-1);
+				if(inversionPhi1){
+					ce.inverserPhi1();
+				}
+				if(inversionPhi2){
+					ce.inverserPhi2();
+				}
 			}
 		}
 		

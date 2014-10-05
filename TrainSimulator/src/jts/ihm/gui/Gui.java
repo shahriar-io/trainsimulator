@@ -125,7 +125,7 @@ public class Gui implements InterfaceGraphique {
 		this.fenetre.add(panelConduite);
 		
 		this.render = panelConduite;
-		this.moteur3d = this.render.init(this.ihm.getControleur().getConfiguration().getConfigurationGraphique().getDimension(),
+		this.moteur3d = this.render.init(this.ihm.getControleur().getConfiguration().getConfigurationGraphique(),
 				(EcouteurClavier)ihm.getInterfaceClavier());
 		this.fenetre.setFocusable(true);
 		this.fenetre.addKeyListener((KeyListener)ihm.getInterfaceClavier());

@@ -27,4 +27,13 @@ public class JtsDimension {
 	public String toString(){
 		return largeur + "x" + hauteur;
 	}
+	
+	public boolean equals(Object obj){
+		if(obj instanceof JtsDimension){
+			JtsDimension dimension = (JtsDimension)obj;
+			return (dimension.largeur == largeur && dimension.hauteur == hauteur);
+		} else {
+			return true;
+		}
+	}
 }

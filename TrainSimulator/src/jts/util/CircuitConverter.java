@@ -35,21 +35,33 @@ public class CircuitConverter {
 			}
 		}
 		
+		//On parcourt les points extremites
 		for(int i=0; i<pointsExtremite.size(); i++){
 			PointExtremite pointExtremite = pointsExtremite.get(i);
 			if(pointExtremite instanceof PointFrontiere){
+				//On recrée le premier point frontière pour le transformer en point de passage
 				PointFrontiere pf1 = (PointFrontiere)pointExtremite;
 				PointPassage pp = new PointPassage(pf1.getX(), pf1.getY(), pf1.getZ(), pf1.getPhi());
 				circuit.addPointPassage(pp);
+				//On le remplace
 				CourbeElementaire ce1 = pf1.getElementBase();
 				ce1.replace(pf1, pp);
 				pp.setElement(ce1);
 				
+				//Si possible on remplace le point frontière auquel il était connecté par le point de passage
 				PointFrontiere pf2 = pf1.getConnexion();
 				if(pf2 != null){
 					CourbeElementaire ce2 = pf2.getElementBase();
 					ce2.replace(pf2, pp);
 					pp.setElement(ce2);
+					
+					//Si on a affaire à un montage tete beche, on inverse le phi
+					if(ce1.getP1() == pp && ce2.getP1() == pp){
+						ce2.inverserPhi1();
+					}
+					if(ce1.getP2() == pp && ce2.getP2() == pp){
+						ce2.inverserPhi2();
+					}
 				}
 				
 				//Facultatifs ?

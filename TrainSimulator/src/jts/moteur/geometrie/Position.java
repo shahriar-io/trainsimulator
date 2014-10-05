@@ -71,6 +71,8 @@ public class Position {
 			//S'il n'y a plus d'élément, le train a déraillé !
 			if(element == null){
 				deraillement = true;
+			} else {
+				this.element.recupererPosition(point, angle, abscisseCourbe, sensDirect);
 			}
 		}
 		

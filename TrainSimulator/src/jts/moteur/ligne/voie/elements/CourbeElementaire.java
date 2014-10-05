@@ -26,8 +26,10 @@ public abstract class CourbeElementaire implements SauvegardableBinaire{
 
 	/**Origine*/
 	protected PointExtremite p1;
+	protected boolean inversionPhi1;
 	/**Fin*/
 	protected PointExtremite p2;
+	protected boolean inversionPhi2;
 	protected TypeElement type;
 	/**Pente de la courbe*/
 	protected double theta;
@@ -39,6 +41,12 @@ public abstract class CourbeElementaire implements SauvegardableBinaire{
 		this.type = type;
 		this.theta = theta;
 	}
+	
+	protected CourbeElementaire(PointExtremite p1, PointExtremite p2, boolean inversionPhi1, boolean inversionPhi2, TypeElement type, double theta){
+		this(p1, p2, type, theta);
+		this.inversionPhi1 = inversionPhi1;
+		this.inversionPhi2 = inversionPhi2;
+	}
 
 	public PointExtremite getP1() { return p1; }
 
@@ -47,6 +55,10 @@ public abstract class CourbeElementaire implements SauvegardableBinaire{
 	public void setP1(PointExtremite p1) { this.p1 = p1; }
 
 	public void setP2(PointExtremite p2) { this.p2 = p2; }
+	
+	public void inverserPhi1() { this.inversionPhi1 = true; }
+	
+	public void inverserPhi2() { this.inversionPhi2 = true; }
 	
 	public void replace(PointExtremite pOld, PointExtremite pNew){
 		if(this.p1.equals(pOld)){
@@ -132,7 +144,10 @@ public abstract class CourbeElementaire implements SauvegardableBinaire{
 	 * @param abscisse l'abscisse curviligne
 	 */
 	public void recupererAngle(AngleEuler angle, double ratio){
-		angle.setPhi((p2.getPhi() - p1.getPhi())*ratio + p1.getPhi());
+		//Si nécessaire on échange le signe de phis stocké dans les points extrémités. On calcule ensuite le phi normalement.
+		double phi1 = inversionPhi1?-p1.getPhi():p1.getPhi();
+		double phi2 = inversionPhi2?-p2.getPhi():p2.getPhi();
+		angle.setPhi((phi2 - phi1)*ratio + phi1);
 		angle.setTheta(theta);
 	}
 	
@@ -181,6 +196,8 @@ public abstract class CourbeElementaire implements SauvegardableBinaire{
 		ElementXml element = new ElementXml("CourbeElementaire");
 		element.addAttribut(new AttributXml("p1", "#" + p1));
 		element.addAttribut(new AttributXml("p2", "#" + p2));
+		element.addAttribut(new AttributXml("inversionPhi1", Boolean.toString(inversionPhi1)));
+		element.addAttribut(new AttributXml("inversionPhi2", Boolean.toString(inversionPhi2)));
 		return element;
 	}
 }

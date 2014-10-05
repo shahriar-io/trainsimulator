@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
 
+import jts.conf.ConfigurationGraphique;
 import jts.ihm.clavier.InterfaceClavier;
 import jts.ihm.gui.render.InterfaceMoteur3D;
 import jts.moteur.geometrie.Point;
@@ -44,7 +45,7 @@ public class RenduJME extends SimpleApplication implements InterfaceMoteur3D {
 	private float theta;
 	private float phi;
 
-	public RenduJME(int width, int height, InterfaceClavier clavier){
+	public RenduJME(int width, int height, ConfigurationGraphique confGraphique, InterfaceClavier clavier){
 		super();
 		this.width = width;
 		this.height = height;
@@ -56,7 +57,7 @@ public class RenduJME extends SimpleApplication implements InterfaceMoteur3D {
 		settings.setHeight(height);
 		settings.setSamples(8);
 		settings.setFrameRate(60);
-		//settings.setRenderer(AppSettings.LWJGL_OPENGL1);
+		settings.setRenderer(confGraphique.getRenderer().getName());
 
 		this.setSettings(settings);
 		this.createCanvas();
