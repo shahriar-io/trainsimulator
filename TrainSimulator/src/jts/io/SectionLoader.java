@@ -9,7 +9,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import jts.log.Log;
+import jts.Controleur;
 import jts.moteur.geometrie.AngleEuler;
 import jts.moteur.geometrie.Point;
 import jts.moteur.ligne.voie.Section;
@@ -36,14 +36,11 @@ public class SectionLoader {
 			Document document = db.parse(file);
 			section = parseDocument(document, position, angle);
 		} catch (ParserConfigurationException e) {
-			System.out.println("Erreur de parse sur le fichier " + file.toString());
-			e.printStackTrace();
+			Controleur.LOG.error("Erreur de parse sur le fichier " + file.toString() + " : " + e.getMessage());
 		} catch (SAXException e) {
-			System.out.println("Erreur de SAX sur le fichier " + file.toString());
-			e.printStackTrace();
+			Controleur.LOG.error("Erreur de SAX sur le fichier " + file.toString() + " : " + e.getMessage());
 		} catch (IOException e) {
-			System.out.println("Erreur de lecture sur le fichier " + file.toString());
-			e.printStackTrace();
+			Controleur.LOG.error("Erreur de lecture sur le fichier " + file.toString() + " : " + e.getMessage());
 		}
 		return section;
 	}
@@ -143,7 +140,7 @@ public class SectionLoader {
 			section.setNomObjet(nom);
 		}
 		
-		Log.getInstance().logWarning("Chargement d'une section " + racine.getAttribute("desc"), false);
+		Controleur.LOG.warn("Chargement d'une section " + racine.getAttribute("desc"));
 		
 		return section;
 	}

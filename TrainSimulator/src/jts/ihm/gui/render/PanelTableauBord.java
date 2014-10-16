@@ -60,22 +60,9 @@ public class PanelTableauBord extends JPanel {
 		panelCommande.setBounds((int)(0.32*width), 4*height/5, (int)(int)(0.36*width), height/5);
 		this.add(panelCommande);
 		
-		/*try {
-			imageCV = ImageIO.read(new File("images/compteurVitesse_800x600.png"));
-		} catch (IOException e) {
-			System.out.println("Image compteur vitesse indisponible ou corrompue");
-			e.printStackTrace();
-		}
-		
-		try {
-			imageCT = ImageIO.read(new File("images/compteTour_800x600.png"));
-		} catch (IOException e) {
-			System.out.println("Image compte tour indisponible ou corrompue");
-			e.printStackTrace();
-		}
 		
 		//Calcul de l'emplacement des éléments
-		dimensionCadrans = (19*height)/20;
+		/*dimensionCadrans = (19*height)/20;
 		xVitesse = width/2 - height/10 - dimensionCadrans;
 		xTour = width/2 + height/10;
 		bordSuperieurCadrans = height/40;

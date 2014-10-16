@@ -2,12 +2,10 @@ package jts.io;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
-import jts.log.Log;
-import jts.log.LogMode;
+import jts.Controleur;
 import jts.moteur.geometrie.AngleEuler;
 import jts.moteur.geometrie.BasicGeo;
 import jts.moteur.geometrie.Point;
@@ -64,10 +62,8 @@ public class ScriptLgnReader {
 			
 			reader.close();
 			fReader.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
+			Controleur.LOG.error("Erreur de lecture sur le fichier " + file.toString() + " : " + e.getMessage());
 		}
 		
 		return circuit;

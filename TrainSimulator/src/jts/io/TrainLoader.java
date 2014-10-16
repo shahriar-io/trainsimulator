@@ -7,6 +7,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import jts.Controleur;
 import jts.moteur.train.Locomotive;
 import jts.moteur.train.Train;
 
@@ -23,14 +24,11 @@ public class TrainLoader {
 			Document document = db.parse(file);
 			train = parseDocument(document);
 		} catch (ParserConfigurationException e) {
-			System.out.println("Erreur de parse sur le fichier " + file.toString());
-			e.printStackTrace();
+			Controleur.LOG.error("Erreur de parse sur le fichier " + file.toString() + " : " + e.getMessage());
 		} catch (SAXException e) {
-			System.out.println("Erreur de SAX sur le fichier " + file.toString());
-			e.printStackTrace();
+			Controleur.LOG.error("Erreur de SAX sur le fichier " + file.toString() + " : " + e.getMessage());
 		} catch (IOException e) {
-			System.out.println("Erreur de lecture sur le fichier " + file.toString());
-			e.printStackTrace();
+			Controleur.LOG.error("Erreur de lecture sur le fichier " + file.toString() + " : " + e.getMessage());
 		}
 		return train;
 	}

@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import jts.Controleur;
 import jts.moteur.geometrie.Point;
 import jts.moteur.ligne.voie.Section;
 import jts.moteur.ligne.voie.elements.Arc;
@@ -96,14 +97,15 @@ public class SectionCourbeCreator {
 	public void createAndSave(String folder){
 		Section section = getSection();
 		
+		File file = new File(folder + "/sections/" + nom + ".xml");
 		try{
-			FileWriter fw = new FileWriter(new File(folder + "/sections/" + nom + ".xml"));
+			FileWriter fw = new FileWriter(file);
 			BufferedWriter writer = new BufferedWriter(fw);
 			section.save("", writer, nom);
 			writer.close();
 			fw.close();
-		} catch(IOException e){
-			e.printStackTrace();
+		} catch (IOException e) {
+			Controleur.LOG.error("Erreur d'écriture sur le fichier " + file.toString() + " : " + e.getMessage());
 		}
 		moc.createAndSave(folder + "/objets", section);
 		System.out.println(nom + " cree");

@@ -3,7 +3,7 @@ package jts.moteur.ligne;
 import java.util.ArrayList;
 import java.util.List;
 
-import jts.log.Log;
+import jts.Controleur;
 import jts.moteur.geometrie.Point;
 import jts.moteur.ligne.voie.Section;
 import jts.moteur.ligne.voie.points.PointExtremite;
@@ -57,7 +57,7 @@ public class CircuitSections {
 							if (pf1.getConnexion() == null){
 								pf1.setConnexion(pf2);
 								reussi = true;
-								Log.getInstance().logWarning("Lien établit en " + pf1.getX() + "/" + pf1.getY(), false);
+								Controleur.LOG.warn("Lien établit en " + pf1.getX() + "/" + pf1.getY());
 							}
 						}
 					}

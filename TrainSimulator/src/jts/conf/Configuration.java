@@ -9,6 +9,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import jts.Controleur;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -49,7 +51,7 @@ public class Configuration implements InterfaceConfiguration {
 		return (Element)rootElement.getElementsByTagName(eltName).item(0);
 	}
 	
-	public void load(File file)  throws IOException {
+	public void load(File file) throws IOException {
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		try {
 			DocumentBuilder db = dbf.newDocumentBuilder();
@@ -62,14 +64,9 @@ public class Configuration implements InterfaceConfiguration {
 			configurationGraphique = new ConfigurationGraphique();
 			configurationGraphique.load(getUniqueElement(root, "Graphique"));
 		} catch (ParserConfigurationException e) {
-			System.out.println("Erreur de parse sur le fichier " + file.toString());
-			e.printStackTrace();
+			Controleur.LOG.fatal("Erreur de parse sur le fichier " + file.toString() + " : " + e.getMessage());
 		} catch (SAXException e) {
-			System.out.println("Erreur de SAX sur le fichier " + file.toString());
-			e.printStackTrace();
-		} catch (IOException e) {
-			System.out.println("Erreur de lecture sur le fichier " + file.toString());
-			e.printStackTrace();
+			Controleur.LOG.fatal("Erreur de SAX sur le fichier " + file.toString() + " : " + e.getMessage());
 		}
 	}
 	

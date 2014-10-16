@@ -24,8 +24,7 @@ public class GrandeBoucle extends Thread {
 			try {
 				Thread.sleep(duree);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Controleur.LOG.error("Interruption de la grande boucle : " + e.getMessage());
 			}
 		}
 	}

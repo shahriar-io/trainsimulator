@@ -7,6 +7,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import jts.Controleur;
 import jts.moteur.ligne.Circuit;
 import jts.moteur.train.Train;
 
@@ -31,14 +32,11 @@ public class ScenarioLoader {
 			circuit.init(courbeNum, abscisse, sensDirect);
 			
 		} catch (ParserConfigurationException e) {
-			System.out.println("Erreur de parse sur le fichier " + scenario.toString());
-			e.printStackTrace();
+			Controleur.LOG.error("Erreur de parse sur le fichier " + scenario.toString() + " : " + e.getMessage());
 		} catch (SAXException e) {
-			System.out.println("Erreur de SAX sur le fichier " + scenario.toString());
-			e.printStackTrace();
+			Controleur.LOG.error("Erreur de SAX sur le fichier " + scenario.toString() + " : " + e.getMessage());
 		} catch (IOException e) {
-			System.out.println("Erreur de lecture sur le fichier " + scenario.toString());
-			e.printStackTrace();
+			Controleur.LOG.error("Erreur de lecture sur le fichier " + scenario.toString() + " : " + e.getMessage());
 		}
 	}
 
@@ -52,14 +50,11 @@ public class ScenarioLoader {
 			noms[0] = racine.getAttribute("name");
 			noms[1] = racine.getAttribute("ligne");
 		} catch (ParserConfigurationException e) {
-			System.out.println("Erreur de parse sur le fichier " + file.toString());
-			e.printStackTrace();
+			Controleur.LOG.error("Erreur de parse sur le fichier " + file.toString() + " : " + e.getMessage());
 		} catch (SAXException e) {
-			System.out.println("Erreur de SAX sur le fichier " + file.toString());
-			e.printStackTrace();
+			Controleur.LOG.error("Erreur de SAX sur le fichier " + file.toString() + " : " + e.getMessage());
 		} catch (IOException e) {
-			System.out.println("Erreur de lecture sur le fichier " + file.toString());
-			e.printStackTrace();
+			Controleur.LOG.error("Erreur de lecture sur le fichier " + file.toString() + " : " + e.getMessage());
 		}
 		return noms;
 	}

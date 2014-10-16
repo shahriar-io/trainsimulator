@@ -1,5 +1,6 @@
 package jts.ihm;
 
+import jts.Controleur;
 import jts.InterfaceControleur;
 import jts.conf.ConfigurationJoystick;
 import jts.ihm.clavier.EcouteurClavier;
@@ -64,7 +65,7 @@ public class Ihm implements InterfaceHommeMachine {
 		try {
 			fakeProgression();
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			Controleur.LOG.warn("Interruption du pré-écran : " + e.getMessage());
 		}
 		gui = new Gui(this);
 		gui.init();

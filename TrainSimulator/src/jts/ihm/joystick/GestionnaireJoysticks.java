@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import jts.log.Log;
+import jts.Controleur;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Controller;
@@ -29,16 +29,14 @@ public class GestionnaireJoysticks implements InterfaceJoystick {
 	public void init(){
 		try {
 			confJoystick = ConfigurationJoystick.readConf();
-		} catch (IOException e1) {
-			Log.getInstance().logInfo("Impossible de lire la configuration joystick !");
-			e1.printStackTrace();
+		} catch (IOException e) {
+			Controleur.LOG.error("Impossible de lire la configuration joystick : " + e.getMessage());
 		}
 		try {
 			Controllers.create();
 			numberOfControllers = Controllers.getControllerCount();
 		} catch (LWJGLException e) {
-			Log.getInstance().logInfo("Problème d'initialisation de la liste des joysticks.");
-			e.printStackTrace();
+			Controleur.LOG.error("Problème d'initialisation de la liste des joysticks : " + e.getMessage());
 		}
 	}
 	
@@ -52,8 +50,8 @@ public class GestionnaireJoysticks implements InterfaceJoystick {
 				valeurs.initAxe(i, joystick.getAxisValue(i));
 			}
 
-			Log.getInstance().logWarning(joystick.getName() + " selectionne : "
-					+ joystick.getAxisCount() + " axes / " + joystick.getButtonCount() + " boutons", false);
+			Controleur.LOG.info(joystick.getName() + " selectionne : "
+					+ joystick.getAxisCount() + " axes / " + joystick.getButtonCount() + " boutons");
 		}
 	}
 	

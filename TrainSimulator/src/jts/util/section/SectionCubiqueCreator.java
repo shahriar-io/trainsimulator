@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import jts.Controleur;
 import jts.moteur.geometrie.Point;
 import jts.moteur.ligne.voie.Section;
 import jts.moteur.ligne.voie.elements.CourbeElementaire;
@@ -49,25 +50,27 @@ public class SectionCubiqueCreator {
 	public void createAndSave(String folder){
 		Section[] sections = new Section[2];
 		sections[0] = getSection(true);
+		File file = new File(folder + "/sections/" + nom[0] + ".xml");
 		try{
-			FileWriter fw = new FileWriter(new File(folder + "/sections/" + nom[0] + ".xml"));
+			FileWriter fw = new FileWriter(file);
 			BufferedWriter writer = new BufferedWriter(fw);
 			sections[0].save("", writer, nom[0]);
 			writer.close();
 			fw.close();
-		} catch(IOException e){
-			e.printStackTrace();
+		} catch (IOException e) {
+			Controleur.LOG.error("Erreur d'écriture sur le fichier " + file.toString() + " : " + e.getMessage());
 		}
 		
 		sections[1] = getSection(false);
+		file = new File(folder + "/sections/" + nom[1] + ".xml");
 		try{
 			FileWriter fw = new FileWriter(new File(folder + "/sections/" + nom[1] + ".xml"));
 			BufferedWriter writer = new BufferedWriter(fw);
 			sections[1].save("", writer, nom[1]);
 			writer.close();
 			fw.close();
-		} catch(IOException e){
-			e.printStackTrace();
+		} catch (IOException e) {
+			Controleur.LOG.error("Erreur d'écriture sur le fichier " + file.toString() + " : " + e.getMessage());
 		}
 		
 		moc.createAndSave(folder + "/objets", sections);

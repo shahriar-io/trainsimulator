@@ -2,11 +2,12 @@ package jts.util.obj;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import jts.Controleur;
 
 public class Objet3D {
 
@@ -117,10 +118,8 @@ public class Objet3D {
 
 			writer.close();
 			fw.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
+			Controleur.LOG.error("Erreur de lecture sur le fichier " + file.toString() + " : " + e.getMessage());
 		}
 	}
 

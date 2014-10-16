@@ -13,12 +13,12 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import jts.Controleur;
 import jts.ihm.InterfaceHommeMachine;
 import jts.ihm.clavier.EcouteurClavier;
 import jts.ihm.gui.ctrl.PanelVisuRoute;
 import jts.ihm.gui.render.InterfaceMoteur3D;
 import jts.ihm.gui.render.PanelConduite;
-import jts.log.Log;
 import jts.moteur.geometrie.Point;
 import jts.moteur.ligne.Ligne;
 import jts.moteur.ligne.ObjetScene;
@@ -70,7 +70,7 @@ public class Gui implements InterfaceGraphique {
 		try {
 			((PanelDemarrage)panelCourant).chargerArriereFond();
 		} catch (IOException e) {
-			Log.getInstance().logInfo("Impossible de lire l'image d'arrière fond de démarrage");
+			Controleur.LOG.warn("Impossible de lire l'image d'arrière fond de démarrage");
 		}
 		fenetre = new JFrame("Java Train Simulator");
 		fenetre.add(panelCourant);
@@ -88,7 +88,7 @@ public class Gui implements InterfaceGraphique {
 		try {
 			panelDemarrage.chargerArriereFond();
 		} catch (IOException e) {
-			Log.getInstance().logInfo("Impossible de lire l'image d'arrière fond de démarrage");
+			Controleur.LOG.warn("Impossible de lire l'image d'arrière fond de démarrage");
 		}
 		fenetre.getContentPane().removeAll();
 		fenetre.add(panelDemarrage);
@@ -100,7 +100,7 @@ public class Gui implements InterfaceGraphique {
 		try {
 			panelChoixScenario.chargerArriereFond();
 		} catch (IOException e) {
-			Log.getInstance().logInfo("Impossible de lire l'image d'arrière fond de démarrage");
+			Controleur.LOG.warn("Impossible de lire l'image d'arrière fond de démarrage");
 		}
 		fenetre.getContentPane().removeAll();
 		fenetre.add(panelChoixScenario);
@@ -112,7 +112,7 @@ public class Gui implements InterfaceGraphique {
 		try {
 			panelReglages.chargerArriereFond();
 		} catch (IOException e) {
-			Log.getInstance().logInfo("Impossible de lire l'image d'arrière fond de règlages");
+			Controleur.LOG.warn("Impossible de lire l'image d'arrière fond de règlages");
 		}
 		fenetre.getContentPane().removeAll();
 		fenetre.add(panelReglages);

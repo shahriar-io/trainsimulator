@@ -6,7 +6,6 @@ import javax.swing.JPanel;
 
 import jts.conf.ConfigurationGraphique;
 import jts.ihm.clavier.EcouteurClavier;
-import jts.ihm.gui.JtsDimension;
 import jts.ihm.gui.render.j3d.RenduJ3D;
 import jts.ihm.gui.render.jme.RenduJME;
 
@@ -68,11 +67,6 @@ public class PanelConduite extends JPanel {
         this.panelAiguillage = new PanelAiguillage();
 		this.add(panelAiguillage);
 		this.panelAiguillage.setBounds(800, 800, 50, 50);
-		/*try {
-			this.panelAiguillage.setSelected(true);
-		} catch (PropertyVetoException e) {
-			e.printStackTrace();
-		}*/
         
         return moteur3d;
 	}

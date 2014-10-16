@@ -2,8 +2,6 @@ package jts;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import jts.conf.Configuration;
 import jts.conf.InterfaceConfiguration;
@@ -16,10 +14,11 @@ import jts.ihm.audio.Son;
 import jts.ihm.gui.Gui;
 import jts.io.LigneLoader;
 import jts.io.ScenarioLoader;
-import jts.log.Log;
-import jts.log.LogMode;
 import jts.moteur.MoteurPhysique;
 import jts.moteur.ligne.Ligne;
+
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 
 /**Cette classe est le controleur de l'application. Il fait le lien entre les moteurs de l'application :
  * moteur physique, moteur graphique, moteur son, récupération des entrées utilisateurs, moteur réseau.
@@ -29,6 +28,7 @@ import jts.moteur.ligne.Ligne;
  */
 public class Controleur implements InterfaceControleur {
 	
+	public static Logger LOG = Logger.getLogger("jts");
 	/**Duree de boucle en millisecondes*/
 	private static long DUREE = 50;
 	/**Fichier de configuration*/
@@ -72,13 +72,7 @@ public class Controleur implements InterfaceControleur {
 	}
 	
 	public void init(){
-		try {
-			Log.init(new File("log.txt"), LogMode.DEBUG);
-		} catch (IOException e) {
-			System.out.println("Impossible de créer un fichier de log");
-			e.printStackTrace();
-		}
-		Logger.getLogger("").setLevel(Level.WARNING);
+		PropertyConfigurator.configure("log4j.properties");
 		configuration = new Configuration();
 		ihm = new Ihm(this);
 		ihm.preinit();
@@ -90,7 +84,7 @@ public class Controleur implements InterfaceControleur {
 			try {
 				configuration.load(CONFIGURATION_FILE);
 			} catch (IOException e) {
-				Log.getInstance().logInfo("Unable to load configuration");
+				LOG.fatal("Unable to load configuration : " + e.getMessage());
 			}
 			ihm.init();
 			moteurPhysique = new MoteurPhysique(DUREE);
@@ -103,11 +97,11 @@ public class Controleur implements InterfaceControleur {
 	public InterfaceConfiguration getConfiguration(){ return this.configuration; }
 	
 	public void lancerSimu(File fichierLigne, File fichierScenario){
-		Log.getInstance().logInfo("**********  Chargement de la ligne  **********");
+		LOG.warn("Chargement de la ligne");
 		Ligne ligne = LigneLoader.load(fichierLigne);
 		this.moteurPhysique.setLigne(ligne);
 		
-		Log.getInstance().logInfo("**********  Chargement du scénario  **********");
+		LOG.warn("Chargement du scénario");
 		ScenarioLoader.loadScenario(ligne.getCircuit(), fichierScenario);
 		
 		this.ihm.getInterfaceGraphique().afficherEcranJeu();
@@ -159,7 +153,7 @@ public class Controleur implements InterfaceControleur {
 		try {
 			configuration.save(CONFIGURATION_FILE);
 		} catch (IOException e) {
-			Log.getInstance().logInfo("Unable to save configuration");
+			LOG.error("Unable to save configuration");
 		}
 	}
 	

@@ -7,6 +7,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import jts.Controleur;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -55,14 +57,11 @@ public class Traduction {
 				panelReglages.parse(getUniqueElement(root, "PanelReglages"));
 			}
 		} catch (ParserConfigurationException e) {
-			System.out.println("Erreur de parse sur le fichier " + file.toString());
-			e.printStackTrace();
+			Controleur.LOG.error("Erreur de parse sur le fichier " + file.toString() + " : " + e.getMessage());
 		} catch (SAXException e) {
-			System.out.println("Erreur de SAX sur le fichier " + file.toString());
-			e.printStackTrace();
+			Controleur.LOG.error("Erreur de SAX sur le fichier " + file.toString() + " : " + e.getMessage());
 		} catch (IOException e) {
-			System.out.println("Erreur de lecture sur le fichier " + file.toString());
-			e.printStackTrace();
+			Controleur.LOG.error("Erreur de lecture sur le fichier " + file.toString() + " : " + e.getMessage());
 		}
 	}
 	

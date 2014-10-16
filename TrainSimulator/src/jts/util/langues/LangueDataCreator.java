@@ -3,13 +3,13 @@ package jts.util.langues;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import jts.Controleur;
 import jts.ihm.langues.Langue;
 import jts.io.xml.AttributXml;
 import jts.io.xml.ElementXml;
@@ -25,10 +25,8 @@ public class LangueDataCreator {
 			
 			reader.close();
 			fr.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
+			Controleur.LOG.error("Erreur de lecture sur le fichier " + fichierLangue.toString() + " : " + e.getMessage());
 		}
 	}
 

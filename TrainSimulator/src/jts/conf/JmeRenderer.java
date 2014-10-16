@@ -1,7 +1,5 @@
 package jts.conf;
 
-import jts.ihm.langues.Langue;
-
 import com.jme3.system.AppSettings;
 
 public enum JmeRenderer {

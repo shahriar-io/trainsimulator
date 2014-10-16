@@ -25,6 +25,7 @@ import javax.vecmath.Color3f;
 import javax.vecmath.Point3d;
 import javax.vecmath.Vector3f;
 
+import jts.Controleur;
 import jts.ihm.gui.render.InterfaceMoteur3D;
 import jts.moteur.geometrie.Point;
 import jts.moteur.ligne.ObjetScene;
@@ -146,11 +147,11 @@ public class RenduJ3D implements InterfaceMoteur3D {
 				sceneLoaded = loaderObj.load(new FileReader(fichierObjet.getAbsolutePath()));
 			}
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			Controleur.LOG.error("Fichier non trouvé " + fichierObjet.toString() + " : " + e.getMessage());
 		} catch (IncorrectFormatException e) {
-			e.printStackTrace();
+			Controleur.LOG.error("Format incorrect " + fichierObjet.toString() + " : " + e.getMessage());
 		} catch (ParsingErrorException e) {
-			e.printStackTrace();
+			Controleur.LOG.error("Erreur de parse " + fichierObjet.toString() + " : " + e.getMessage());
 		}
 		
 		if(sceneLoaded != null){

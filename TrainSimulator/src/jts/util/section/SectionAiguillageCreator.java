@@ -8,6 +8,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import jts.Controleur;
 import jts.moteur.geometrie.Point;
 import jts.moteur.ligne.voie.Section;
 import jts.moteur.ligne.voie.elements.Arc;
@@ -140,14 +141,15 @@ public class SectionAiguillageCreator {
 	}
 	
 	private void createAndSave(String folder, Section section, int n){
+		File file = new File(folder + "/sections/" + nom[n] + ".xml");
 		try{
-			FileWriter fw = new FileWriter(new File(folder + "/sections/" + nom[n] + ".xml"));
+			FileWriter fw = new FileWriter(file);
 			BufferedWriter writer = new BufferedWriter(fw);
 			section.save("", writer, nom[n]);
 			writer.close();
 			fw.close();
-		} catch(IOException e){
-			e.printStackTrace();
+		} catch (IOException e) {
+			Controleur.LOG.error("Erreur d'écriture sur le fichier " + file.toString() + " : " + e.getMessage());
 		}
 	}
 
