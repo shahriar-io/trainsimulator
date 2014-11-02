@@ -1,6 +1,7 @@
 package jts.moteur.ligne;
 
 import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,13 +17,23 @@ import jts.moteur.geometrie.CoordonneesGps;
  */
 public class Ligne {
 
+	//Gestion des aspects informatiques
+	/**Nom du dossier de la ligne*/
+	private String nomDossier;
+	/**Chemin pour accéder au dossier de la ligne*/
+	private String chemin;
+	
 	private String name;
 	private CoordonneesGps origine;
 	private Circuit circuit;
-	private List<ObjetScene> objets;
+	//private List<ObjetScene> objets;
+	private List<Parcelle> parcelles;
 	
-	public Ligne(){
-		this.objets = new ArrayList<ObjetScene>();
+	public Ligne(String nomDossier){
+		//this.objets = new ArrayList<ObjetScene>();
+		this.nomDossier = nomDossier;
+		this.chemin = "data/lignes/" + nomDossier;
+		this.parcelles = new ArrayList<Parcelle>();
 	}
 	
 	public String getName(){ return this.name; }
@@ -37,44 +48,85 @@ public class Ligne {
 	
 	public void setCircuit(Circuit circuit){ this.circuit = circuit; }
 	
-	public List<ObjetScene> getObjets(){ return this.objets; }
+	//public List<ObjetScene> getObjets(){ return this.objets; }
 	
-	public void addObjet(ObjetScene objet){ this.objets.add(objet); }
+	public List<Parcelle> getParcelles(){ return this.parcelles; }
 	
-	public void save(String indent, BufferedWriter writer) throws IOException {
-		/*writer.write("<?xml version=\"1.0\"?>");
-		writer.newLine();
-		writer.write("<Ligne name=\"" + name + "\">");
-		writer.newLine();
+	public void addObjet(ObjetScene objet){
+		//On cherche à savoir à quelle parcelle appartient l'objet
+		int x = (int)Math.floor(objet.getPoint().getX()/1000.0);
+		int y = (int)Math.floor(objet.getPoint().getY()/1000.0);
 		
-		circuit.save("\t", writer);
-		
-		writer.write("\t<Objets>");
-		writer.newLine();
-		for(ObjetScene objet : objets){
-			objet.save("\t\t", writer);
+		Parcelle parcelle = this.getParcelle(x, y);
+		if(parcelle == null){
+			parcelle = this.creerParcelle(x, y);
 		}
-		writer.write("\t</Objets>");
-		writer.newLine();
-		
-		writer.write("</Ligne>");
-		writer.newLine();*/
-		writer.write("<?xml version=\"1.0\"?>");
-		writer.newLine();
-		this.save().write(indent, writer);
+		parcelle.addObjet(objet);
 	}
 	
-	public ElementXml save(){
+	/**Renvoie la parcelle de la ligne aux coordonnées demandées, si elle existe.
+	 * 
+	 * @param x <b>int</b> la coordonnée Est de la parcelle
+	 * @param y <b>int</b> la coordonnée Nord de la parcelle
+	 * @return la <code>Parcelle</code> recherchée (peut-être <b>null</b>)
+	 */
+	public Parcelle getParcelle(int x, int y){
+		Parcelle parcelleCherchee = null;
+		
+		for(Parcelle parcelle : parcelles){
+			if((parcelle.getX() == x) && (parcelle.getY() == y)){
+				parcelleCherchee = parcelle;
+			}
+		}
+		
+		return parcelleCherchee;
+	}
+	
+	/**Crée une nouvelle parcelle vide aux coordonnées demandées.
+	 * 
+	 * @param x <b>int</b> la coordonnée Est de la parcelle
+	 * @param y <b>int</b> la coordonnée Nord de la parcelle
+	 */
+	public Parcelle creerParcelle(int x, int y){
+		Parcelle parcelle = new Parcelle(x, y);
+		this.parcelles.add(parcelle);
+		return parcelle;
+	}
+	
+	public void save(String indent, BufferedWriter writer) throws IOException {
+		writer.write("<?xml version=\"1.0\"?>");
+		writer.newLine();
+		this.saveXml().write(indent, writer);
+	}
+	
+	public void save() throws IOException {
+		FileWriter fw = new FileWriter(chemin + "/" + nomDossier + ".xml");
+		BufferedWriter buffer = new BufferedWriter(fw);
+		buffer.write("<?xml version=\"1.0\"?>");
+		buffer.newLine();
+		this.saveXml().write("", buffer);
+		buffer.close();
+		fw.close();
+	}
+	
+	public ElementXml saveXml(){
 		ElementXml element = new ElementXml("Ligne");
 		element.addAttribut(new AttributXml("name", name));
 		element.addElement(origine.save());
 		element.addElement(circuit.save());
 		ElementXml objetsElement = new ElementXml("Objets");
 		element.addElement(objetsElement);
-		for(ObjetScene objet : objets){
+		/*for(ObjetScene objet : objets){
 			objetsElement.addElement(objet.save());
-		}
+		}*/
 		
 		return element;
+	}
+	
+	public void saveParcelles() throws IOException{
+		for(Parcelle parcelle : parcelles){
+			parcelle.save(chemin);
+			//parcelle.saveTerrain(chemin, true);
+		}
 	}
 }

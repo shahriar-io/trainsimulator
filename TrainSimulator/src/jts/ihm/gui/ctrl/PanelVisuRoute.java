@@ -13,6 +13,7 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
+import jts.Controleur;
 import jts.moteur.geometrie.Point;
 import jts.moteur.ligne.Circuit;
 import jts.moteur.ligne.Ligne;
@@ -201,7 +202,7 @@ public class PanelVisuRoute extends JPanel {
 			Ellipse2D pt2d = ptsExtremites2d.get(i);
 			if(pt2d.contains(x, y)){
 				Point p = this.ptsExtremites.get(i);
-				System.out.println(p);
+				Controleur.LOG.debug("Clic gauche " + p);
 			}
 		}
 	}

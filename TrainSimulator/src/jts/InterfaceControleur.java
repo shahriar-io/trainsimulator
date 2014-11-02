@@ -27,7 +27,7 @@ public interface InterfaceControleur {
 	 * @param fichierLigne
 	 * @param fichierScenario
 	 */
-	public void lancerSimu(File fichierLigne, File fichierScenario);
+	public void lancerSimu(String fichierLigne, File fichierScenario);
 	
 	/**Réalise une boucle de simulation avec l'appel des moteurs à appeler (physique, réseau, ihm).
 	 * 

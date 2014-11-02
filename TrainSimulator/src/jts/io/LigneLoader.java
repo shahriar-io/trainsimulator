@@ -25,13 +25,14 @@ import org.xml.sax.SAXException;
 
 public class LigneLoader {
 
-	public static Ligne load(File file){
+	public static Ligne load(String nomDossier){
+		File file = new File("data/lignes/" + nomDossier + "/" + nomDossier + ".xml");
 		Ligne ligne = null;
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		try {
 			DocumentBuilder db = dbf.newDocumentBuilder();
 			Document document = db.parse(file);
-			ligne = parseDocument(document);
+			ligne = parseDocument(document, nomDossier);
 		} catch (ParserConfigurationException e) {
 			Controleur.LOG.error("Erreur de parse sur le fichier " + file.toString() + " : " + e.getMessage());
 		} catch (SAXException e) {
@@ -42,8 +43,8 @@ public class LigneLoader {
 		return ligne;
 	}
 	
-	private static Ligne parseDocument(Document document){
-		Ligne ligne = new Ligne();
+	private static Ligne parseDocument(Document document, String nomDossier){
+		Ligne ligne = new Ligne(nomDossier);
 		Circuit circuit = new Circuit();
 		ligne.setCircuit(circuit);
 		

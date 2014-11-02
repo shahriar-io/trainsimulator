@@ -7,6 +7,8 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.FloatControl.Type;
 
+import jts.Controleur;
+
 /**Cette classe permet de jouer certaines fréquences.
  * 
  * @author Frédéric Boulanger, Yannick BISIAUX
@@ -44,12 +46,9 @@ public class AudioPlayer implements InterfaceAudio {
 			line.open(audioFormat);
 			line.start();
 			bufferSize = line.getBufferSize();
-			//System.out.println("Buffer size : " + bufferSize);
-			//audioSamples = new byte[(int)(sampleRate*this.duree)];
 			audioSamples = new byte[bufferSize];
-		} catch (LineUnavailableException lue) {
-			System.out.println("# Erreur : impossible de trouver une ligne de sortie audio au format :");
-			System.out.println("#          " + audioFormat);
+		} catch (LineUnavailableException e) {
+			Controleur.LOG.error("Impossible de trouver une ligne de sortie audio au format : " + audioFormat + " : " + e.getMessage());
 		}
 		
 		nbOctets = 0;  // nombre d'octets par échantillon

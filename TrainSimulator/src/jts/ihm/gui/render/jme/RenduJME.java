@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
 
+import jts.Controleur;
 import jts.conf.ConfigurationGraphique;
 import jts.ihm.clavier.InterfaceClavier;
 import jts.ihm.gui.render.InterfaceMoteur3D;
@@ -72,7 +73,7 @@ public class RenduJME extends SimpleApplication implements InterfaceMoteur3D {
 	}
 
 	public void simpleInitApp() {
-		System.out.println("Caps : " + renderer.getCaps());
+		Controleur.LOG.info("Caps : " + renderer.getCaps());
 		
 		assetManager.registerLocator(".", FileLocator.class);
 

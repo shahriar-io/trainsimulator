@@ -96,7 +96,7 @@ public class Controleur implements InterfaceControleur {
 	
 	public InterfaceConfiguration getConfiguration(){ return this.configuration; }
 	
-	public void lancerSimu(File fichierLigne, File fichierScenario){
+	public void lancerSimu(String fichierLigne, File fichierScenario){
 		LOG.warn("Chargement de la ligne");
 		Ligne ligne = LigneLoader.load(fichierLigne);
 		this.moteurPhysique.setLigne(ligne);

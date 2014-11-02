@@ -15,8 +15,8 @@ import jts.moteur.ligne.voie.points.PointPassage;
 
 public class CircuitConverter {
 
-	public static Ligne convert(CircuitSections circuitSections){
-		Ligne ligne = new Ligne();
+	public static Ligne convert(CircuitSections circuitSections, String nomDossier){
+		Ligne ligne = new Ligne(nomDossier);
 		Circuit circuit = new Circuit();
 		
 		List<PointExtremite> pointsExtremite = new ArrayList<PointExtremite>();

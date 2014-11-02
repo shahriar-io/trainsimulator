@@ -64,7 +64,7 @@ public class PanelChoixScenario extends JPanel implements ActionListener, ListSe
 		labelScenario.setFont(Gui.POLICE_TITRE);
 		this.add(labelScenario);
 		
-		fl.chercherNomScenarios(fl.getFichiersLignes().get(0).getName().split(".xml")[0]);
+		fl.chercherNomScenarios(fl.getFichiersLignes().get(0));
 		
 		this.listScenario = new JList();
 		this.listScenario.setBounds(90, 315, 220, 140);
@@ -98,7 +98,7 @@ public class PanelChoixScenario extends JPanel implements ActionListener, ListSe
 			int indexFichierLigne = this.listLigne.getSelectedIndex();
 			int indexFichierScenario = this.listScenario.getSelectedIndex();
 			if((indexFichierLigne != -1) && (indexFichierScenario != -1)){
-				File fichierLigne = fl.getFichiersLignes().get(indexFichierLigne);
+				String fichierLigne = fl.getFichiersLignes().get(indexFichierLigne);
 				File fichierScenario = fl.getFichiersScenarios().get(indexFichierScenario);
 				this.gui.getIhm().getControleur().lancerSimu(fichierLigne, fichierScenario);
 			}
@@ -107,7 +107,7 @@ public class PanelChoixScenario extends JPanel implements ActionListener, ListSe
 
 	public void valueChanged(ListSelectionEvent event) {
 		int indexFichierLigne = this.listLigne.getSelectedIndex();
-		fl.chercherNomScenarios(fl.getFichiersLignes().get(indexFichierLigne).getName().split(".xml")[0]);
+		fl.chercherNomScenarios(fl.getFichiersLignes().get(indexFichierLigne));
 		this.listScenario.setListData(fl.getNomsScenarios().toArray());
 	}
 }

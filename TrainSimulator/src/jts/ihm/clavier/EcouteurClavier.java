@@ -3,6 +3,8 @@ package jts.ihm.clavier;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import jts.Controleur;
+
 
 public class EcouteurClavier implements KeyListener, InterfaceClavier{
 	
@@ -20,7 +22,7 @@ public class EcouteurClavier implements KeyListener, InterfaceClavier{
 	
 	public void keyPressed(KeyEvent event) {
 		int code = event.getKeyCode();
-		//System.out.println(event.getKeyCode());
+		Controleur.LOG.debug("Key pressed " + event.getKeyCode());
 		
 		//Chiffre haut clavier
 		if ((code>=48)&&(code<=57)){

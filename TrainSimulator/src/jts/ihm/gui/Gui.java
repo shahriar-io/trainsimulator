@@ -22,6 +22,7 @@ import jts.ihm.gui.render.PanelConduite;
 import jts.moteur.geometrie.Point;
 import jts.moteur.ligne.Ligne;
 import jts.moteur.ligne.ObjetScene;
+import jts.moteur.ligne.Parcelle;
 import jts.moteur.ligne.voie.elements.CourbeElementaire;
 import jts.moteur.train.Locomotive;
 import jts.moteur.train.Train;
@@ -159,8 +160,10 @@ public class Gui implements InterfaceGraphique {
 			moteur3d.dessinerLigne(element.getPointsRemarquables());
 		}
 		
-		for(ObjetScene objet : ligne.getObjets()){
-			moteur3d.chargerObjet(objet);
+		for(Parcelle parcelle : ligne.getParcelles()){
+			for(ObjetScene objet : parcelle.getObjets()){
+				moteur3d.chargerObjet(objet);
+			}
 		}
 	}
 
