@@ -161,9 +161,7 @@ public class Gui implements InterfaceGraphique {
 		}
 		
 		for(Parcelle parcelle : ligne.getParcelles()){
-			for(ObjetScene objet : parcelle.getObjets()){
-				moteur3d.chargerObjet(objet);
-			}
+			moteur3d.ajouterParcelle(parcelle);
 		}
 	}
 

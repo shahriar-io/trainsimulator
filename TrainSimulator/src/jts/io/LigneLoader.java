@@ -9,6 +9,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import jts.Controleur;
 import jts.moteur.geometrie.AngleEuler;
+import jts.moteur.geometrie.CoordonneesGps;
 import jts.moteur.geometrie.Point;
 import jts.moteur.ligne.Circuit;
 import jts.moteur.ligne.Ligne;
@@ -49,6 +50,12 @@ public class LigneLoader {
 		ligne.setCircuit(circuit);
 		
 		Element racine = document.getDocumentElement();
+		
+		Element coordGpsNode = (Element)racine.getElementsByTagName("CoordonneesGps").item(0);
+		CoordonneesGps origineGps = new CoordonneesGps(
+				Double.parseDouble(coordGpsNode.getAttribute("latitude")),
+				Double.parseDouble(coordGpsNode.getAttribute("longitude")));
+		ligne.setOrigine(origineGps);
 		
 		Element circuitNode = (Element)racine.getElementsByTagName("Circuit").item(0);
 		Element points = (Element)circuitNode.getElementsByTagName("PointsPassages").item(0);
@@ -130,7 +137,7 @@ public class LigneLoader {
 			}
 		}
 		
-		Element objetsNode = (Element)racine.getElementsByTagName("Objets").item(0);
+		/*Element objetsNode = (Element)racine.getElementsByTagName("Objets").item(0);
 		if(objetsNode!=null){
 			NodeList objetsNL = objetsNode.getChildNodes();
 			for(int i=0; i<objetsNL.getLength(); i++){
@@ -149,7 +156,9 @@ public class LigneLoader {
 					}
 				}
 			}
-		}
+		}*/
+		
+		ligne.preloadParcelles();
 		
 		return ligne;
 	}

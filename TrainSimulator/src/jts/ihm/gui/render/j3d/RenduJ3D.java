@@ -29,6 +29,7 @@ import jts.Controleur;
 import jts.ihm.gui.render.InterfaceMoteur3D;
 import jts.moteur.geometrie.Point;
 import jts.moteur.ligne.ObjetScene;
+import jts.moteur.ligne.Parcelle;
 
 import com.microcrowd.loader.java3d.max3ds.Loader3DS;
 import com.sun.j3d.loaders.IncorrectFormatException;
@@ -220,5 +221,17 @@ public class RenduJ3D implements InterfaceMoteur3D {
 		return new Vector3f ((float)p.getY(),
 				(float)p.getZ(),
 				(float)p.getX());
+	}
+
+	@Override
+	public void ajouterParcelle(Parcelle parcelle) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void supprimerParcelle(Parcelle parcelle) {
+		// TODO Auto-generated method stub
+		
 	}
 }

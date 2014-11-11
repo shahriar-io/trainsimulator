@@ -8,6 +8,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import jts.Controleur;
 import jts.io.xml.AttributXml;
 import jts.io.xml.ElementXml;
 
@@ -24,6 +25,8 @@ public class Parcelle {
 		this.x = x;
 		this.y = y;
 		this.objets = new ArrayList<ObjetScene>();
+		this.terrain = new Terrain();
+		this.terrain.init(1);
 	}
 	
 	public int getX(){ return this.x; }
@@ -44,8 +47,16 @@ public class Parcelle {
 	
 	public Terrain getTerrain(){ return this.terrain; }
 	
-	public void loadTerrain(){
-		this.terrain = new Terrain();
+	public void loadTerrain(String dossier){
+		File fichierTerrain = new File(dossier + "/" + getNom() + ".ter");
+		if(fichierTerrain.exists()){
+			this.terrain = new Terrain();
+			try {
+				this.terrain.load(fichierTerrain);
+			} catch (IOException e) {
+				Controleur.LOG.error("Impossible de charger le terrain en " + x + "/" + y + " : " + e.getMessage());
+			}
+		}
 	}
 	
 	public void clearTerrain(){
@@ -70,6 +81,19 @@ public class Parcelle {
 		nom += DF.format(Math.abs(y));
 		
 		return nom;
+	}
+	
+	public boolean equals(Object o){
+		boolean same = false;
+		
+		if(o instanceof Parcelle){
+			Parcelle p = (Parcelle)o;
+			if(p.x == x && p.y == y){
+				same = true;
+			}
+		}
+		
+		return same;
 	}
 	
 	public void save(String dossier) throws IOException {

@@ -4,7 +4,7 @@ import java.awt.Canvas;
 import java.util.List;
 
 import jts.moteur.geometrie.Point;
-import jts.moteur.ligne.ObjetScene;
+import jts.moteur.ligne.Parcelle;
 
 
 public interface InterfaceMoteur3D {
@@ -17,7 +17,9 @@ public interface InterfaceMoteur3D {
 	
 	public void dessinerSurface(List<Point> frontiere);
 	
-	public void chargerObjet(ObjetScene objet);
+	public void ajouterParcelle(Parcelle parcelle);
+	
+	public void supprimerParcelle(Parcelle parcelle);
 	
 	public void setHeure(float heure);
 }

@@ -1,11 +1,13 @@
 package jts.moteur.ligne;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import jts.io.ParcelleLoader;
 import jts.io.xml.AttributXml;
 import jts.io.xml.ElementXml;
 import jts.moteur.geometrie.CoordonneesGps;
@@ -47,8 +49,6 @@ public class Ligne {
 	public Circuit getCircuit(){ return this.circuit; }
 	
 	public void setCircuit(Circuit circuit){ this.circuit = circuit; }
-	
-	//public List<ObjetScene> getObjets(){ return this.objets; }
 	
 	public List<Parcelle> getParcelles(){ return this.parcelles; }
 	
@@ -93,6 +93,21 @@ public class Ligne {
 		return parcelle;
 	}
 	
+	/**Pré-charge toutes les parcelles de l'itinéraire.
+	 * 
+	 */
+	public void preloadParcelles(){
+		File dossierParcelles = new File(this.chemin + "/parcelles");
+		for(File fichier : dossierParcelles.listFiles()){
+			//On suppose que les seuls fichiers .xml du dossier décriront des parcelles
+			if(fichier.getName().endsWith(".xml")){
+				Parcelle parcelle = ParcelleLoader.load(fichier);
+				this.parcelles.add(parcelle);
+				parcelle.loadTerrain(this.chemin + "/parcelles");
+			}
+		}
+	}
+	
 	public void save(String indent, BufferedWriter writer) throws IOException {
 		writer.write("<?xml version=\"1.0\"?>");
 		writer.newLine();
@@ -126,7 +141,7 @@ public class Ligne {
 	public void saveParcelles() throws IOException{
 		for(Parcelle parcelle : parcelles){
 			parcelle.save(chemin);
-			//parcelle.saveTerrain(chemin, true);
+			parcelle.saveTerrain(chemin, true);
 		}
 	}
 }

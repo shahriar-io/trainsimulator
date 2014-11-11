@@ -16,6 +16,7 @@ import jts.io.LigneLoader;
 import jts.io.ScenarioLoader;
 import jts.moteur.MoteurPhysique;
 import jts.moteur.ligne.Ligne;
+import jts.moteur.ligne.Terrain;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -87,6 +88,7 @@ public class Controleur implements InterfaceControleur {
 				LOG.fatal("Unable to load configuration : " + e.getMessage());
 			}
 			ihm.init();
+			Terrain.init();
 			moteurPhysique = new MoteurPhysique(DUREE);
 			decisions = new PreneurDecisionClavier(moteurPhysique);
 			audio = new AudioPlayer();
@@ -128,20 +130,10 @@ public class Controleur implements InterfaceControleur {
 		this.moteurPhysique.nextStep();
 		((Gui)this.ihm.getInterfaceGraphique()).afficherLigne(moteurPhysique.getLigne());
 		
-		//Harmoniques 400 et 1200 Hz fonction de la commande moteur.
 		double commande = this.moteurPhysique.getLigne().getCircuit().getTrainJoueur().getCommandeTraction();
 		double vitesse = this.moteurPhysique.getLigne().getCircuit().getTrainJoueur().getVitesse();
-		//double frequences[] = {400.0, 1200.0, frequenceVitesse};
-		//double amplitudes[] = new double[3];
-		//amplitudes[0] = 0.85 * commande * 0.6;
-		//amplitudes[1] = 0.15 * commande * 0.6;
-		//double frequenceVitesse1 = vitesse*17.5;
-		//double frequenceVitesse2 = vitesse*21.1;
-		//amplitudes[2] = 0.4;
 		Son son = interpolationSon.getSon(vitesse);
-		//son.getFrequences().set(0, vitesse*17.5);
 		son.getAmplitudes().set(0, commande*0.2);
-		//son.getFrequences().set(1, vitesse*21.1);
 		son.getAmplitudes().set(1, commande*0.2);
 		son.getAmplitudes().set(2, commande*0.2);
 		son.getAmplitudes().set(3, commande*0.2);
